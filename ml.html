@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Beginner's Handbook · Google Colab + Python</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Epilogue:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f5f2eb;
+    --bg2:       #eee9df;
+    --surface:   #ffffff;
+    --card:      #fffdf9;
+    --border:    #e0d9cc;
+    --border2:   #cfc7b7;
+    --ink:       #1c1a16;
+    --ink2:      #4a4438;
+    --muted:     #8a7f72;
+    --accent:    #2563eb;
+    --accent-bg: #eff5ff;
+    --green:     #16a34a;
+    --green-bg:  #f0fdf4;
+    --amber:     #d97706;
+    --amber-bg:  #fffbeb;
+    --red:       #dc2626;
+    --red-bg:    #fff5f5;
+    --code-bg:   #1e1b16;
+    --code-text: #e8e0d0;
+    --radius:    14px;
+    --shadow:    0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 400;
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #prog {
+    position: fixed; top:0; left:0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 200;
+    transition: width .1s linear;
+    box-shadow: 0 0 8px rgba(37,99,235,.4);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0;
+    z-index: 100;
+    height: 58px;
+    background: rgba(245,242,235,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
+
+  .nav-brand {
+    display: flex; align-items: center; gap: .6rem;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: .15rem;
+  }
+
+  .nav-links a {
+    font-size: .78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .3rem .65rem;
+    border-radius: 8px;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 10rem 2rem 5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(72px);
+    pointer-events: none;
+  }
+
+  .blob1 { width:500px;height:500px;background:rgba(37,99,235,.08);top:-120px;left:-80px; }
+  .blob2 { width:400px;height:400px;background:rgba(22,163,74,.07);top:20px;right:-60px; }
+  .blob3 { width:350px;height:350px;background:rgba(217,119,6,.06);bottom:-40px;left:35%; }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: .35rem 1rem;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .04em;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    animation: rise .7s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 7vw, 5.2rem);
+    line-height: 1.02;
+    letter-spacing: -2px;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    animation: rise .7s .1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+    position: relative;
+  }
+
+  .hero h1 em::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 4px;
+    width: 100%; height: 7px;
+    background: rgba(37,99,235,.15);
+    border-radius: 3px;
+    z-index: -1;
+  }
+
+  .hero-sub {
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    color: var(--ink2);
+    font-size: 1.05rem;
+    animation: rise .7s .2s ease both;
+  }
+
+  .cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: rise .7s .3s ease both;
+  }
+
+  .btn {
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: .7rem 1.6rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all .2s;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+  }
+
+  .btn-blue {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(37,99,235,.3);
+  }
+  .btn-blue:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(37,99,235,.35); }
+
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--ink2);
+    border: 1.5px solid var(--border2);
+  }
+  .btn-ghost:hover { border-color:var(--accent);color:var(--accent);transform:translateY(-2px); }
+
+  /* stats */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding: 3rem 2rem 5rem;
+    animation: rise .7s .4s ease both;
+  }
+
+  .stat { text-align:center; }
+
+  .stat-n {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-l { font-size:.78rem;color:var(--muted);margin-top:.3rem;font-weight:500; }
+
+  .vr { width:1px;background:var(--border);align-self:stretch; }
+
+  @keyframes rise {
+    from { opacity:0;transform:translateY(22px); }
+    to   { opacity:1;transform:translateY(0); }
+  }
+
+  /* ── LAYOUT ── */
+  .w { max-width:860px;margin:0 auto;padding:0 1.5rem; }
+  section { padding:5rem 0; }
+  .sec-head { margin-bottom:2.5rem; }
+
+  .badge {
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-bg);
+    border:1px solid rgba(37,99,235,.15);border-radius:100px;
+    padding:.28rem .8rem;margin-bottom:.85rem;
+  }
+
+  h2 {
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(1.9rem,4vw,2.6rem);letter-spacing:-1px;
+    line-height:1.1;color:var(--ink);margin-bottom:.5rem;
+  }
+
+  .lead { color:var(--ink2);font-size:1rem;max-width:600px; }
+
+  hr.sep { border:none;border-top:1px solid var(--border); }
+
+  /* ── STEP CARDS ── */
+  .steps { display:flex;flex-direction:column;gap:1rem; }
+
+  .step-card {
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--radius);padding:1.5rem 1.75rem;
+    display:flex;gap:1.25rem;align-items:flex-start;
+    box-shadow:var(--shadow);
+    transition:border-color .2s,box-shadow .2s,transform .2s;
+    position:relative;
+  }
+
+  .step-card:hover { border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateX(4px); }
+
+  .step-badge {
+    width:38px;height:38px;border-radius:10px;
+    background:var(--accent-bg);color:var(--accent);
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    border:1px solid rgba(37,99,235,.15);margin-top:2px;
+  }
+
+  .step-body h3 {
+    font-family:'Fraunces',serif;font-weight:700;
+    font-size:1.05rem;color:var(--ink);margin-bottom:.35rem;
+  }
+
+  .step-body p { color:var(--ink2);font-size:.9rem; }
+  .step-em { position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:1.8rem;opacity:.12; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    display:flex;gap:1rem;padding:1rem 1.3rem;
+    border-radius:12px;border:1.5px solid;
+    margin:1.25rem 0;font-size:.88rem;line-height:1.6;
+  }
+  .callout-icon { font-size:1.1rem;flex-shrink:0;margin-top:1px; }
+  .callout p { color:var(--ink2); }
+  .callout strong { color:var(--ink); }
+  .c-blue  { background:var(--accent-bg);border-color:rgba(37,99,235,.2); }
+  .c-green { background:var(--green-bg); border-color:rgba(22,163,74,.25); }
+  .c-amber { background:var(--amber-bg); border-color:rgba(217,119,6,.25); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block { margin:1.25rem 0;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg); }
+
+  .code-bar {
+    display:flex;align-items:center;justify-content:space-between;
+    background:#2a2620;padding:.6rem 1.1rem;
+  }
+
+  .dots { display:flex;gap:5px; }
+  .dots span { width:11px;height:11px;border-radius:50%; }
+  .dr { background:#ff5f57; } .dy { background:#ffbd2e; } .dg { background:#28c840; }
+
+  .code-lbl {
+    font-family:'JetBrains Mono',monospace;font-size:.65rem;
+    color:#8a8070;letter-spacing:.08em;
+  }
+
+  .copy-btn {
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+    color:#8a8070;font-family:'JetBrains Mono',monospace;
+    font-size:.62rem;letter-spacing:.06em;padding:.28rem .65rem;
+    border-radius:6px;cursor:pointer;transition:all .2s;
+  }
+  .copy-btn:hover { background:rgba(255,255,255,.15);color:#d0c8b8; }
+  .copy-btn.ok { color:#4ade80;border-color:rgba(74,222,128,.35); }
+
+  pre {
+    background:var(--code-bg);color:var(--code-text);
+    padding:1.4rem 1.5rem;font-family:'JetBrains Mono',monospace;
+    font-size:.78rem;line-height:1.9;overflow-x:auto;
+  }
+
+  .kw  { color:#c792ea; }
+  .fn  { color:#82aaff; }
+  .str { color:#c3e88d; }
+  .cm  { color:#546870;font-style:italic; }
+  .num { color:#f78c6c; }
+  .cls { color:#ffcb6b; }
+
+  /* ── TABS ── */
+  .tab-row { display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap; }
+
+  .tab-pill {
+    font-family:'Epilogue',sans-serif;font-weight:600;font-size:.82rem;
+    padding:.45rem 1.1rem;border-radius:100px;
+    border:1.5px solid var(--border2);background:var(--surface);
+    color:var(--muted);cursor:pointer;transition:all .18s;
+  }
+  .tab-pill.on { background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(37,99,235,.25); }
+  .tab-pill:hover:not(.on) { border-color:var(--accent);color:var(--accent); }
+
+  .tab-pane { display:none; }
+  .tab-pane.on { display:block; }
+
+  /* ── TABLE ── */
+  .table-wrap { border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow); }
+  table { width:100%;border-collapse:collapse; }
+  thead tr { background:var(--bg2); }
+  th {
+    font-family:'JetBrains Mono',monospace;font-size:.65rem;
+    letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+    padding:.8rem 1.2rem;text-align:left;font-weight:500;
+    border-bottom:1.5px solid var(--border);
+  }
+  td { padding:.9rem 1.2rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.875rem;color:var(--ink2); }
+  tr:last-child td { border-bottom:none; }
+  tbody tr:hover td { background:var(--bg2); }
+
+  .ep { font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--red);background:var(--red-bg);border:1px solid rgba(220,38,38,.15);padding:.2rem .55rem;border-radius:6px;white-space:nowrap;display:inline-block; }
+  .fp { font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green);background:var(--green-bg);border:1px solid rgba(22,163,74,.15);padding:.2rem .55rem;border-radius:6px;display:inline-block; }
+
+  /* ── DATASET GRID ── */
+  .ds-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem; }
+
+  .ds-card {
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--radius);padding:1.35rem 1.4rem;
+    box-shadow:var(--shadow);transition:all .2s;
+  }
+  .ds-card:hover { border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-lg); }
+  .ds-icon { font-size:2rem;margin-bottom:.7rem; }
+  .ds-card h4 { font-family:'Fraunces',serif;font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.3rem; }
+  .ds-card p { font-size:.82rem;color:var(--muted);margin-bottom:.65rem; }
+  .ds-tag { display:inline-block;font-size:.65rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;padding:.2rem .55rem;border-radius:100px; }
+  .tc { background:var(--accent-bg);color:var(--accent); }
+  .tr { background:var(--amber-bg);color:var(--amber); }
+
+  /* ── CHECKLIST ── */
+  .cl { display:flex;flex-direction:column;gap:.7rem; }
+
+  .ck {
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:.95rem 1.2rem;
+    display:flex;align-items:flex-start;gap:.9rem;
+    cursor:pointer;transition:all .2s;user-select:none;box-shadow:var(--shadow);
+  }
+  .ck:hover { border-color:var(--accent); }
+  .ck.done { opacity:.55;background:var(--green-bg);border-color:rgba(22,163,74,.3); }
+
+  .cb {
+    width:22px;height:22px;border-radius:7px;border:2px solid var(--border2);
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-size:.75rem;transition:all .18s;margin-top:1px;color:transparent;
+  }
+  .ck.done .cb { background:var(--green);border-color:var(--green);color:#fff; }
+  .ck.done .cl-label { text-decoration:line-through;color:var(--muted); }
+
+  .cl-label { font-weight:500;font-size:.92rem;color:var(--ink);transition:all .2s; }
+  .cl-sub   { font-size:.78rem;color:var(--muted);margin-top:.2rem; }
+
+  /* ── RESOURCES ── */
+  .res-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:.85rem; }
+
+  .res-card {
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--radius);padding:1.2rem 1.3rem;
+    text-decoration:none;transition:all .2s;box-shadow:var(--shadow);display:block;
+  }
+  .res-card:hover { border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-lg); }
+  .res-card .ri { font-size:1.6rem;margin-bottom:.55rem; }
+  .res-card h4 { font-family:'Fraunces',serif;font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:.25rem; }
+  .res-card p { font-size:.77rem;color:var(--muted);line-height:1.5; }
+
+  /* ── BTT ── */
+  #btt {
+    position:fixed;bottom:1.75rem;right:1.75rem;
+    width:42px;height:42px;border-radius:12px;
+    background:var(--ink);color:var(--bg);border:none;
+    font-size:1rem;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;
+    box-shadow:0 4px 18px rgba(0,0,0,.15);
+    opacity:0;transform:translateY(8px);transition:all .3s;z-index:50;
+  }
+  #btt.show { opacity:1;transform:translateY(0); }
+  #btt:hover { background:var(--accent);transform:translateY(-2px); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align:center;padding:3.5rem 2rem;
+    border-top:1px solid var(--border);background:var(--surface);
+  }
+  .foot-logo { font-family:'Fraunces',serif;font-weight:700;font-size:1.2rem;color:var(--ink);margin-bottom:.4rem; }
+  footer p { font-size:.82rem;color:var(--muted); }
+
+  /* inline code */
+  code {
+    font-family:'JetBrains Mono',monospace;font-size:.8em;
+    background:var(--bg2);color:var(--accent);
+    padding:.15em .45em;border-radius:5px;border:1px solid var(--border);
+  }
+
+  /* reveal */
+  .rv { opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease; }
+  .rv.in { opacity:1;transform:translateY(0); }
+
+  @media(max-width:640px){
+    .nav-links { display:none; }
+    .step-em { display:none; }
+    .vr { display:none; }
+    pre { font-size:.7rem; }
+    .w { padding:0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand"><span class="nav-dot"></span> ML Handbook</a>
+  <ul class="nav-links">
+    <li><a href="#open">Open Colab</a></li>
+    <li><a href="#imports">Imports</a></li>
+    <li><a href="#data">Load Data</a></li>
+    <li><a href="#tasks">ML Tasks</a></li>
+    <li><a href="#errors">Errors</a></li>
+    <li><a href="#datasets">Datasets</a></li>
+    <li><a href="#checklist">Checklist</a></li>
+    <li><a href="#links">Resources</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+
+  <div class="eyebrow">🐍 Python · Google Colab · Machine Learning</div>
+
+  <h1>Your Beginner's<br>Guide to <em>ML</em><br>on Google Colab</h1>
+
+  <p class="hero-sub">No experience needed. Just open your browser, follow each step, and run your first machine learning model in minutes.</p>
+
+  <div class="cta-row">
+    <a href="#open" class="btn btn-blue">Get Started →</a>
+    <a href="#checklist" class="btn btn-ghost">✅ Quick Checklist</a>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat"><div class="stat-n">8</div><div class="stat-l">Clear Steps</div></div>
+  <div class="vr"></div>
+  <div class="stat"><div class="stat-n">6</div><div class="stat-l">Code Templates</div></div>
+  <div class="vr"></div>
+  <div class="stat"><div class="stat-n">0</div><div class="stat-l">Prior Experience Needed</div></div>
+  <div class="vr"></div>
+  <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Free to Use</div></div>
+</div>
+
+<hr class="sep">
+
+<!-- ── STEP 1 ── -->
+<section id="open">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 01</div>
+      <h2>Opening Google Colab</h2>
+      <p class="lead">Think of Colab like <strong>Google Docs, but for code</strong>. You write Python, click play, and the computer does the work — all inside your browser.</p>
+    </div>
+
+    <div class="steps rv">
+      <div class="step-card">
+        <div class="step-badge">01</div>
+        <div class="step-body">
+          <h3>Visit colab.google.com</h3>
+          <p>Open any browser and navigate to <strong>colab.google.com</strong>. Sign in with your Google account — it's completely free, no setup needed.</p>
+        </div>
+        <span class="step-em">🌐</span>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">02</div>
+        <div class="step-body">
+          <h3>Click "New Notebook"</h3>
+          <p>Tap the <strong>+ New notebook</strong> button. A white page opens with a grey box — that box is called a <strong>Cell</strong>, and that's where you write your code.</p>
+        </div>
+        <span class="step-em">📓</span>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">03</div>
+        <div class="step-body">
+          <h3>Run Code with ▶ or Shift + Enter</h3>
+          <p>Click the <strong>▶ play button</strong> on the left of any cell, or press <strong>Shift + Enter</strong> on your keyboard. The output appears just below instantly.</p>
+        </div>
+        <span class="step-em">▶️</span>
+      </div>
+    </div>
+
+    <div class="callout c-blue rv" style="margin-top:1.5rem;">
+      <span class="callout-icon">🧠</span>
+      <p>Think of each cell like a <strong>step in a recipe</strong>. You must run them <strong>top to bottom</strong>, in order. Skipping steps will cause errors!</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 2 ── -->
+<section id="imports">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 02</div>
+      <h2>The 5 Magic Import Lines</h2>
+      <p class="lead">Copy and paste these at the very <strong>top of every notebook</strong> — always, no exceptions. Think of it as opening your toolbox before you start any work.</p>
+    </div>
+
+    <div class="code-block rv">
+      <div class="code-bar">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <span class="code-lbl">PYTHON · PASTE THIS FIRST — EVERY TIME</span>
+        <button class="copy-btn" onclick="cp(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Open your toolbox ── paste into the first cell, always!</span>
+<span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd             <span class="cm"># for reading tables and data</span>
+<span class="kw">import</span> <span class="cls">numpy</span> <span class="kw">as</span> np              <span class="cm"># for numbers and math</span>
+<span class="kw">import</span> <span class="cls">matplotlib.pyplot</span> <span class="kw">as</span> plt  <span class="cm"># for drawing graphs and charts</span>
+<span class="kw">from</span> <span class="cls">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cls">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">accuracy_score</span></pre>
+    </div>
+
+    <div class="callout c-amber rv">
+      <span class="callout-icon">💡</span>
+      <p>If you get a <strong>ModuleNotFoundError</strong>, a library isn't installed yet. Fix it instantly by running <code>!pip install library_name</code> in a new cell above.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 3 ── -->
+<section id="data">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 03</div>
+      <h2>Loading &amp; Exploring Your Data</h2>
+      <p class="lead">Most ML tasks start with a <strong>CSV file</strong> — basically a spreadsheet saved as text. Here's how to bring it into Colab and understand what you've got.</p>
+    </div>
+
+    <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin-bottom:.75rem;color:var(--ink);" class="rv">📁 Upload a file from your computer</h3>
+
+    <div class="code-block rv">
+      <div class="code-bar">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <span class="code-lbl">PYTHON · UPLOAD CSV FILE</span>
+        <button class="copy-btn" onclick="cp(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> <span class="cls">google.colab</span> <span class="kw">import</span> files
+uploaded = files.<span class="fn">upload</span>()    <span class="cm"># a file picker button will appear → click it</span>
+
+<span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+df = pd.<span class="fn">read_csv</span>(<span class="str">'your_filename.csv'</span>)  <span class="cm"># ← replace with your actual file name</span>
+df.<span class="fn">head</span>()                                 <span class="cm"># show the first 5 rows</span></pre>
+    </div>
+
+    <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin:2rem 0 .75rem;color:var(--ink);" class="rv">🔍 Always explore first — run all of these commands</h3>
+
+    <div class="code-block rv">
+      <div class="code-bar">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <span class="code-lbl">PYTHON · DATA EXPLORATION COMMANDS</span>
+        <button class="copy-btn" onclick="cp(this)">COPY</button>
+      </div>
+      <pre>df.<span class="fn">head</span>()           <span class="cm"># first 5 rows</span>
+df.<span class="fn">tail</span>()           <span class="cm"># last 5 rows</span>
+df.shape            <span class="cm"># (rows, columns) → e.g. (150, 5)</span>
+df.columns          <span class="cm"># names of every column</span>
+df.<span class="fn">info</span>()           <span class="cm"># data types + missing values overview</span>
+df.<span class="fn">describe</span>()       <span class="cm"># average, min, max, and more</span>
+df.<span class="fn">isnull</span>().<span class="fn">sum</span>()   <span class="cm"># count empty/missing cells per column</span></pre>
+    </div>
+
+    <div class="callout c-green rv">
+      <span class="callout-icon">✅</span>
+      <p><strong>Good habit:</strong> Always run these on every new dataset. Understanding your data <em>before</em> touching any model is the mark of a careful, confident practitioner.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 4 ── -->
+<section id="tasks">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 04</div>
+      <h2>ML Task Code Templates</h2>
+      <p class="lead">Pick the task that matches your goal. Copy the code, swap in your column name, and run — that's the whole process.</p>
+    </div>
+
+    <div class="tab-row rv">
+      <button class="tab-pill on" onclick="tab(this,'cls')">🔵 Classification</button>
+      <button class="tab-pill"    onclick="tab(this,'reg')">🟡 Regression</button>
+      <button class="tab-pill"    onclick="tab(this,'plt')">📊 Plotting</button>
+    </div>
+
+    <!-- Classification -->
+    <div class="tab-pane on" id="pane-cls">
+      <div class="callout c-blue">
+        <span class="callout-icon">💡</span>
+        <p><strong>What is Classification?</strong> The answer is a <em>category</em> — "Spam / Not Spam", "Healthy / Sick", "Type A / B / C". Use this when predicting a label, not a number.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+          <span class="code-lbl">PYTHON · DECISION TREE CLASSIFIER</span>
+          <button class="copy-btn" onclick="cp(this)">COPY</button>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+<span class="kw">from</span> <span class="cls">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cls">sklearn.tree</span> <span class="kw">import</span> <span class="cls">DecisionTreeClassifier</span>
+<span class="kw">from</span> <span class="cls">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">accuracy_score</span>
+
+<span class="cm"># 1. Load data</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'your_file.csv'</span>)
+
+<span class="cm"># 2. Separate inputs (X) and the answer column (y)</span>
+X = df.<span class="fn">drop</span>(<span class="str">'target_column'</span>, axis=<span class="num">1</span>)  <span class="cm"># ← change 'target_column' to yours</span>
+y = df[<span class="str">'target_column'</span>]               <span class="cm"># ← change 'target_column' to yours</span>
+
+<span class="cm"># 3. Split into training and testing sets</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># 4. Train the model</span>
+model = <span class="cls">DecisionTreeClassifier</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># 5. Predict and check accuracy</span>
+predictions = model.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="str">"Accuracy:"</span>, <span class="fn">accuracy_score</span>(y_test, predictions))</pre>
+      </div>
+      <div class="callout c-amber" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <p>Replace <code>'target_column'</code> with the actual name of the column you want to predict. Run <code>df.columns</code> first to see every available column name.</p>
+      </div>
+    </div>
+
+    <!-- Regression -->
+    <div class="tab-pane" id="pane-reg">
+      <div class="callout c-blue">
+        <span class="callout-icon">💡</span>
+        <p><strong>What is Regression?</strong> The answer is a <em>number</em> — like a house price, temperature, or score. Use this when you're predicting a continuous value, not a category.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+          <span class="code-lbl">PYTHON · LINEAR REGRESSION</span>
+          <button class="copy-btn" onclick="cp(this)">COPY</button>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+<span class="kw">from</span> <span class="cls">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cls">sklearn.linear_model</span> <span class="kw">import</span> <span class="cls">LinearRegression</span>
+<span class="kw">from</span> <span class="cls">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">mean_squared_error</span>
+
+<span class="cm"># 1. Load data</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'your_file.csv'</span>)
+
+<span class="cm"># 2. Separate inputs (X) and the answer column (y)</span>
+X = df.<span class="fn">drop</span>(<span class="str">'target_column'</span>, axis=<span class="num">1</span>)  <span class="cm"># ← change 'target_column' to yours</span>
+y = df[<span class="str">'target_column'</span>]               <span class="cm"># ← change 'target_column' to yours</span>
+
+<span class="cm"># 3. Split into training and testing sets</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># 4. Train the model</span>
+model = <span class="cls">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># 5. Predict and check error</span>
+predictions = model.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="str">"Mean Squared Error:"</span>, <span class="fn">mean_squared_error</span>(y_test, predictions))</pre>
+      </div>
+    </div>
+
+    <!-- Plotting -->
+    <div class="tab-pane" id="pane-plt">
+      <div class="callout c-blue">
+        <span class="callout-icon">💡</span>
+        <p><strong>Plotting</strong> means creating charts and graphs from your data. Visualising results helps you spot patterns and communicate findings clearly to others.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+          <span class="code-lbl">PYTHON · 4 CHART TYPES</span>
+          <button class="copy-btn" onclick="cp(this)">COPY</button>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">matplotlib.pyplot</span> <span class="kw">as</span> plt
+
+<span class="cm"># ── Line Chart</span>
+plt.<span class="fn">plot</span>(df[<span class="str">'column1'</span>], df[<span class="str">'column2'</span>])
+plt.<span class="fn">xlabel</span>(<span class="str">'Column 1'</span>) ; plt.<span class="fn">ylabel</span>(<span class="str">'Column 2'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Line Chart'</span>) ; plt.<span class="fn">show</span>()
+
+<span class="cm"># ── Bar Chart</span>
+df[<span class="str">'column_name'</span>].<span class="fn">value_counts</span>().<span class="fn">plot</span>(kind=<span class="str">'bar'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Bar Chart'</span>) ; plt.<span class="fn">show</span>()
+
+<span class="cm"># ── Histogram</span>
+df[<span class="str">'column_name'</span>].<span class="fn">hist</span>(bins=<span class="num">20</span>)
+plt.<span class="fn">title</span>(<span class="str">'Histogram'</span>) ; plt.<span class="fn">show</span>()
+
+<span class="cm"># ── Scatter Plot</span>
+plt.<span class="fn">scatter</span>(df[<span class="str">'column1'</span>], df[<span class="str">'column2'</span>], alpha=<span class="num">0.6</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Column 1'</span>) ; plt.<span class="fn">ylabel</span>(<span class="str">'Column 2'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Scatter Plot'</span>) ; plt.<span class="fn">show</span>()</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 5 ── -->
+<section id="errors">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 05</div>
+      <h2>Common Errors &amp; Fixes</h2>
+      <p class="lead">Red text looks scary at first — but every error follows a pattern. Here are the ones you'll see most, and exactly how to fix each one.</p>
+    </div>
+
+    <div class="table-wrap rv">
+      <table>
+        <thead>
+          <tr><th>Error</th><th>What it means</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ep">ModuleNotFoundError</span></td>
+            <td>A library is not installed</td>
+            <td><span class="fp">!pip install name</span><br><small style="color:var(--muted)">run in a new cell above</small></td>
+          </tr>
+          <tr>
+            <td><span class="ep">FileNotFoundError</span></td>
+            <td>Wrong file name in your code</td>
+            <td>Check spelling of the CSV name exactly — uppercase matters</td>
+          </tr>
+          <tr>
+            <td><span class="ep">KeyError: 'col'</span></td>
+            <td>Column name does not exist</td>
+            <td>Run <span class="fp">df.columns</span> then copy the name precisely</td>
+          </tr>
+          <tr>
+            <td><span class="ep">ValueError: float</span></td>
+            <td>Column has text; model needs numbers</td>
+            <td>Google: <em>"label encoding sklearn python"</em></td>
+          </tr>
+          <tr>
+            <td><span class="ep">NameError</span></td>
+            <td>Variable used before it was created</td>
+            <td>Re-run all cells from the top — Runtime → Run all</td>
+          </tr>
+          <tr>
+            <td><span class="ep">IndentationError</span></td>
+            <td>Spacing or tabs are inconsistent</td>
+            <td>Python needs 4 spaces. Never mix spaces and the Tab key</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-green rv" style="margin-top:1.25rem;">
+      <span class="callout-icon">🔍</span>
+      <p><strong>Best trick:</strong> Copy your exact red error message and paste it into Google. Someone on Stack Overflow has already solved it — every single time.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 6 ── -->
+<section id="datasets">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 06</div>
+      <h2>Famous Built-in Datasets</h2>
+      <p class="lead">These datasets come pre-loaded inside sklearn — <strong>no uploading needed</strong>. Perfect for practising and learning without any external files.</p>
+    </div>
+
+    <div class="ds-grid rv">
+      <div class="ds-card">
+        <div class="ds-icon">🌸</div>
+        <h4>Iris</h4>
+        <p>The most classic ML dataset. 3 flower types, 4 measurements each.</p>
+        <span class="ds-tag tc">CLASSIFICATION</span>
+      </div>
+      <div class="ds-card">
+        <div class="ds-icon">🏠</div>
+        <h4>California Housing</h4>
+        <p>Predict house prices from location and room count features.</p>
+        <span class="ds-tag tr">REGRESSION</span>
+      </div>
+      <div class="ds-card">
+        <div class="ds-icon">🩺</div>
+        <h4>Breast Cancer</h4>
+        <p>Predict if a tumour is malignant or benign. Classic binary task.</p>
+        <span class="ds-tag tc">CLASSIFICATION</span>
+      </div>
+      <div class="ds-card">
+        <div class="ds-icon">🔢</div>
+        <h4>Digits</h4>
+        <p>Recognise handwritten digits 0–9 from tiny 8×8 pixel images.</p>
+        <span class="ds-tag tc">CLASSIFICATION</span>
+      </div>
+      <div class="ds-card">
+        <div class="ds-icon">💊</div>
+        <h4>Diabetes</h4>
+        <p>Predict disease progression score from 10 patient measurements.</p>
+        <span class="ds-tag tr">REGRESSION</span>
+      </div>
+      <div class="ds-card">
+        <div class="ds-icon">🍷</div>
+        <h4>Wine</h4>
+        <p>Classify wines into 3 types based on 13 chemical properties.</p>
+        <span class="ds-tag tc">CLASSIFICATION</span>
+      </div>
+    </div>
+
+    <div class="code-block rv" style="margin-top:2rem;">
+      <div class="code-bar">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <span class="code-lbl">PYTHON · LOAD ANY BUILT-IN DATASET</span>
+        <button class="copy-btn" onclick="cp(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> <span class="cls">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+
+iris = <span class="fn">load_iris</span>()
+df = pd.<span class="cls">DataFrame</span>(iris.data, columns=iris.feature_names)
+df[<span class="str">'target'</span>] = iris.target
+
+df.<span class="fn">head</span>()   <span class="cm"># verify it loaded correctly</span>
+
+<span class="cm"># Swap in other datasets — just change the import line:</span>
+<span class="cm"># from sklearn.datasets import load_breast_cancer</span>
+<span class="cm"># from sklearn.datasets import load_wine</span>
+<span class="cm"># from sklearn.datasets import load_diabetes</span>
+<span class="cm"># from sklearn.datasets import load_digits</span></pre>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 7 ── -->
+<section id="checklist">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 07</div>
+      <h2>Your Workflow Checklist</h2>
+      <p class="lead">Follow these steps every time you start a new ML task. Tap each item to mark it as done.</p>
+    </div>
+
+    <div class="cl rv">
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Open colab.google.com → New Notebook</div>
+          <div class="cl-sub">Always start fresh in a clean notebook</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Paste and run the 5 magic import lines</div>
+          <div class="cl-sub">pandas, numpy, matplotlib, train_test_split, accuracy_score</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Upload or load a dataset</div>
+          <div class="cl-sub">files.upload() for CSV files, or use sklearn's built-in datasets</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Run df.head(), df.info(), df.describe()</div>
+          <div class="cl-sub">Understand your data before touching any model</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Separate X (inputs) and y (target/answer)</div>
+          <div class="cl-sub">X = all columns except the answer. y = answer column only.</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Run train_test_split</div>
+          <div class="cl-sub">Use test_size=0.2 and random_state=42 as safe defaults</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Create model → .fit(X_train, y_train)</div>
+          <div class="cl-sub">DecisionTreeClassifier for categories; LinearRegression for numbers</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">model.predict(X_test) → print results</div>
+          <div class="cl-sub">accuracy_score for classification; mean_squared_error for regression</div>
+        </div>
+      </div>
+      <div class="ck" onclick="tick(this)">
+        <div class="cb">✓</div>
+        <div>
+          <div class="cl-label">Plot at least one chart</div>
+          <div class="cl-sub">Bar, histogram, scatter, or line — whichever fits your data</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ── STEP 8 ── -->
+<section id="links">
+  <div class="w">
+    <div class="sec-head rv">
+      <div class="badge">Step 08</div>
+      <h2>Helpful Resources</h2>
+      <p class="lead">Bookmark these sites. Between them, they cover answers to virtually every Python and ML question a beginner will ever have.</p>
+    </div>
+
+    <div class="res-grid rv">
+      <a class="res-card" href="https://scikit-learn.org/stable/supervised_learning.html" target="_blank">
+        <div class="ri">🤖</div>
+        <h4>scikit-learn Docs</h4>
+        <p>Official reference for every ML model. Search "sklearn [model name] example"</p>
+      </a>
+      <a class="res-card" href="https://pandas.pydata.org/docs/" target="_blank">
+        <div class="ri">🐼</div>
+        <h4>Pandas Docs</h4>
+        <p>Everything about loading, cleaning, and working with data tables</p>
+      </a>
+      <a class="res-card" href="https://matplotlib.org/stable/gallery/" target="_blank">
+        <div class="ri">📊</div>
+        <h4>Matplotlib Gallery</h4>
+        <p>Browse every chart type with working copy-paste code examples</p>
+      </a>
+      <a class="res-card" href="https://kaggle.com/code" target="_blank">
+        <div class="ri">📓</div>
+        <h4>Kaggle Notebooks</h4>
+        <p>Thousands of free, complete ML notebooks you can run and learn from</p>
+      </a>
+      <a class="res-card" href="https://stackoverflow.com" target="_blank">
+        <div class="ri">🔧</div>
+        <h4>Stack Overflow</h4>
+        <p>Paste your exact error message here — a solution is almost always waiting</p>
+      </a>
+      <a class="res-card" href="https://www.w3schools.com/python/python_ml_getting_started.asp" target="_blank">
+        <div class="ri">🎓</div>
+        <h4>W3Schools ML</h4>
+        <p>Simple, clear ML explanations written for complete beginners</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">ML Beginner's Handbook</div>
+  <p>A complete reference for Google Colab · Python · Machine Learning</p>
+  <p style="margin-top:.4rem;font-size:.75rem;">Free to use · No login required · Works in any browser</p>
+</footer>
+
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    document.getElementById('prog').style.width =
+      (d.scrollTop / (d.scrollHeight - d.clientHeight) * 100) + '%';
+    document.getElementById('btt').classList.toggle('show', d.scrollTop > 500);
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(
+    els => els.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.07 }
+  );
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+  // Tabs
+  function tab(btn, id) {
+    document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('pane-' + id).classList.add('on');
+  }
+
+  // Checklist toggle
+  function tick(el) { el.classList.toggle('done'); }
+
+  // Copy code
+  function cp(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'COPIED ✓';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('ok'); }, 1800);
+    });
+  }
+</script>
+</body>
+</html>
