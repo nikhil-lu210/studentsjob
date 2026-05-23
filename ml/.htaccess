@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# If `/ml/` is mapped without Apache knowing the subdirectory, uncomment:
+RewriteBase /ml/
+
+# Serve real files (CSS, SVG, etc.) and directories as-is
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Extensionless PHP: /ml/ml_any → ml_any.php (relative to this folder)
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ $1.php [L]
+</IfModule>
+
+DirectoryIndex index.php

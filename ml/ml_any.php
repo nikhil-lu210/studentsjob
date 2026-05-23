@@ -1,3 +1,7 @@
+<?php
+declare(strict_types=1);
+require __DIR__ . '/includes/paths.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -801,7 +805,7 @@
   <header class="sk-navbar">
     <div class="sk-navbar-start">
       <a href="#" class="sk-brand" onclick="tab('data-loader')">
-        <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
+        <img class="sk-logo-img" src="<?= htmlspecialchars(asset('img/scikit-learn-logo.svg'), ENT_QUOTES, 'UTF-8') ?>" alt="scikit-learn" width="1251" height="675">
         <span>scikit-learn <span class="sk-version-tag">Universal Workbench</span></span>
       </a>
     </div>

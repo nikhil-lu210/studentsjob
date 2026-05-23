@@ -1,3 +1,7 @@
+<?php
+declare(strict_types=1);
+require __DIR__ . '/includes/paths.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ML Beginner's Handbook · Google Colab + Python</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ml_handbook_skin.css">
+<link rel="stylesheet" href="<?= htmlspecialchars(asset('css/ml_handbook_skin.css'), ENT_QUOTES, 'UTF-8') ?>">
 
 </head>
 <body>
@@ -15,7 +19,7 @@
 <header class="sk-navbar">
   <div class="sk-navbar-start">
     <a href="#top" class="sk-brand">
-      <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
+      <img class="sk-logo-img" src="<?= htmlspecialchars(asset('img/scikit-learn-logo.svg'), ENT_QUOTES, 'UTF-8') ?>" alt="scikit-learn" width="1251" height="675">
       <span>scikit-learn <span class="sk-version-tag">ML Handbook</span></span>
     </a>
   </div>
