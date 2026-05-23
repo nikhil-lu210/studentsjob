@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Exam Helpline — Random Forest</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface2: #eef2f7;
+    --border: #d4dbe8;
+    --accent: #0077cc;
+    --accent2: #6d28d9;
+    --accent3: #059669;
+    --warn: #d97706;
+    --danger: #dc2626;
+    --text: #1e293b;
+    --muted: #64748b;
+    --code-bg: #1e2433;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle dot grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,100,200,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,100,200,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(0,119,204,0.08);
+    border: 1px solid rgba(0,119,204,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    animation: pulse-border 2s ease infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { border-color: rgba(0,119,204,0.3); }
+    50% { border-color: rgba(0,119,204,0.7); }
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #0f172a 0%, var(--accent) 50%, #6d28d9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* QUICK IMPORTS BOX */
+  .imports-box {
+    background: var(--code-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+  }
+
+  .imports-box .box-label {
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 24px 0 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--accent2);
+    color: #fff;
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PART CARD */
+  .part-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .part-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .part-num {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .part-title { font-size: 17px; font-weight: 700; }
+  .part-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .part-body { padding: 20px 24px; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 14px 0;
+    position: relative;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: rgba(0,0,0,0.18);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #8899aa;
+  }
+
+  .copy-btn {
+    background: rgba(0,119,204,0.1);
+    border: 1px solid rgba(0,119,204,0.35);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .copy-btn:hover { background: rgba(0,119,204,0.2); }
+  .copy-btn.copied { background: rgba(5,150,105,0.15); border-color: var(--accent3); color: var(--accent3); }
+
+  pre {
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #cdd6f4;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+
+  /* Syntax highlight */
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .st { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .nm { color: #f78c6c; }
+  .cl { color: #ffcb6b; }
+
+  /* INFO BOXES */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+  }
+
+  .info-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border-left: 3px solid;
+  }
+
+  .info-card.blue { border-color: var(--accent); }
+  .info-card.purple { border-color: var(--accent2); }
+  .info-card.green { border-color: var(--accent3); }
+  .info-card.yellow { border-color: var(--warn); }
+  .info-card.red { border-color: var(--danger); }
+
+  .info-card h4 {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .info-card.blue h4 { color: var(--accent); }
+  .info-card.purple h4 { color: var(--accent2); }
+  .info-card.green h4 { color: var(--accent3); }
+  .info-card.yellow h4 { color: var(--warn); }
+  .info-card.red h4 { color: var(--danger); }
+
+  .info-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* Q&A TABLE */
+  .qa-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+
+  .qa-table tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .qa-table tr:hover { background: rgba(0,0,0,0.025); }
+
+  .qa-table td {
+    padding: 11px 14px;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .qa-table td:first-child {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    width: 38%;
+    font-weight: 600;
+  }
+
+  .qa-table td:last-child { color: #374151; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 10px 0; }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 13.5px;
+    color: var(--text);
+    border-bottom: 1px dashed rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .checklist li .check-icon {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent3);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all 0.2s;
+    font-size: 13px;
+  }
+
+  .checklist li.done { color: var(--muted); text-decoration: line-through; }
+  .checklist li.done .check-icon { background: var(--accent3); border-color: var(--accent3); color: #000; }
+
+  /* HIGHLIGHT */
+  .highlight {
+    background: rgba(0,119,204,0.06);
+    border: 1px solid rgba(0,119,204,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 12px 0;
+    color: #374151;
+  }
+
+  .highlight strong { color: var(--accent); }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: linear-gradient(135deg, rgba(109,40,217,0.06), rgba(0,119,204,0.04));
+    border: 1px solid rgba(109,40,217,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #4c1d95;
+  }
+
+  .analogy strong { color: #6d28d9; }
+  .analogy .emoji { font-size: 20px; margin-right: 8px; }
+
+  /* METRIC GRID */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .metric-box {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .metric-box:hover { transform: translateY(-2px); border-color: var(--accent2); }
+
+  .metric-box .metric-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .metric-box .metric-val {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .metric-box .metric-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  /* STEP INDICATOR */
+  .step-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 10px 0;
+  }
+
+  .step-num {
+    width: 26px;
+    height: 26px;
+    background: var(--accent2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text { font-size: 13.5px; color: #475569; line-height: 1.5; padding-top: 3px; }
+  .step-text strong { color: var(--text); }
+
+  /* WARNING BOX */
+  .warn-box {
+    background: rgba(217,119,6,0.07);
+    border: 1px solid rgba(217,119,6,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #92400e;
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+
+  .warn-box::before { content: '⚠ '; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin: 20px 0 8px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .part-body { padding: 16px; }
+    pre { font-size: 11.5px; }
+    .tab-btn { font-size: 12px; padding: 7px 12px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.3s;
+    z-index: 999;
+  }
+
+  /* TOP STRIP */
+  .top-strip {
+    background: linear-gradient(90deg, rgba(0,119,204,0.08), rgba(109,40,217,0.08));
+    border-bottom: 1px solid rgba(0,119,204,0.18);
+    padding: 8px 20px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="top-strip">
+  🎓 IS502 EXAM HELPLINE &nbsp;|&nbsp; RANDOM FOREST + FEATURE IMPORTANCE &nbsp;|&nbsp; BREAST CANCER DATASET
+</div>
+
+<div class="container">
+
+  <header>
+    <div class="badge">📋 Exam Quick Guide</div>
+    <h1>Random Forest<br>Classifier</h1>
+    <p class="subtitle">scikit-learn · breast_cancer · Google Colab</p>
+  </header>
+
+  <!-- IMPORTS BOX -->
+  <div class="imports-box">
+    <span class="box-label">★ ALWAYS PASTE FIRST</span>
+    <div class="code-header">
+      <span>python · all imports needed</span>
+      <button class="copy-btn" onclick="copyCode(this, 'imports')">COPY</button>
+    </div>
+    <pre id="imports"><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> <span class="fn">load_breast_cancer</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> <span class="fn">accuracy_score</span>, <span class="fn">precision_score</span>, <span class="fn">recall_score</span>, <span class="fn">f1_score</span>, <span class="fn">confusion_matrix</span>, <span class="fn">classification_report</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np</pre>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'overview')">🧠 Overview</button>
+    <button class="tab-btn" onclick="switchTab(this, 'partA')">A · Explore</button>
+    <button class="tab-btn" onclick="switchTab(this, 'partB')">B · Split</button>
+    <button class="tab-btn" onclick="switchTab(this, 'partC')">C · Train</button>
+    <button class="tab-btn" onclick="switchTab(this, 'partD')">D · Features</button>
+    <button class="tab-btn" onclick="switchTab(this, 'partE')">E · Report</button>
+    <button class="tab-btn" onclick="switchTab(this, 'checklist')">✅ Checklist</button>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <div class="tab-content active" id="overview">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(0,119,204,0.1);color:var(--accent)">🧠</div>
+        <div>
+          <div class="part-title">Big Picture — What Are You Doing?</div>
+          <div class="part-desc">Understand this before you touch any code</div>
+        </div>
+      </div>
+      <div class="part-body">
+        <div class="analogy">
+          <span class="emoji">🏥</span>
+          <strong>Simple Analogy:</strong> You have 569 patient reports. Each has 30 measurements (tumor size, shape, etc.). A doctor already labeled each one: <strong>CANCER</strong> or <strong>NOT CANCER</strong>. You teach a computer to learn this pattern — then test if it learned correctly.
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card blue">
+            <h4>Dataset</h4>
+            <p>breast_cancer from scikit-learn. 569 samples, 30 features, 2 classes.</p>
+          </div>
+          <div class="info-card purple">
+            <h4>Model</h4>
+            <p>Random Forest — 100 decision trees that vote together.</p>
+          </div>
+          <div class="info-card green">
+            <h4>Goal</h4>
+            <p>Predict malignant (cancer) vs benign (safe) tumors.</p>
+          </div>
+          <div class="info-card yellow">
+            <h4>Platform</h4>
+            <p>Google Colab — colab.research.google.com → New Notebook</p>
+          </div>
+        </div>
+
+        <div class="section-label">What is Random Forest?</div>
+        <div class="analogy" style="border-color:rgba(5,150,105,0.25);color:#065f46;background:rgba(5,150,105,0.06)">
+          <span class="emoji">🌳</span>
+          Like asking <strong>100 different doctors</strong> to look at the same patient. Each doctor uses slightly different logic. Then you go with what <strong>the majority says</strong>. One doctor might be wrong — 100 doctors voting together are usually right.
+        </div>
+
+        <div class="section-label">The 5 Parts You Must Complete</div>
+        <div class="info-grid">
+          <div class="info-card blue"><h4>Part A</h4><p>Load data, explore shape, stats, class balance.</p></div>
+          <div class="info-card purple"><h4>Part B</h4><p>Split into 80% train / 20% test.</p></div>
+          <div class="info-card green"><h4>Part C</h4><p>Train model, predict, report accuracy/F1 etc.</p></div>
+          <div class="info-card yellow"><h4>Part D</h4><p>Feature importance — which measurements matter most.</p></div>
+          <div class="info-card red"><h4>Part E</h4><p>Write a short interpretation paragraph.</p></div>
+        </div>
+
+        <div class="warn-box">In Colab: run each cell with <strong>Shift + Enter</strong>. Add new cells with <strong>+ Code</strong> button at top.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PART A ===================== -->
+  <div class="tab-content" id="partA">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(0,119,204,0.1);color:var(--accent)">A</div>
+        <div>
+          <div class="part-title">Data Exploration</div>
+          <div class="part-desc">Load the dataset and understand what's in it</div>
+        </div>
+      </div>
+      <div class="part-body">
+
+        <div class="section-label">Cell 1 — Load & Explore</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>python</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeA1')">COPY</button>
+          </div>
+          <pre id="codeA1"><span class="cm"># Part A - Data Exploration</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> <span class="fn">load_breast_cancer</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+data = <span class="fn">load_breast_cancer</span>()
+
+<span class="cm"># Convert to DataFrame (like Excel table)</span>
+df = pd.<span class="fn">DataFrame</span>(data.data, columns=data.feature_names)
+df[<span class="st">'target'</span>] = data.target
+
+<span class="cm"># Shape</span>
+<span class="fn">print</span>(<span class="st">"Dataset Shape:"</span>, data.data.shape)
+
+<span class="cm"># Feature names</span>
+<span class="fn">print</span>(<span class="st">"\nFeature Names:"</span>, data.feature_names)
+
+<span class="cm"># Target names</span>
+<span class="fn">print</span>(<span class="st">"\nTarget Names:"</span>, data.target_names)
+
+<span class="cm"># Summary statistics</span>
+<span class="fn">print</span>(<span class="st">"\nSummary Statistics:"</span>)
+<span class="fn">print</span>(df.<span class="fn">describe</span>())</pre>
+        </div>
+
+        <div class="section-label">Cell 2 — Class Distribution</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>python</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeA2')">COPY</button>
+          </div>
+          <pre id="codeA2"><span class="cm"># Target distribution</span>
+target_counts = pd.<span class="fn">Series</span>(data.target).<span class="fn">value_counts</span>()
+<span class="fn">print</span>(<span class="st">"Target Distribution:"</span>)
+<span class="fn">print</span>(<span class="st">f"Malignant (0): {target_counts[0]}"</span>)
+<span class="fn">print</span>(<span class="st">f"Benign    (1): {target_counts[1]}"</span>)
+<span class="fn">print</span>(<span class="st">f"Total        : {len(data.target)}"</span>)</pre>
+        </div>
+
+        <div class="section-label">Discussion Answers</div>
+        <table class="qa-table">
+          <tr><td>What type of problem?</td><td>Binary Classification — predicting one of 2 classes (malignant or benign)</td></tr>
+          <tr><td>How many classes?</td><td>2 — Malignant (cancer=0) and Benign (safe=1)</td></tr>
+          <tr><td>Is the dataset balanced?</td><td>Roughly yes — ~212 malignant, ~357 benign. Not equal but acceptable for ML</td></tr>
+          <tr><td>Shape means?</td><td>569 rows (patients) × 30 columns (measurements)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PART B ===================== -->
+  <div class="tab-content" id="partB">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(109,40,217,0.1);color:var(--accent2)">B</div>
+        <div>
+          <div class="part-title">Train-Test Split</div>
+          <div class="part-desc">Divide data — 80% to learn, 20% to test</div>
+        </div>
+      </div>
+      <div class="part-body">
+        <div class="analogy">
+          <span class="emoji">📚</span>
+          Like a student studying 80% of the textbook, then being tested on the other 20% they haven't seen. If they pass, they truly learned — not just memorized.
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>python · Part B</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeB')">COPY</button>
+          </div>
+          <pre id="codeB"><span class="cm"># Part B - Train-Test Split</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="fn">train_test_split</span>
+
+X = data.data   <span class="cm"># 30 features (inputs)</span>
+y = data.target  <span class="cm"># labels (0=malignant, 1=benign)</span>
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y,
+    test_size=<span class="nm">0.2</span>,       <span class="cm"># 20% for testing</span>
+    random_state=<span class="nm">42</span>     <span class="cm"># fixed seed = same split every time</span>
+)
+
+<span class="fn">print</span>(<span class="st">"Training set size:"</span>, X_train.shape)
+<span class="fn">print</span>(<span class="st">"Testing set size: "</span>, X_test.shape)</pre>
+        </div>
+
+        <div class="section-label">Discussion Answers</div>
+        <table class="qa-table">
+          <tr><td>Why split the data?</td><td>So the model learns on one part and is tested on data it has NEVER seen before — just like a real exam</td></tr>
+          <tr><td>Purpose of test set?</td><td>To check if the model truly learned the pattern, or just memorized training data</td></tr>
+          <tr><td>What is random_state=42?</td><td>A seed so the split is always the same — for reproducibility. Any number works, 42 is convention.</td></tr>
+          <tr><td>Expected sizes?</td><td>Train: ~455 samples | Test: ~114 samples</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PART C ===================== -->
+  <div class="tab-content" id="partC">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(5,150,105,0.1);color:var(--accent3)">C</div>
+        <div>
+          <div class="part-title">Train Model & Evaluate</div>
+          <div class="part-desc">Train Random Forest and check how well it performs</div>
+        </div>
+      </div>
+      <div class="part-body">
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>python · Part C</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeC')">COPY</button>
+          </div>
+          <pre id="codeC"><span class="cm"># Part C - Random Forest Classification</span>
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (
+    <span class="fn">accuracy_score</span>, <span class="fn">precision_score</span>,
+    <span class="fn">recall_score</span>, <span class="fn">f1_score</span>,
+    <span class="fn">confusion_matrix</span>, <span class="fn">classification_report</span>
+)
+
+<span class="cm"># Create model</span>
+model = <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nm">100</span>, random_state=<span class="nm">42</span>)
+
+<span class="cm"># Train it</span>
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># Make predictions</span>
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># Print all metrics</span>
+<span class="fn">print</span>(<span class="st">"Accuracy : "</span>, <span class="fn">round</span>(<span class="fn">accuracy_score</span>(y_test, y_pred), <span class="nm">4</span>))
+<span class="fn">print</span>(<span class="st">"Precision: "</span>, <span class="fn">round</span>(<span class="fn">precision_score</span>(y_test, y_pred), <span class="nm">4</span>))
+<span class="fn">print</span>(<span class="st">"Recall   : "</span>, <span class="fn">round</span>(<span class="fn">recall_score</span>(y_test, y_pred), <span class="nm">4</span>))
+<span class="fn">print</span>(<span class="st">"F1-Score : "</span>, <span class="fn">round</span>(<span class="fn">f1_score</span>(y_test, y_pred), <span class="nm">4</span>))
+
+<span class="fn">print</span>(<span class="st">"\nConfusion Matrix:"</span>)
+<span class="fn">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))
+
+<span class="fn">print</span>(<span class="st">"\nFull Report:"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred, target_names=data.target_names))</pre>
+        </div>
+
+        <div class="section-label">What Each Metric Means</div>
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-name">Accuracy</div>
+            <div class="metric-val">~96%</div>
+            <div class="metric-desc">% of ALL correct predictions out of total</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-name">Precision</div>
+            <div class="metric-val">~95%</div>
+            <div class="metric-desc">Of predicted cancer cases, how many were actually cancer?</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-name">Recall</div>
+            <div class="metric-val">~97%</div>
+            <div class="metric-desc">Of all actual cancer cases, how many did we catch?</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-name">F1-Score</div>
+            <div class="metric-val">~96%</div>
+            <div class="metric-desc">Balance of Precision + Recall in one number</div>
+          </div>
+        </div>
+
+        <div class="section-label">Discussion Answers</div>
+        <table class="qa-table">
+          <tr><td>What does Random Forest do?</td><td>Builds 100 decision trees, each slightly different. All trees vote, majority wins — more reliable than one tree</td></tr>
+          <tr><td>Why not accuracy alone?</td><td>If 90% of patients are healthy, always predicting "healthy" = 90% accuracy but catches ZERO cancer. Recall reveals this flaw</td></tr>
+          <tr><td>Confusion Matrix?</td><td>Shows True Positives, True Negatives, False Positives, False Negatives in a 2×2 grid</td></tr>
+          <tr><td>n_estimators=100?</td><td>Number of trees in the forest. 100 trees vote together</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PART D ===================== -->
+  <div class="tab-content" id="partD">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(217,119,6,0.1);color:var(--warn)">D</div>
+        <div>
+          <div class="part-title">Feature Importance</div>
+          <div class="part-desc">Which tumor measurements matter most?</div>
+        </div>
+      </div>
+      <div class="part-body">
+
+        <div class="analogy" style="border-color:rgba(217,119,6,0.25);color:#78350f;background:rgba(245,158,11,0.06)">
+          <span class="emoji">🔍</span>
+          Like a doctor saying: "I mostly look at the tumor size and shape — those matter most. The color barely affects my decision." Feature importance tells you which of the 30 measurements the model relied on most.
+        </div>
+
+        <div class="section-label">Cell 1 — Table of Importances</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>python · Part D — Table</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeD1')">COPY</button>
+          </div>
+          <pre id="codeD1"><span class="cm"># Part D - Feature Importance</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+importances = model.feature_importances_
+feature_names = data.feature_names
+
+<span class="cm"># Create a sorted table</span>
+feat_df = pd.<span class="fn">DataFrame</span>({
+    <span class="st">'Feature'</span>: feature_names,
+    <span class="st">'Importance'</span>: importances
+})
+
+feat_df = feat_df.<span class="fn">sort_values</span>(<span class="st">'Importance'</span>, ascending=<span class="kw">False</span>).<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+
+<span class="fn">print</span>(<span class="st">"Top 10 Most Important Features:"</span>)
+<span class="fn">print</span>(feat_df.<span class="fn">head</span>(<span class="nm">10</span>).<span class="fn">to_string</span>(index=<span class="kw">False</span>))</pre>
+        </div>
+
+        <div class="section-label">Cell 2 — Bar Chart</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>python · Part D — Chart</span>
+            <button class="copy-btn" onclick="copyCode(this, 'codeD2')">COPY</button>
+          </div>
+          <pre id="codeD2"><span class="cm"># Bar chart of top 10</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+top10 = feat_df.<span class="fn">head</span>(<span class="nm">10</span>)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="nm">10</span>, <span class="nm">6</span>))
+plt.<span class="fn">barh</span>(top10[<span class="st">'Feature'</span>][::-<span class="nm">1</span>], top10[<span class="st">'Importance'</span>][::-<span class="nm">1</span>], color=<span class="st">'steelblue'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'Importance Score'</span>)
+plt.<span class="fn">title</span>(<span class="st">'Top 10 Feature Importances — Random Forest'</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">savefig</span>(<span class="st">'feature_importance.png'</span>, dpi=<span class="nm">150</span>)
+plt.<span class="fn">show</span>()</pre>
+        </div>
+
+        <div class="section-label">Discussion Answers</div>
+        <table class="qa-table">
+          <tr><td>Most important features?</td><td>Typically: worst concave points, worst perimeter, mean concave points — related to shape extremes</td></tr>
+          <tr><td>What does importance mean?</td><td>How much each feature helped the trees make correct decisions (split data well)</td></tr>
+          <tr><td>Does high importance = cause?</td><td>NO. It means useful for prediction. It does NOT mean that feature causes cancer. Correlation ≠ Causation</td></tr>
+          <tr><td>How does it help?</td><td>Doctors can focus on key measurements; we can simplify models by removing unimportant features</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PART E ===================== -->
+  <div class="tab-content" id="partE">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(220,38,38,0.1);color:var(--danger)">E</div>
+        <div>
+          <div class="part-title">Short Interpretation</div>
+          <div class="part-desc">Write a paragraph summarizing everything</div>
+        </div>
+      </div>
+      <div class="part-body">
+
+        <div class="section-label">Sample Paragraph (adapt numbers to yours)</div>
+        <div class="highlight">
+          The Random Forest classifier achieved approximately <strong>96–97% accuracy</strong> on the breast cancer dataset, with high precision, recall, and F1-score, demonstrating strong and reliable performance for binary tumor classification. The model identified <strong>'worst concave points'</strong>, <strong>'worst perimeter'</strong>, and <strong>'mean concave points'</strong> as the most important features, suggesting that the extreme shape and size characteristics of a tumor are most predictive of malignancy. Overall, the model appears well-suited for this dataset. However, relying solely on these results is insufficient — <strong>cross-validation, checking for overfitting, and clinical expert review</strong> would be necessary before deploying such a model in a real medical environment.
+        </div>
+
+        <div class="section-label">Discussion Answers</div>
+        <table class="qa-table">
+          <tr><td>Would you trust it?</td><td>Not fully — high accuracy on one test split is promising but not enough for life-or-death medical decisions</td></tr>
+          <tr><td>Additional checks?</td><td>Cross-validation, ROC-AUC curve, testing on external datasets, checking class imbalance impact, clinical validation</td></tr>
+          <tr><td>Is the model useful?</td><td>Yes — as a decision support tool for doctors, not a replacement for clinical judgment</td></tr>
+        </table>
+
+        <div class="warn-box">For your PDF report — take screenshots of: the metrics output, confusion matrix, top 10 table, and the bar chart. Paste them in a Word doc / Google Doc and save as PDF.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <div class="tab-content" id="checklist">
+    <div class="part-card">
+      <div class="part-header">
+        <div class="part-num" style="background:rgba(5,150,105,0.1);color:var(--accent3)">✅</div>
+        <div>
+          <div class="part-title">Exam Day Checklist</div>
+          <div class="part-desc">Click each item as you complete it</div>
+        </div>
+      </div>
+      <div class="part-body">
+
+        <div class="section-label">Setup</div>
+        <ul class="checklist" id="checkSetup">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Go to colab.research.google.com</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Click "New Notebook"</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Paste all imports in Cell 1 and run (Shift+Enter)</li>
+        </ul>
+
+        <div class="section-label">Part A — Exploration</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Load dataset with load_breast_cancer()</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print: shape, feature names, target names</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print summary statistics with df.describe()</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print malignant vs benign count</li>
+        </ul>
+
+        <div class="section-label">Part B — Split</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Set X = data.data, y = data.target</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Use train_test_split with test_size=0.2, random_state=42</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print training and testing sizes</li>
+        </ul>
+
+        <div class="section-label">Part C — Model</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create RandomForestClassifier(n_estimators=100, random_state=42)</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>model.fit(X_train, y_train)</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>y_pred = model.predict(X_test)</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print accuracy, precision, recall, f1</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print confusion matrix</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print classification_report</li>
+        </ul>
+
+        <div class="section-label">Part D — Feature Importance</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Extract model.feature_importances_</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create DataFrame with Feature + Importance columns</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Sort by Importance descending</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print top 10 with feat_df.head(10)</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create and save bar chart (plt.savefig)</li>
+        </ul>
+
+        <div class="section-label">Part E — Write Up</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Write interpretation paragraph in a text cell</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Answer all discussion questions</li>
+        </ul>
+
+        <div class="section-label">Submit</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>File → Download → Download .ipynb</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Rename to {NameSurname}_{StudentID}_RandomForest.ipynb</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create PDF report with screenshots</li>
+          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Zip both files: {NameSurname}_{StudentID}_Activity4.zip</li>
+        </ul>
+
+        <div class="section-label">Key Numbers To Remember</div>
+        <div class="info-grid">
+          <div class="info-card blue"><h4>test_size</h4><p>0.2 (20%)</p></div>
+          <div class="info-card purple"><h4>random_state</h4><p>42 (both split and model)</p></div>
+          <div class="info-card green"><h4>n_estimators</h4><p>100 trees</p></div>
+          <div class="info-card yellow"><h4>figsize</h4><p>(10, 6) for chart</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // Tab switching
+  function switchTab(btn, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Copy code — strips HTML tags
+  function copyCode(btn, id) {
+    const el = document.getElementById(id);
+    const text = el.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'COPIED!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'COPY';
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  }
+
+  // Checklist toggle
+  function toggleCheck(li) {
+    li.classList.toggle('done');
+    const icon = li.querySelector('.check-icon');
+    if (li.classList.contains('done')) {
+      icon.textContent = '✓';
+    } else {
+      icon.textContent = '';
+    }
+  }
+
+  // Progress bar on scroll
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+  });
+</script>
+</body>
+</html>
