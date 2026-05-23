@@ -38,19 +38,40 @@
     flex-direction: column;
   }
 
-  /* TOP HEADER (OFFICIAL SCIKIT-LEARN STYLE) */
+  /* NAVBAR (shared layout with ml_any.html) */
   .sk-navbar {
     background: #ffffff;
     border-bottom: 1px solid var(--sk-border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    height: 52px;
+    min-height: 52px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
+    gap: 16px;
+    padding: 0 24px;
     position: sticky;
     top: 0;
     z-index: 100;
+  }
+
+  .sk-navbar-start {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .sk-navbar-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .sk-navbar-end {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
   }
 
   .sk-brand {
@@ -76,6 +97,8 @@
     align-items: center;
     gap: 20px;
     list-style: none;
+    flex-wrap: wrap;
+    justify-content: center;
     font-size: 13px;
   }
 
@@ -85,7 +108,8 @@
     font-weight: 500;
   }
 
-  .sk-nav-links a:hover, .sk-nav-links a.active {
+  .sk-nav-links a:hover,
+  .sk-nav-links a.active {
     color: var(--sk-green-dark);
   }
 
@@ -103,20 +127,31 @@
     font-weight: 600;
   }
 
+  /* SEARCH (identical styling on both pages) */
   .sk-search-container {
     position: relative;
-    width: 240px;
+    width: 100%;
+    min-width: 180px;
+    max-width: 280px;
   }
 
   .sk-search-input {
     width: 100%;
-    padding: 6px 12px 6px 30px;
-    border-radius: 15px;
+    box-sizing: border-box;
+    padding: 7px 12px 7px 34px;
+    border-radius: 6px;
     border: 1px solid var(--sk-border);
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.35;
     outline: none;
     background: var(--sk-gray-bg);
-    transition: all 0.2s;
+    color: var(--sk-text);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .sk-search-input::placeholder {
+    color: var(--sk-text-muted);
+    opacity: 0.9;
   }
 
   .sk-search-input:focus {
@@ -127,11 +162,42 @@
 
   .sk-search-icon {
     position: absolute;
-    left: 10px;
+    left: 11px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1;
     color: var(--sk-text-muted);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* SEARCH RESULTS */
+  .sk-search-results {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 110;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .sk-search-result-item {
+    padding: 8px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--sk-border);
+  }
+
+  .sk-search-result-item:hover {
+    background: var(--sk-green-light);
+    color: var(--sk-green-dark);
   }
 
   /* TWO-COLUMN LAYOUT */
@@ -709,55 +775,33 @@
     text-decoration: line-through;
     color: var(--sk-text-muted);
   }
-
-  /* LIVE SEARCH DROP-DOWN RESULTS */
-  .sk-search-results {
-    position: absolute;
-    top: 36px;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid var(--sk-border);
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 110;
-    max-height: 250px;
-    overflow-y: auto;
-    display: none;
-  }
-
-  .sk-search-result-item {
-    padding: 8px 12px;
-    font-size: 12.5px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--sk-border);
-  }
-
-  .sk-search-result-item:hover {
-    background: var(--sk-green-light);
-    color: var(--sk-green-dark);
-  }
 </style>
 </head>
 <body>
 
   <!-- HEADER NAVIGATION BAR -->
   <header class="sk-navbar">
-    <a href="#" class="sk-brand" onclick="tab('breast-cancer')">
-      <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
-      <span>scikit-learn <span class="sk-version-tag">v1.4.2</span></span>
-    </a>
-    
-    <ul class="sk-nav-links">
-      <li><a href="#" class="active" onclick="tab('breast-cancer')">Cheat-Sheet API</a></li>
-      <li><a href="#" onclick="alert('Google Colab setup active!')">Colab Integration</a></li>
-      <li><a href="#" onclick="tab('report')">Report Builder</a></li>
-    </ul>
+    <div class="sk-navbar-start">
+      <a href="#" class="sk-brand" onclick="tab('breast-cancer')">
+        <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
+        <span>scikit-learn <span class="sk-version-tag">v1.4.2</span></span>
+      </a>
+    </div>
 
-    <div class="sk-search-container">
-      <span class="sk-search-icon">🔍</span>
-      <input type="text" class="sk-search-input" id="searchBar" placeholder="Search documentation..." oninput="triggerSearch()">
-      <div class="sk-search-results" id="searchResults"></div>
+    <div class="sk-navbar-center">
+      <ul class="sk-nav-links">
+        <li><a href="#" class="active" onclick="tab('breast-cancer')">Cheat-Sheet API</a></li>
+        <li><a href="#" onclick="alert('Google Colab setup active!')">Colab Integration</a></li>
+        <li><a href="#" onclick="tab('report')">Report Builder</a></li>
+      </ul>
+    </div>
+
+    <div class="sk-navbar-end">
+      <div class="sk-search-container">
+        <span class="sk-search-icon" aria-hidden="true">🔍</span>
+        <input type="search" class="sk-search-input" id="searchBar" placeholder="Search documentation..." autocomplete="off" oninput="triggerSearch()">
+        <div class="sk-search-results" id="searchResults"></div>
+      </div>
     </div>
   </header>
 
@@ -1512,7 +1556,7 @@ plt.show()</pre>
 
     // Close search results if clicked outside
     window.addEventListener('click', (e) => {
-      if (!e.target.matches('.sk-search-input')) {
+      if (!e.target.closest('.sk-search-container')) {
         document.getElementById('searchResults').style.display = 'none';
       }
     });

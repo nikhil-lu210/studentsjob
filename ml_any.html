@@ -38,19 +38,40 @@
     flex-direction: column;
   }
 
-  /* NAVBAR ACCENTS */
+  /* NAVBAR (shared layout with ml_test.html) */
   .sk-navbar {
     background: #ffffff;
     border-bottom: 1px solid var(--sk-border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    height: 52px;
+    min-height: 52px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
+    gap: 16px;
+    padding: 0 24px;
     position: sticky;
     top: 0;
     z-index: 100;
+  }
+
+  .sk-navbar-start {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .sk-navbar-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .sk-navbar-end {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
   }
 
   .sk-brand {
@@ -69,6 +90,16 @@
     width: auto;
     display: block;
     flex-shrink: 0;
+  }
+
+  .sk-version-tag {
+    background: var(--sk-gray-bg);
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--sk-text-muted);
+    font-weight: 600;
   }
 
   /* SYSTEM MODE SWITCHER TOGGLE */
@@ -104,9 +135,13 @@
     position: relative;
   }
 
+  .sk-sidebar-item {
+    margin-bottom: 2px;
+  }
+
   /* SIDEBAR */
   .sk-sidebar {
-    width: 290px;
+    width: 280px;
     background: #ffffff;
     border-right: 1px solid var(--sk-border);
     padding: 20px 0;
@@ -686,20 +721,31 @@
     color: #111;
   }
 
+  /* SEARCH (identical styling on both pages) */
   .sk-search-container {
     position: relative;
-    width: 220px;
+    width: 100%;
+    min-width: 180px;
+    max-width: 280px;
   }
 
   .sk-search-input {
     width: 100%;
-    padding: 7px 12px;
+    box-sizing: border-box;
+    padding: 7px 12px 7px 34px;
     border-radius: 6px;
     border: 1px solid var(--sk-border);
     font-size: 13px;
+    line-height: 1.35;
     outline: none;
     background: var(--sk-gray-bg);
+    color: var(--sk-text);
     transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .sk-search-input::placeholder {
+    color: var(--sk-text-muted);
+    opacity: 0.9;
   }
 
   .sk-search-input:focus {
@@ -708,10 +754,22 @@
     box-shadow: 0 0 0 3px rgba(74, 174, 79, 0.12);
   }
 
+  .sk-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    line-height: 1;
+    color: var(--sk-text-muted);
+    pointer-events: none;
+    user-select: none;
+  }
+
   /* SEARCH RESULTS */
   .sk-search-results {
     position: absolute;
-    top: 36px;
+    top: calc(100% + 6px);
     left: 0;
     right: 0;
     background: white;
@@ -741,20 +799,26 @@
 
   <!-- HEADER NAVIGATION -->
   <header class="sk-navbar">
-    <a href="#" class="sk-brand" onclick="tab('data-loader')">
-      <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
-      <span>scikit-learn <span class="sk-version-tag">Universal Workbench</span></span>
-    </a>
-
-    <!-- GLOBAL DYNAMIC MODEL SWITCHER -->
-    <div class="sk-mode-switcher" id="modeSwitcher">
-      <button class="sk-mode-btn active" id="btnClassMode" onclick="setGlobalProblemMode('classification')">Classifier Theme</button>
-      <button class="sk-mode-btn" id="btnRegMode" onclick="setGlobalProblemMode('regression')">Regressor Theme</button>
+    <div class="sk-navbar-start">
+      <a href="#" class="sk-brand" onclick="tab('data-loader')">
+        <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
+        <span>scikit-learn <span class="sk-version-tag">Universal Workbench</span></span>
+      </a>
     </div>
 
-    <div class="sk-search-container">
-      <input type="text" class="sk-search-input" id="searchBar" placeholder="Search workbench..." oninput="triggerSearch()">
-      <div class="sk-search-results" id="searchResults"></div>
+    <div class="sk-navbar-center">
+      <div class="sk-mode-switcher" id="modeSwitcher">
+        <button type="button" class="sk-mode-btn active" id="btnClassMode" onclick="setGlobalProblemMode('classification')">Classifier Theme</button>
+        <button type="button" class="sk-mode-btn" id="btnRegMode" onclick="setGlobalProblemMode('regression')">Regressor Theme</button>
+      </div>
+    </div>
+
+    <div class="sk-navbar-end">
+      <div class="sk-search-container">
+        <span class="sk-search-icon" aria-hidden="true">🔍</span>
+        <input type="search" class="sk-search-input" id="searchBar" placeholder="Search workbench..." autocomplete="off" oninput="triggerSearch()">
+        <div class="sk-search-results" id="searchResults"></div>
+      </div>
     </div>
   </header>
 
@@ -1572,7 +1636,7 @@ plt.show()</pre>
 
     // Close drop-down on outside clicks
     window.addEventListener('click', (e) => {
-      if (!e.target.matches('.sk-search-input')) {
+      if (!e.target.closest('.sk-search-container')) {
         document.getElementById('searchResults').style.display = 'none';
       }
     });
