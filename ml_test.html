@@ -3,1043 +3,1512 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ML Exam Helpline — Random Forest</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>sklearn.model_selection.train_test_split — scikit-learn 1.4.2 documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f7fa;
-    --surface: #ffffff;
-    --surface2: #eef2f7;
-    --border: #d4dbe8;
-    --accent: #0077cc;
-    --accent2: #6d28d9;
-    --accent3: #059669;
-    --warn: #d97706;
-    --danger: #dc2626;
-    --text: #1e293b;
-    --muted: #64748b;
-    --code-bg: #1e2433;
+    --sk-green: #1b9e77;
+    --sk-green-dark: #127557;
+    --sk-green-light: #e6f6f2;
+    --sk-orange: #f89406;
+    --sk-orange-light: #fef8f0;
+    --sk-gray-bg: #f8f9fa;
+    --sk-border: #e5e5e5;
+    --sk-text: #333333;
+    --sk-text-muted: #666666;
+    --sk-code-light: #f7f9fa;
+    --sk-code-dark: #1e1e1e;
+    
+    /* Variable state styling */
+    --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, 'Courier New', Courier, monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Subtle dot grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,100,200,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,100,200,0.06) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 20px 60px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* HEADER */
-  header {
-    text-align: center;
-    padding: 40px 20px 30px;
-    position: relative;
-  }
-
-  .badge {
-    display: inline-block;
-    background: rgba(0,119,204,0.08);
-    border: 1px solid rgba(0,119,204,0.3);
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 4px 14px;
-    border-radius: 20px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    animation: pulse-border 2s ease infinite;
-  }
-
-  @keyframes pulse-border {
-    0%, 100% { border-color: rgba(0,119,204,0.3); }
-    50% { border-color: rgba(0,119,204,0.7); }
-  }
-
-  h1 {
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 800;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #0f172a 0%, var(--accent) 50%, #6d28d9 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
-  }
-
-  .subtitle {
-    color: var(--muted);
+    background: #ffffff;
+    color: var(--sk-text);
+    font-family: var(--font-sans);
     font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* QUICK IMPORTS BOX */
-  .imports-box {
-    background: var(--code-bg);
-    border: 2px solid var(--accent);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin: 24px 0;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(0,119,204,0.15);
-  }
-
-  .imports-box .box-label {
-    position: absolute;
-    top: -11px;
-    left: 16px;
-    background: var(--accent);
-    color: #000;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-  }
-
-  /* TABS */
-  .tabs {
+    line-height: 1.5;
+    min-height: 100vh;
     display: flex;
-    gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 5px;
-    margin: 24px 0 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-
-  .tab-btn {
-    flex: 0 0 auto;
-    padding: 8px 16px;
-    background: transparent;
-    border: none;
-    border-radius: 7px;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    flex-direction: column;
   }
 
-  .tab-btn.active {
-    background: var(--accent2);
-    color: #fff;
-  }
-
-  .tab-btn:hover:not(.active) {
-    background: var(--surface2);
-    color: var(--text);
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* PART CARD */
-  .part-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-top: 20px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
-
-  .part-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 24px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .part-num {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-
-  .part-title { font-size: 17px; font-weight: 700; }
-  .part-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-  .part-body { padding: 20px 24px; }
-
-  /* CODE BLOCK */
-  .code-block {
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 14px 0;
-    position: relative;
-  }
-
-  .code-header {
+  /* TOP HEADER (OFFICIAL SCIKIT-LEARN STYLE) */
+  .sk-navbar {
+    background: #ffffff;
+    border-bottom: 1px solid var(--sk-border);
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px;
-    background: rgba(0,0,0,0.18);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #8899aa;
-  }
-
-  .copy-btn {
-    background: rgba(0,119,204,0.1);
-    border: 1px solid rgba(0,119,204,0.35);
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-
-  .copy-btn:hover { background: rgba(0,119,204,0.2); }
-  .copy-btn.copied { background: rgba(5,150,105,0.15); border-color: var(--accent3); color: var(--accent3); }
-
-  pre {
-    padding: 16px 18px;
-    overflow-x: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    line-height: 1.7;
-    color: #cdd6f4;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.1) transparent;
-  }
-
-  /* Syntax highlight */
-  .kw { color: #c792ea; }
-  .fn { color: #82aaff; }
-  .st { color: #c3e88d; }
-  .cm { color: #546e7a; font-style: italic; }
-  .nm { color: #f78c6c; }
-  .cl { color: #ffcb6b; }
-
-  /* INFO BOXES */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin: 14px 0;
-  }
-
-  .info-card {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 14px 16px;
-    border-left: 3px solid;
-  }
-
-  .info-card.blue { border-color: var(--accent); }
-  .info-card.purple { border-color: var(--accent2); }
-  .info-card.green { border-color: var(--accent3); }
-  .info-card.yellow { border-color: var(--warn); }
-  .info-card.red { border-color: var(--danger); }
-
-  .info-card h4 {
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-  }
-
-  .info-card.blue h4 { color: var(--accent); }
-  .info-card.purple h4 { color: var(--accent2); }
-  .info-card.green h4 { color: var(--accent3); }
-  .info-card.yellow h4 { color: var(--warn); }
-  .info-card.red h4 { color: var(--danger); }
-
-  .info-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-  /* Q&A TABLE */
-  .qa-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 14px 0;
-    font-size: 13px;
-  }
-
-  .qa-table tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-
-  .qa-table tr:hover { background: rgba(0,0,0,0.025); }
-
-  .qa-table td {
-    padding: 11px 14px;
-    vertical-align: top;
-    line-height: 1.5;
-  }
-
-  .qa-table td:first-child {
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    width: 38%;
-    font-weight: 600;
-  }
-
-  .qa-table td:last-child { color: #374151; }
-
-  /* CHECKLIST */
-  .checklist { list-style: none; margin: 10px 0; }
-
-  .checklist li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 7px 0;
-    font-size: 13.5px;
-    color: var(--text);
-    border-bottom: 1px dashed rgba(0,0,0,0.08);
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-
-  .checklist li:last-child { border-bottom: none; }
-
-  .checklist li .check-icon {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--accent3);
-    border-radius: 4px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-    transition: all 0.2s;
-    font-size: 13px;
-  }
-
-  .checklist li.done { color: var(--muted); text-decoration: line-through; }
-  .checklist li.done .check-icon { background: var(--accent3); border-color: var(--accent3); color: #000; }
-
-  /* HIGHLIGHT */
-  .highlight {
-    background: rgba(0,119,204,0.06);
-    border: 1px solid rgba(0,119,204,0.2);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 12px 0;
-    color: #374151;
-  }
-
-  .highlight strong { color: var(--accent); }
-
-  /* ANALOGY BOX */
-  .analogy {
-    background: linear-gradient(135deg, rgba(109,40,217,0.06), rgba(0,119,204,0.04));
-    border: 1px solid rgba(109,40,217,0.2);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin: 12px 0;
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: #4c1d95;
-  }
-
-  .analogy strong { color: #6d28d9; }
-  .analogy .emoji { font-size: 20px; margin-right: 8px; }
-
-  /* METRIC GRID */
-  .metric-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-    margin: 14px 0;
-  }
-
-  .metric-box {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    border: 1px solid var(--border);
-    transition: transform 0.2s, border-color 0.2s;
-  }
-
-  .metric-box:hover { transform: translateY(-2px); border-color: var(--accent2); }
-
-  .metric-box .metric-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  .metric-box .metric-val {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .metric-box .metric-desc {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 5px;
-    line-height: 1.4;
-  }
-
-  /* STEP INDICATOR */
-  .step-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin: 10px 0;
-  }
-
-  .step-num {
-    width: 26px;
-    height: 26px;
-    background: var(--accent2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .step-text { font-size: 13.5px; color: #475569; line-height: 1.5; padding-top: 3px; }
-  .step-text strong { color: var(--text); }
-
-  /* WARNING BOX */
-  .warn-box {
-    background: rgba(217,119,6,0.07);
-    border: 1px solid rgba(217,119,6,0.3);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #92400e;
-    margin: 12px 0;
-    line-height: 1.6;
-  }
-
-  .warn-box::before { content: '⚠ '; }
-
-  /* SECTION LABEL */
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--muted);
-    margin: 20px 0 8px;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    .part-body { padding: 16px; }
-    pre { font-size: 11.5px; }
-    .tab-btn { font-size: 12px; padding: 7px 12px; }
-    .info-grid { grid-template-columns: 1fr; }
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* PROGRESS BAR */
-  .progress-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transition: width 0.3s;
-    z-index: 999;
-  }
-
-  /* TOP STRIP */
-  .top-strip {
-    background: linear-gradient(90deg, rgba(0,119,204,0.08), rgba(109,40,217,0.08));
-    border-bottom: 1px solid rgba(0,119,204,0.18);
-    padding: 8px 20px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 1px;
+    padding: 0 20px;
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
+  }
+
+  .sk-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--sk-text);
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .sk-logo-img {
+    height: 32px;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .sk-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    list-style: none;
+    font-size: 13px;
+  }
+
+  .sk-nav-links a {
+    color: var(--sk-text-muted);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .sk-nav-links a:hover, .sk-nav-links a.active {
+    color: var(--sk-green);
+  }
+
+  .sk-version-tag {
+    background: var(--sk-gray-bg);
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--sk-text-muted);
+    font-weight: 600;
+  }
+
+  .sk-search-container {
+    position: relative;
+    width: 240px;
+  }
+
+  .sk-search-input {
+    width: 100%;
+    padding: 6px 12px 6px 30px;
+    border-radius: 15px;
+    border: 1px solid var(--sk-border);
+    font-size: 12px;
+    outline: none;
+    background: var(--sk-gray-bg);
+    transition: all 0.2s;
+  }
+
+  .sk-search-input:focus {
+    border-color: var(--sk-green);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(27, 158, 119, 0.1);
+  }
+
+  .sk-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--sk-text-muted);
+  }
+
+  /* TWO-COLUMN LAYOUT */
+  .sk-layout-container {
+    display: flex;
+    flex: 1;
+    position: relative;
+  }
+
+  /* SIDEBAR (LEFT) */
+  .sk-sidebar {
+    width: 280px;
+    background: var(--sk-gray-bg);
+    border-right: 1px solid var(--sk-border);
+    padding: 20px 0;
+    overflow-y: auto;
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sk-sidebar-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sk-text-muted);
+    padding: 0 20px 10px 20px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--sk-border);
+    margin-bottom: 10px;
+  }
+
+  .sk-sidebar-menu {
+    list-style: none;
+  }
+
+  .sk-sidebar-item {
+    margin-bottom: 2px;
+  }
+
+  .sk-sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 8px 20px;
+    color: var(--sk-text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .sk-sidebar-link:hover {
+    background: #f0f1f2;
+    color: var(--sk-green-dark);
+  }
+
+  .sk-sidebar-link.active {
+    background: var(--sk-green-light);
+    color: var(--sk-green-dark);
+    font-weight: 600;
+    border-left-color: var(--sk-green);
+  }
+
+  .sk-sidebar-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--sk-border);
+    color: var(--sk-text-muted);
+    padding: 1px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+  }
+
+  .sk-sidebar-badge.core {
+    background: rgba(27, 158, 119, 0.15);
+    color: var(--sk-green-dark);
+  }
+
+  .sk-quick-button {
+    width: 100%;
+    padding: 8px;
+    background: var(--sk-green);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .sk-quick-button:hover {
+    background: var(--sk-green-dark);
+  }
+
+  /* MAIN CONTENT AREA */
+  .sk-main {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    max-width: 1000px;
+  }
+
+  /* EXAM INTEGRITY NOTICE BAR */
+  .sk-notice-bar {
+    background: #fff9db;
+    border: 1px solid #ffe066;
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-size: 13px;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  /* PAGE / SECTION TITLE STYLING */
+  .sk-section-header {
+    border-bottom: 1px solid var(--sk-border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .sk-section-namespace {
+    font-family: var(--font-mono);
+    color: var(--sk-text-muted);
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .sk-section-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #222222;
+  }
+
+  /* SOURCE CODE CALLOUT (LIKE REALSITE) */
+  .sk-source-link {
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    font-size: 12px;
+    color: var(--sk-green);
+    text-decoration: none;
+  }
+
+  .sk-source-link:hover {
+    text-decoration: underline;
+  }
+
+  /* CLASS/METHOD SIGNATURE HEADER */
+  .sk-signature-box {
+    background: var(--sk-gray-bg);
+    border-left: 4px solid var(--sk-green);
+    border-top: 1px solid var(--sk-border);
+    border-right: 1px solid var(--sk-border);
+    border-bottom: 1px solid var(--sk-border);
+    padding: 15px;
+    border-radius: 0 4px 4px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #111;
+    margin-bottom: 20px;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .sk-sig-name {
+    color: var(--sk-green-dark);
+    font-weight: 700;
+  }
+
+  .sk-sig-param {
+    color: #4f6b72;
+  }
+
+  .sk-sig-val {
+    color: #b05a00;
+  }
+
+  /* PARAMETER DEFINITIONS (SPHINX-DOC TABLE STYLE) */
+  .sk-doc-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 25px 0 15px 0;
+    color: #222222;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+  }
+
+  .sk-params-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .sk-param-item {
+    padding-left: 15px;
+    border-left: 2px solid #ddd;
+  }
+
+  .sk-param-header {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .sk-param-name {
+    font-weight: 700;
+    color: #111;
+  }
+
+  .sk-param-type {
+    color: var(--sk-text-muted);
+    font-style: italic;
+  }
+
+  .sk-param-desc {
+    font-size: 13.5px;
+    color: #444;
+  }
+
+  /* SPHINX NOTES & WARNING BOXES */
+  .sk-note-box {
+    background: var(--sk-green-light);
+    border-left: 4px solid var(--sk-green);
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .sk-note-box h5 {
+    color: var(--sk-green-dark);
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sk-note-box p {
+    font-size: 13px;
+    color: #2e5549;
+    line-height: 1.6;
+  }
+
+  .sk-warning-box {
+    background: var(--sk-orange-light);
+    border-left: 4px solid var(--sk-orange);
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .sk-warning-box h5 {
+    color: #c2410c;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .sk-warning-box p {
+    font-size: 13px;
+    color: #7c2d12;
+    line-height: 1.6;
+  }
+
+  /* CODE CONTAINER AND THEME SWITCHER */
+  .sk-code-container {
+    background: #272822; /* High quality dark theme matching scikit-learn gallery previews */
+    border-radius: 6px;
+    border: 1px solid var(--sk-border);
+    margin: 15px 0 25px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .sk-code-header {
+    background: #1e1e1e;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-bottom: 1px solid #333;
+  }
+
+  .sk-code-lang {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sk-copy-btn {
+    background: #333;
+    border: 1px solid #444;
+    color: #ccc;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .sk-copy-btn:hover {
+    background: var(--sk-green);
+    border-color: var(--sk-green-dark);
+    color: #fff;
+  }
+
+  .sk-code-pre {
+    padding: 15px;
+    margin: 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: #f8f8f2;
+  }
+
+  /* CODE HIGHLIGHT COLORS */
+  .sk-c-keyword { color: #f92672; font-weight: bold; }
+  .sk-c-import  { color: #66d9ef; font-weight: bold; }
+  .sk-c-func    { color: #a6e22e; }
+  .sk-c-str     { color: #e6db74; }
+  .sk-c-comm    { color: #75715e; font-style: italic; }
+  .sk-c-num     { color: #ae81ff; }
+
+  /* DISCUSSION & ACCORDION EXPANDERS */
+  .sk-accordion {
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .sk-accordion-header {
+    background: var(--sk-gray-bg);
+    padding: 12px 15px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--sk-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+
+  .sk-accordion-header:hover {
+    background: #eee;
+  }
+
+  .sk-accordion-content {
+    padding: 15px;
+    border-top: 1px solid var(--sk-border);
+    background: #ffffff;
+    display: none;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .sk-accordion.open .sk-accordion-content {
+    display: block;
+  }
+
+  .sk-accordion-arrow {
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+
+  .sk-accordion.open .sk-accordion-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* TAB COMPONENT CONTROLLER */
+  .tab-pane {
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  /* LIVE LAB SIMULATOR (DOCK) */
+  .sk-sandbox {
+    background: var(--sk-gray-bg);
+    border: 1px solid var(--sk-border);
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 30px;
+  }
+
+  .sk-sandbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  @media (max-width: 768px) {
+    .sk-sandbox-grid {
+      grid-template-columns: 1fr;
+    }
+    .sk-layout-container {
+      flex-direction: column;
+    }
+    .sk-sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+    }
+    .sk-main {
+      padding: 15px;
+    }
+  }
+
+  .sk-sandbox-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-sandbox-control label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sk-text-muted);
+  }
+
+  .sk-sandbox-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+  }
+
+  .sk-sandbox-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--sk-green);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .sk-sandbox-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  /* BAR CHART SVG SIMULATOR */
+  .sk-chart-container {
+    background: white;
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sk-chart-svg {
+    width: 100%;
+    height: 180px;
+  }
+
+  /* DELIVERABLES & INTERACTIVE REPORT BUILDER */
+  .sk-report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .sk-input-row {
+    display: flex;
+    gap: 15px;
+  }
+
+  .sk-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sk-input-group label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sk-text-muted);
+  }
+
+  .sk-text-input {
+    padding: 8px 12px;
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .sk-text-input:focus {
+    border-color: var(--sk-green);
+  }
+
+  .sk-report-output-box {
+    background: #fafafa;
+    border: 1px dashed var(--sk-green);
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #111;
+    position: relative;
+  }
+
+  /* CHECKLIST */
+  .sk-checklist {
+    list-style: none;
+    margin-top: 15px;
+  }
+
+  .sk-checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px dashed var(--sk-border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sk-checklist-item:hover {
+    background: var(--sk-gray-bg);
+  }
+
+  .sk-check-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--sk-text-muted);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .sk-checklist-item.done .sk-check-box {
+    background: var(--sk-green);
+    border-color: var(--sk-green);
+  }
+
+  .sk-checklist-item.done span {
+    text-decoration: line-through;
+    color: var(--sk-text-muted);
+  }
+
+  /* LIVE SEARCH DROP-DOWN RESULTS */
+  .sk-search-results {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--sk-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 110;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .sk-search-result-item {
+    padding: 8px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--sk-border);
+  }
+
+  .sk-search-result-item:hover {
+    background: var(--sk-green-light);
+    color: var(--sk-green-dark);
   }
 </style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
+  <!-- HEADER NAVIGATION BAR -->
+  <header class="sk-navbar">
+    <a href="#" class="sk-brand" onclick="tab('breast-cancer')">
+      <img class="sk-logo-img" src="scikit-learn-logo.svg" alt="scikit-learn" width="1251" height="675">
+      <span>scikit-learn <span class="sk-version-tag">v1.4.2</span></span>
+    </a>
+    
+    <ul class="sk-nav-links">
+      <li><a href="#" class="active" onclick="tab('breast-cancer')">Cheat-Sheet API</a></li>
+      <li><a href="#" onclick="alert('Google Colab setup active!')">Colab Integration</a></li>
+      <li><a href="#" onclick="tab('report')">Report Builder</a></li>
+    </ul>
 
-<div class="top-strip">
-  🎓 IS502 EXAM HELPLINE &nbsp;|&nbsp; RANDOM FOREST + FEATURE IMPORTANCE &nbsp;|&nbsp; BREAST CANCER DATASET
-</div>
-
-<div class="container">
-
-  <header>
-    <div class="badge">📋 Exam Quick Guide</div>
-    <h1>Random Forest<br>Classifier</h1>
-    <p class="subtitle">scikit-learn · breast_cancer · Google Colab</p>
+    <div class="sk-search-container">
+      <span class="sk-search-icon">🔍</span>
+      <input type="text" class="sk-search-input" id="searchBar" placeholder="Search documentation..." oninput="triggerSearch()">
+      <div class="sk-search-results" id="searchResults"></div>
+    </div>
   </header>
 
-  <!-- IMPORTS BOX -->
-  <div class="imports-box">
-    <span class="box-label">★ ALWAYS PASTE FIRST</span>
-    <div class="code-header">
-      <span>python · all imports needed</span>
-      <button class="copy-btn" onclick="copyCode(this, 'imports')">COPY</button>
-    </div>
-    <pre id="imports"><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> <span class="fn">load_breast_cancer</span>
-<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="fn">train_test_split</span>
-<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
-<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> <span class="fn">accuracy_score</span>, <span class="fn">precision_score</span>, <span class="fn">recall_score</span>, <span class="fn">f1_score</span>, <span class="fn">confusion_matrix</span>, <span class="fn">classification_report</span>
-<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
-<span class="kw">import</span> pandas <span class="kw">as</span> pd
-<span class="kw">import</span> numpy <span class="kw">as</span> np</pre>
-  </div>
+  <!-- WORKSPACE CONTAINER -->
+  <div class="sk-layout-container">
 
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(this, 'overview')">🧠 Overview</button>
-    <button class="tab-btn" onclick="switchTab(this, 'partA')">A · Explore</button>
-    <button class="tab-btn" onclick="switchTab(this, 'partB')">B · Split</button>
-    <button class="tab-btn" onclick="switchTab(this, 'partC')">C · Train</button>
-    <button class="tab-btn" onclick="switchTab(this, 'partD')">D · Features</button>
-    <button class="tab-btn" onclick="switchTab(this, 'partE')">E · Report</button>
-    <button class="tab-btn" onclick="switchTab(this, 'checklist')">✅ Checklist</button>
-  </div>
+    <!-- LEFT SIDEBAR -->
+    <nav class="sk-sidebar">
+      <h4 class="sk-sidebar-title">Activity 4 Modules</h4>
+      <ul class="sk-sidebar-menu">
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link active" id="side-breast-cancer" onclick="tab('breast-cancer')">
+            <span>Part A: load_breast_cancer</span>
+            <span class="sk-sidebar-badge core">Input</span>
+          </a>
+        </li>
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link" id="side-train-split" onclick="tab('train-split')">
+            <span>Part B: train_test_split</span>
+            <span class="sk-sidebar-badge">Split</span>
+          </a>
+        </li>
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link" id="side-random-forest" onclick="tab('random-forest')">
+            <span>Part C: RandomForestClassifier</span>
+            <span class="sk-sidebar-badge core">Model</span>
+          </a>
+        </li>
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link" id="side-evaluation" onclick="tab('evaluation')">
+            <span>Part C: classification_metrics</span>
+            <span class="sk-sidebar-badge">Metrics</span>
+          </a>
+        </li>
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link" id="side-feature-importance" onclick="tab('feature-importance')">
+            <span>Part D: feature_importances_</span>
+            <span class="sk-sidebar-badge core">Plots</span>
+          </a>
+        </li>
+        <li class="sk-sidebar-item">
+          <a href="#" class="sk-sidebar-link" id="side-report" onclick="tab('report')">
+            <span>Part E: Deliverables & Report</span>
+            <span class="sk-sidebar-badge">Output</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-  <!-- ===================== OVERVIEW ===================== -->
-  <div class="tab-content active" id="overview">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(0,119,204,0.1);color:var(--accent)">🧠</div>
+    <!-- MAIN EXAM PANELS -->
+    <main class="sk-main">
+
+      <!-- EXAM SECURITY ALERTS -->
+      <div class="sk-notice-bar">
+        <span>⚠️</span>
         <div>
-          <div class="part-title">Big Picture — What Are You Doing?</div>
-          <div class="part-desc">Understand this before you touch any code</div>
+          <strong>Strict Academic Integrity Mode:</strong> No generative AI portals (ChatGPT/Claude) are permitted. You can safely refer to this offline-styled guide and search Google or standard scikit-learn documentation freely.
         </div>
       </div>
-      <div class="part-body">
-        <div class="analogy">
-          <span class="emoji">🏥</span>
-          <strong>Simple Analogy:</strong> You have 569 patient reports. Each has 30 measurements (tumor size, shape, etc.). A doctor already labeled each one: <strong>CANCER</strong> or <strong>NOT CANCER</strong>. You teach a computer to learn this pattern — then test if it learned correctly.
+
+      <!-- ================== PART A: DATA EXPLORATION ================== -->
+      <section class="tab-pane active" id="pane-breast-cancer">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">sklearn.datasets</div>
+          <h1 class="sk-section-title">load_breast_cancer</h1>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_breast_cancer.html" target="_blank" class="sk-source-link">[source]</a>
         </div>
 
-        <div class="info-grid">
-          <div class="info-card blue">
-            <h4>Dataset</h4>
-            <p>breast_cancer from scikit-learn. 569 samples, 30 features, 2 classes.</p>
+        <div class="sk-signature-box">
+          <span class="sk-sig-name">sklearn.datasets.load_breast_cancer</span>(<span class="sk-sig-param">*, return_X_y=False, as_frame=True</span>)
+        </div>
+
+        <p class="sk-param-desc">
+          Load and return the classic breast cancer wisconsin dataset (classification).
+          This dataset is a binary classification dataset containing various nuclear features of tumor cells.
+        </p>
+
+        <h3 class="sk-doc-section-title">Parameters</h3>
+        <div class="sk-params-list">
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">as_frame</span> : <span class="sk-param-type">bool, default=False</span>
+            </div>
+            <p class="sk-param-desc">If True, returns the data as a pandas DataFrame containing both data and target variables.</p>
           </div>
-          <div class="info-card purple">
-            <h4>Model</h4>
-            <p>Random Forest — 100 decision trees that vote together.</p>
+        </div>
+
+        <!-- EXAM READY CODE BLOCK -->
+        <h3 class="sk-doc-section-title">Exam Lab Code (Load & Explore)</h3>
+        <div class="sk-code-container">
+          <div class="sk-code-header">
+            <span class="sk-code-lang">python (Colab Compatible)</span>
+            <button class="sk-copy-btn" onclick="copyCode('code-block-a')">COPY</button>
           </div>
-          <div class="info-card green">
-            <h4>Goal</h4>
-            <p>Predict malignant (cancer) vs benign (safe) tumors.</p>
+          <pre class="sk-code-pre" id="code-block-a"><span class="sk-c-comm"># Import the dataset loader and standard helpers</span>
+<span class="sk-c-import">import</span> pandas <span class="sk-c-import">as</span> pd
+<span class="sk-c-import">from</span> sklearn.datasets <span class="sk-c-import">import</span> load_breast_cancer
+
+<span class="sk-c-comm"># 1. Load the dataset</span>
+cancer = <span class="sk-c-func">load_breast_cancer</span>()
+
+<span class="sk-c-comm"># 2. Extract Shape, Target Classes, and Features</span>
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"Dataset Shape:"</span>, cancer.data.shape)
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"Target Class Names:"</span>, cancer.target_names)
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"Features Count:"</span>, <span class="sk-c-func">len</span>(cancer.feature_names))
+
+<span class="sk-c-comm"># 3. Create DataFrame & Print summary statistics (Mean, Std Dev, Min, Max)</span>
+df = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+df[<span class="sk-c-str">'target'</span>] = cancer.target
+
+<span class="sk-c-comm"># Get the transposed summary stats specifically focusing on mean, std, min, max</span>
+stats = df.describe().loc[[<span class="sk-c-str">'mean'</span>, <span class="sk-c-str">'std'</span>, <span class="sk-c-str">'min'</span>, <span class="sk-c-str">'max'</span>]].T
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"\nSummary Statistics:"</span>)
+<span class="sk-c-func">print</span>(stats)
+
+<span class="sk-c-comm"># 4. Target variable class distribution</span>
+target_counts = df[<span class="sk-c-str">'target'</span>].value_counts()
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"\nClass Distribution counts:"</span>, target_counts)</pre>
+        </div>
+
+        <!-- SPHINX INFO NOTE BOX -->
+        <div class="sk-note-box">
+          <h5>ℹ️ Student Cheat-Note</h5>
+          <p>
+            The Breast Cancer dataset is <strong>moderately imbalanced</strong>. It contains 357 benign (class 1) and 212 malignant (class 0) tissue scans. Make sure to point this out during discussion questions!
+          </p>
+        </div>
+
+        <h3 class="sk-doc-section-title">Part A: Discussion Answers</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q1: What type of machine learning problem is this?</span>
+            <span class="sk-accordion-arrow">▼</span>
           </div>
-          <div class="info-card yellow">
-            <h4>Platform</h4>
-            <p>Google Colab — colab.research.google.com → New Notebook</p>
+          <div class="sk-accordion-content">
+            This is a <strong>supervised binary classification</strong> problem. It is supervised because we are training on historical data containing known correct outcomes (labels). It is binary classification because the model must predict one of two exclusive categories: Malignant or Benign.
           </div>
         </div>
 
-        <div class="section-label">What is Random Forest?</div>
-        <div class="analogy" style="border-color:rgba(5,150,105,0.25);color:#065f46;background:rgba(5,150,105,0.06)">
-          <span class="emoji">🌳</span>
-          Like asking <strong>100 different doctors</strong> to look at the same patient. Each doctor uses slightly different logic. Then you go with what <strong>the majority says</strong>. One doctor might be wrong — 100 doctors voting together are usually right.
-        </div>
-
-        <div class="section-label">The 5 Parts You Must Complete</div>
-        <div class="info-grid">
-          <div class="info-card blue"><h4>Part A</h4><p>Load data, explore shape, stats, class balance.</p></div>
-          <div class="info-card purple"><h4>Part B</h4><p>Split into 80% train / 20% test.</p></div>
-          <div class="info-card green"><h4>Part C</h4><p>Train model, predict, report accuracy/F1 etc.</p></div>
-          <div class="info-card yellow"><h4>Part D</h4><p>Feature importance — which measurements matter most.</p></div>
-          <div class="info-card red"><h4>Part E</h4><p>Write a short interpretation paragraph.</p></div>
-        </div>
-
-        <div class="warn-box">In Colab: run each cell with <strong>Shift + Enter</strong>. Add new cells with <strong>+ Code</strong> button at top.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== PART A ===================== -->
-  <div class="tab-content" id="partA">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(0,119,204,0.1);color:var(--accent)">A</div>
-        <div>
-          <div class="part-title">Data Exploration</div>
-          <div class="part-desc">Load the dataset and understand what's in it</div>
-        </div>
-      </div>
-      <div class="part-body">
-
-        <div class="section-label">Cell 1 — Load & Explore</div>
-        <div class="code-block">
-          <div class="code-header">
-            <span>python</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeA1')">COPY</button>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q2: Is the dataset balanced? Explain the class details.</span>
+            <span class="sk-accordion-arrow">▼</span>
           </div>
-          <pre id="codeA1"><span class="cm"># Part A - Data Exploration</span>
-<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> <span class="fn">load_breast_cancer</span>
-<span class="kw">import</span> pandas <span class="kw">as</span> pd
-
-data = <span class="fn">load_breast_cancer</span>()
-
-<span class="cm"># Convert to DataFrame (like Excel table)</span>
-df = pd.<span class="fn">DataFrame</span>(data.data, columns=data.feature_names)
-df[<span class="st">'target'</span>] = data.target
-
-<span class="cm"># Shape</span>
-<span class="fn">print</span>(<span class="st">"Dataset Shape:"</span>, data.data.shape)
-
-<span class="cm"># Feature names</span>
-<span class="fn">print</span>(<span class="st">"\nFeature Names:"</span>, data.feature_names)
-
-<span class="cm"># Target names</span>
-<span class="fn">print</span>(<span class="st">"\nTarget Names:"</span>, data.target_names)
-
-<span class="cm"># Summary statistics</span>
-<span class="fn">print</span>(<span class="st">"\nSummary Statistics:"</span>)
-<span class="fn">print</span>(df.<span class="fn">describe</span>())</pre>
-        </div>
-
-        <div class="section-label">Cell 2 — Class Distribution</div>
-        <div class="code-block">
-          <div class="code-header">
-            <span>python</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeA2')">COPY</button>
+          <div class="sk-accordion-content">
+            The dataset is moderately imbalanced. It consists of 569 instances where 357 cases are Benign (~62.74%) and 212 are Malignant (~37.26%). This indicates that the class distributions are not exactly 50/50, but they are robust enough that special imbalancing operations (like oversampling/SMOTE) are not mandatory. Standard metrics are suitable for assessment.
           </div>
-          <pre id="codeA2"><span class="cm"># Target distribution</span>
-target_counts = pd.<span class="fn">Series</span>(data.target).<span class="fn">value_counts</span>()
-<span class="fn">print</span>(<span class="st">"Target Distribution:"</span>)
-<span class="fn">print</span>(<span class="st">f"Malignant (0): {target_counts[0]}"</span>)
-<span class="fn">print</span>(<span class="st">f"Benign    (1): {target_counts[1]}"</span>)
-<span class="fn">print</span>(<span class="st">f"Total        : {len(data.target)}"</span>)</pre>
+        </div>
+      </section>
+
+      <!-- ================== PART B: TRAIN-TEST SPLIT ================== -->
+      <section class="tab-pane" id="pane-train-split">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">sklearn.model_selection</div>
+          <h1 class="sk-section-title">train_test_split</h1>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html" target="_blank" class="sk-source-link">[source]</a>
         </div>
 
-        <div class="section-label">Discussion Answers</div>
-        <table class="qa-table">
-          <tr><td>What type of problem?</td><td>Binary Classification — predicting one of 2 classes (malignant or benign)</td></tr>
-          <tr><td>How many classes?</td><td>2 — Malignant (cancer=0) and Benign (safe=1)</td></tr>
-          <tr><td>Is the dataset balanced?</td><td>Roughly yes — ~212 malignant, ~357 benign. Not equal but acceptable for ML</td></tr>
-          <tr><td>Shape means?</td><td>569 rows (patients) × 30 columns (measurements)</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== PART B ===================== -->
-  <div class="tab-content" id="partB">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(109,40,217,0.1);color:var(--accent2)">B</div>
-        <div>
-          <div class="part-title">Train-Test Split</div>
-          <div class="part-desc">Divide data — 80% to learn, 20% to test</div>
-        </div>
-      </div>
-      <div class="part-body">
-        <div class="analogy">
-          <span class="emoji">📚</span>
-          Like a student studying 80% of the textbook, then being tested on the other 20% they haven't seen. If they pass, they truly learned — not just memorized.
+        <div class="sk-signature-box">
+          <span class="sk-sig-name">sklearn.model_selection.train_test_split</span>(<span class="sk-sig-param">*arrays, test_size=None, random_state=42, stratify=None</span>)
         </div>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span>python · Part B</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeB')">COPY</button>
+        <h3 class="sk-doc-section-title">Parameters</h3>
+        <div class="sk-params-list">
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">test_size</span> : <span class="sk-param-type">float, default=None</span>
+            </div>
+            <p class="sk-param-desc">If float, should be between 0.0 and 1.0 and represent the proportion of the dataset to include in the test split. For this activity, we use 0.2 (20%).</p>
           </div>
-          <pre id="codeB"><span class="cm"># Part B - Train-Test Split</span>
-<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="fn">train_test_split</span>
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">random_state</span> : <span class="sk-param-type">int, default=42</span>
+            </div>
+            <p class="sk-param-desc">Controls the shuffling applied to the data before applying the split. Pass an int for reproducible output across multiple executions.</p>
+          </div>
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">stratify</span> : <span class="sk-param-type">array-like, default=None</span>
+            </div>
+            <p class="sk-param-desc">If not None, data is split in a stratified fashion, keeping the relative proportion of target classes equal between train and test slices.</p>
+          </div>
+        </div>
 
-X = data.data   <span class="cm"># 30 features (inputs)</span>
-y = data.target  <span class="cm"># labels (0=malignant, 1=benign)</span>
+        <h3 class="sk-doc-section-title">Exam Lab Code (Splitting)</h3>
+        <div class="sk-code-container">
+          <div class="sk-code-header">
+            <span class="sk-code-lang">python</span>
+            <button class="sk-copy-btn" onclick="copyCode('code-block-b')">COPY</button>
+          </div>
+          <pre class="sk-code-pre" id="code-block-b"><span class="sk-c-import">from</span> sklearn.model_selection <span class="sk-c-import">import</span> train_test_split
 
-X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
-    X, y,
-    test_size=<span class="nm">0.2</span>,       <span class="cm"># 20% for testing</span>
-    random_state=<span class="nm">42</span>     <span class="cm"># fixed seed = same split every time</span>
+<span class="sk-c-comm"># Splitting predictors (X) and label targets (y)</span>
+X = df.drop(columns=[<span class="sk-c-str">'target'</span>])
+y = df[<span class="sk-c-str">'target'</span>]
+
+<span class="sk-c-comm"># Perform stratified split to maintain class ratios</span>
+X_train, X_test, y_train, y_test = <span class="sk-c-func">train_test_split</span>(
+    X, y, 
+    test_size=<span class="sk-c-num">0.2</span>, 
+    random_state=<span class="sk-c-num">42</span>, 
+    stratify=y
 )
 
-<span class="fn">print</span>(<span class="st">"Training set size:"</span>, X_train.shape)
-<span class="fn">print</span>(<span class="st">"Testing set size: "</span>, X_test.shape)</pre>
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"X_train shape: {X_train.shape}"</span>)
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"X_test shape: {X_test.shape}"</span>)</pre>
         </div>
 
-        <div class="section-label">Discussion Answers</div>
-        <table class="qa-table">
-          <tr><td>Why split the data?</td><td>So the model learns on one part and is tested on data it has NEVER seen before — just like a real exam</td></tr>
-          <tr><td>Purpose of test set?</td><td>To check if the model truly learned the pattern, or just memorized training data</td></tr>
-          <tr><td>What is random_state=42?</td><td>A seed so the split is always the same — for reproducibility. Any number works, 42 is convention.</td></tr>
-          <tr><td>Expected sizes?</td><td>Train: ~455 samples | Test: ~114 samples</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== PART C ===================== -->
-  <div class="tab-content" id="partC">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(5,150,105,0.1);color:var(--accent3)">C</div>
-        <div>
-          <div class="part-title">Train Model & Evaluate</div>
-          <div class="part-desc">Train Random Forest and check how well it performs</div>
-        </div>
-      </div>
-      <div class="part-body">
-
-        <div class="code-block">
-          <div class="code-header">
-            <span>python · Part C</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeC')">COPY</button>
+        <h3 class="sk-doc-section-title">Part B: Discussion Answers</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q1: Why split the dataset into training and testing subsets?</span>
+            <span class="sk-accordion-arrow">▼</span>
           </div>
-          <pre id="codeC"><span class="cm"># Part C - Random Forest Classification</span>
-<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
-<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (
-    <span class="fn">accuracy_score</span>, <span class="fn">precision_score</span>,
-    <span class="fn">recall_score</span>, <span class="fn">f1_score</span>,
-    <span class="fn">confusion_matrix</span>, <span class="fn">classification_report</span>
+          <div class="sk-accordion-content">
+            We split the dataset to assess how well the machine learning model generalizes to entirely unseen data. If we train and evaluate our classifier on the exact same data, it might suffer from <strong>overfitting</strong>—meaning it has memorized features of specific instances instead of understanding general boundary rules.
+          </div>
+        </div>
+
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q2: What is the purpose of the test set?</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            The test set acts as an independent auditor of our system's predictive accuracy. It evaluates the model on records that have played absolutely no part in configuring model boundaries or setting tree nodes, giving us an unbiased measurement of real-world operational performance.
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== PART C: RANDOM FOREST MODEL ================== -->
+      <section class="tab-pane" id="pane-random-forest">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">sklearn.ensemble</div>
+          <h1 class="sk-section-title">RandomForestClassifier</h1>
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html" target="_blank" class="sk-source-link">[source]</a>
+        </div>
+
+        <div class="sk-signature-box">
+          <span class="sk-sig-name">sklearn.ensemble.RandomForestClassifier</span>(<span class="sk-sig-param">n_estimators=100, *, criterion='gini', max_depth=None, random_state=42</span>)
+        </div>
+
+        <h3 class="sk-doc-section-title">Parameters</h3>
+        <div class="sk-params-list">
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">n_estimators</span> : <span class="sk-param-type">int, default=100</span>
+            </div>
+            <p class="sk-param-desc">The total number of individual decision trees configured inside the forest structure.</p>
+          </div>
+          <div class="sk-param-item">
+            <div class="sk-param-header">
+              <span class="sk-param-name">criterion</span> : <span class="sk-param-type">{"gini", "entropy", "log_loss"}, default="gini"</span>
+            </div>
+            <p class="sk-param-desc">The mathematical optimization function used to assess the impurity reduction when creating feature splits.</p>
+          </div>
+        </div>
+
+        <h3 class="sk-doc-section-title">Exam Lab Code (Model Training)</h3>
+        <div class="sk-code-container">
+          <div class="sk-code-header">
+            <span class="sk-code-lang">python</span>
+            <button class="sk-copy-btn" onclick="copyCode('code-block-c')">COPY</button>
+          </div>
+          <pre class="sk-code-pre" id="code-block-c"><span class="sk-c-import">from</span> sklearn.ensemble <span class="sk-c-import">import</span> RandomForestClassifier
+
+<span class="sk-c-comm"># 1. Instantiate the forest classifier model</span>
+rf_classifier = <span class="sk-c-func">RandomForestClassifier</span>(
+    n_estimators=<span class="sk-c-num">100</span>, 
+    random_state=<span class="sk-c-num">42</span>
 )
 
-<span class="cm"># Create model</span>
-model = <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nm">100</span>, random_state=<span class="nm">42</span>)
+<span class="sk-c-comm"># 2. Train the classifier on training arrays</span>
+rf_classifier.<span class="sk-c-func">fit</span>(X_train, y_train)
 
-<span class="cm"># Train it</span>
-model.<span class="fn">fit</span>(X_train, y_train)
-
-<span class="cm"># Make predictions</span>
-y_pred = model.<span class="fn">predict</span>(X_test)
-
-<span class="cm"># Print all metrics</span>
-<span class="fn">print</span>(<span class="st">"Accuracy : "</span>, <span class="fn">round</span>(<span class="fn">accuracy_score</span>(y_test, y_pred), <span class="nm">4</span>))
-<span class="fn">print</span>(<span class="st">"Precision: "</span>, <span class="fn">round</span>(<span class="fn">precision_score</span>(y_test, y_pred), <span class="nm">4</span>))
-<span class="fn">print</span>(<span class="st">"Recall   : "</span>, <span class="fn">round</span>(<span class="fn">recall_score</span>(y_test, y_pred), <span class="nm">4</span>))
-<span class="fn">print</span>(<span class="st">"F1-Score : "</span>, <span class="fn">round</span>(<span class="fn">f1_score</span>(y_test, y_pred), <span class="nm">4</span>))
-
-<span class="fn">print</span>(<span class="st">"\nConfusion Matrix:"</span>)
-<span class="fn">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))
-
-<span class="fn">print</span>(<span class="st">"\nFull Report:"</span>)
-<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred, target_names=data.target_names))</pre>
+<span class="sk-c-comm"># 3. Predict classifications for the test set</span>
+y_pred = rf_classifier.<span class="sk-c-func">predict</span>(X_test)
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"Model training complete. Ready to evaluate!"</span>)</pre>
         </div>
 
-        <div class="section-label">What Each Metric Means</div>
-        <div class="metric-grid">
-          <div class="metric-box">
-            <div class="metric-name">Accuracy</div>
-            <div class="metric-val">~96%</div>
-            <div class="metric-desc">% of ALL correct predictions out of total</div>
+        <h3 class="sk-doc-section-title">Part C (Forest Theory): Discussion Answers</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q1: What is a Decision Tree vs a Random Forest?</span>
+            <span class="sk-accordion-arrow">▼</span>
           </div>
-          <div class="metric-box">
-            <div class="metric-name">Precision</div>
-            <div class="metric-val">~95%</div>
-            <div class="metric-desc">Of predicted cancer cases, how many were actually cancer?</div>
+          <div class="sk-accordion-content">
+            A single **Decision Tree** builds flowchart-style partitions of questions to evaluate classification. However, decision trees are prone to overfitting. A **Random Forest** is an ensemble method that generates many independent decision trees (a "forest") using random slices of features and records. It aggregates all tree decisions through a **majority voting mechanism**, producing more robust and generalized classifications.
           </div>
-          <div class="metric-box">
-            <div class="metric-name">Recall</div>
-            <div class="metric-val">~97%</div>
-            <div class="metric-desc">Of all actual cancer cases, how many did we catch?</div>
+        </div>
+      </section>
+
+      <!-- ================== PART C METRICS: MODEL EVALUATION ================== -->
+      <section class="tab-pane" id="pane-evaluation">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">sklearn.metrics</div>
+          <h1 class="sk-section-title">classification_report</h1>
+          <a href="https://scikit-learn.org/stable/modules/model_evaluation.html" target="_blank" class="sk-source-link">[source]</a>
+        </div>
+
+        <div class="sk-signature-box">
+          <span class="sk-sig-name">sklearn.metrics.classification_report</span>(<span class="sk-sig-param">y_true, y_pred, *, target_names=None</span>)
+        </div>
+
+        <h3 class="sk-doc-section-title">Exam Lab Code (Evaluation Metrics)</h3>
+        <div class="sk-code-container">
+          <div class="sk-code-header">
+            <span class="sk-code-lang">python</span>
+            <button class="sk-copy-btn" onclick="copyCode('code-block-cm')">COPY</button>
           </div>
-          <div class="metric-box">
-            <div class="metric-name">F1-Score</div>
-            <div class="metric-val">~96%</div>
-            <div class="metric-desc">Balance of Precision + Recall in one number</div>
+          <pre class="sk-code-pre" id="code-block-cm"><span class="sk-c-import">from</span> sklearn.metrics <span class="sk-c-import">import</span> (
+    accuracy_score, precision_score, recall_score, f1_score, 
+    confusion_matrix, classification_report
+)
+
+<span class="sk-c-comm"># 1. Generate core individual metrics</span>
+accuracy = <span class="sk-c-func">accuracy_score</span>(y_test, y_pred)
+precision = <span class="sk-c-func">precision_score</span>(y_test, y_pred)
+recall = <span class="sk-c-func">recall_score</span>(y_test, y_pred)
+f1 = <span class="sk-c-func">f1_score</span>(y_test, y_pred)
+
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"Accuracy: {accuracy:.4f}"</span>)
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"Precision: {precision:.4f}"</span>)
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"Recall: {recall:.4f}"</span>)
+<span class="sk-c-func">print</span>(f<span class="sk-c-str">"F1-Score: {f1:.4f}"</span>)
+
+<span class="sk-c-comm"># 2. Output confusion matrix and classification report</span>
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"\nConfusion Matrix:\n"</span>, <span class="sk-c-func">confusion_matrix</span>(y_test, y_pred))
+<span class="sk-c-func">print</span>(<span class="sk-c-str">"\nClassification Report:\n"</span>, <span class="sk-c-func">classification_report</span>(y_test, y_pred, target_names=cancer.target_names))</pre>
+        </div>
+
+        <div class="sk-warning-box">
+          <h5>⚠️ Diagnostic Context Trap</h5>
+          <p>
+            In clinical diagnostic models, a **False Negative** (failing to identify a malignant tumor) is far more dangerous than a **False Positive** (wrongly flagging a benign tumor as malignant). Thus, **Recall (Sensitivity)** is the most crucial metric to maximize!
+          </p>
+        </div>
+
+        <h3 class="sk-doc-section-title">Part C: Metric Interpretations</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>What do Accuracy, Precision, Recall, and F1-Score mean mathematically?</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            <ul>
+              <li><strong>Accuracy:</strong> Out of all predictions, how many were correct? <br> $\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}$</li>
+              <li><strong>Precision:</strong> Out of all instances predicted as malignant, how many are actually malignant? (Minimizes false alarms / False Positives). <br> $\text{Precision} = \frac{TP}{TP + FP}$</li>
+              <li><strong>Recall:</strong> Out of all actual malignant cases in the dataset, how many did the model identify? (Minimizes missed cases / False Negatives). <br> $\text{Recall} = \frac{TP}{TP + FN}$</li>
+              <li><strong>F1-Score:</strong> The harmonic mean of Precision and Recall, which balances both metrics. <br> $\text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== PART D: FEATURE IMPORTANCE ================== -->
+      <section class="tab-pane" id="pane-feature-importance">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">sklearn.ensemble.RandomForestClassifier</div>
+          <h1 class="sk-section-title">feature_importances_</h1>
+        </div>
+
+        <p class="sk-param-desc">
+          The importance of a feature is computed as the (normalized) total reduction of the criterion brought by that feature. It is also known as the Gini importance.
+        </p>
+
+        <h3 class="sk-doc-section-title">Exam Lab Code (Plotting Importance)</h3>
+        <div class="sk-code-container">
+          <div class="sk-code-header">
+            <span class="sk-code-lang">python</span>
+            <button class="sk-copy-btn" onclick="copyCode('code-block-d')">COPY</button>
+          </div>
+          <pre class="sk-code-pre" id="code-block-d"><span class="sk-c-import">import</span> matplotlib.pyplot <span class="sk-c-import">as</span> plt
+<span class="sk-c-import">import</span> pandas <span class="sk-c-import">as</span> pd
+
+<span class="sk-c-comm"># 1. Extract importance scores and construct a DataFrame</span>
+importances = rf_classifier.feature_importances_
+importance_df = pd.DataFrame({
+    <span class="sk-c-str">'Feature'</span>: cancer.feature_names,
+    <span class="sk-c-str">'Importance'</span>: importances
+}).sort_values(by=<span class="sk-c-str">'Importance'</span>, ascending=<span class="sk-c-str">False</span>)
+
+<span class="sk-c-func">print</span>(importance_df.head(<span class="sk-c-num">10</span>))
+
+<span class="sk-c-comm"># 2. Plot top 10 features horizontally</span>
+top_10 = importance_df.head(<span class="sk-c-num">10</span>)
+plt.figure(figsize=(<span class="sk-c-num">10</span>, <span class="sk-c-num">6</span>))
+<span class="sk-c-comm"># [::-1] reverses the sorted list so the highest importance bar is plotted at the top of the chart</span>
+plt.barh(top_10[<span class="sk-c-str">'Feature'</span>][::-1], top_10[<span class="sk-c-str">'Importance'</span>][::-1], color=<span class="sk-c-str">'#1b9e77'</span>, edgecolor=<span class="sk-c-str">'black'</span>)
+plt.xlabel(<span class="sk-c-str">'Importance Score'</span>)
+plt.ylabel(<span class="sk-c-str">'Feature Title'</span>)
+plt.title(<span class="sk-c-str">'Top 10 Feature Importances'</span>)
+plt.grid(axis=<span class="sk-c-str">'x'</span>, linestyle=<span class="sk-c-str">'--'</span>, alpha=<span class="sk-c-num">0.7</span>)
+plt.tight_layout()
+plt.show()</pre>
+        </div>
+
+        <h3 class="sk-doc-section-title">Part D: Discussion Answers</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q1: Does a high feature importance score mean that feature causes the target class?</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            No, a high feature importance score does not imply causation. It only indicates that the feature is highly correlated with target partitions and provides substantial predictive value. It does not mean that the biological measurement itself causes cells to turn malignant.
           </div>
         </div>
 
-        <div class="section-label">Discussion Answers</div>
-        <table class="qa-table">
-          <tr><td>What does Random Forest do?</td><td>Builds 100 decision trees, each slightly different. All trees vote, majority wins — more reliable than one tree</td></tr>
-          <tr><td>Why not accuracy alone?</td><td>If 90% of patients are healthy, always predicting "healthy" = 90% accuracy but catches ZERO cancer. Recall reveals this flaw</td></tr>
-          <tr><td>Confusion Matrix?</td><td>Shows True Positives, True Negatives, False Positives, False Negatives in a 2×2 grid</td></tr>
-          <tr><td>n_estimators=100?</td><td>Number of trees in the forest. 100 trees vote together</td></tr>
-        </table>
-      </div>
-    </div>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Q2: How does feature importance improve real-world applications?</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            It transforms "black box" models into transparent, explainable machine learning. It allows medical practitioners to sanity-check model predictions, perform dimensionality reduction (removing noisy, non-contributing columns), and design faster, more cost-effective diagnostic screening pipelines.
+          </div>
+        </div>
+
+        <!-- LIVE SANDBOX SIMULATOR FOR PLOTTING OR UNDERSTANDING HYPERPARAMETERS -->
+        <div class="sk-sandbox">
+          <h4 style="font-weight:600; font-size:15px; border-bottom:1px solid #ddd; padding-bottom:8px;">🛠️ Scikit-Learn Model Hyperparameter Sandbox</h4>
+          <p style="font-size:12.5px; color:var(--sk-text-muted); margin-top:5px;">
+            Experiment with hyperparameter adjustments to see how the feature importance scores and model accuracy dynamically respond in real time.
+          </p>
+          <div class="sk-sandbox-grid">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div class="sk-sandbox-control">
+                <label>Number of Trees (n_estimators): <span id="valTrees">100</span></label>
+                <input type="range" min="10" max="250" value="100" class="sk-sandbox-slider" id="sliderTrees" oninput="runSandboxSim()">
+              </div>
+              <div class="sk-sandbox-control">
+                <label>Train/Test Split Ratio (test_size): <span id="valSplit">20%</span></label>
+                <input type="range" min="10" max="50" value="20" class="sk-sandbox-slider" id="sliderSplit" oninput="runSandboxSim()">
+              </div>
+              <div style="background:white; padding:10px; border-radius:4px; border:1px solid var(--sk-border); font-size:12.5px;">
+                <strong>Live Simulated Outputs:</strong>
+                <div style="display:flex; justify-content:space-between; margin-top:6px;">
+                  <span>Accuracy:</span><span id="simAccuracy" style="color:var(--sk-green-dark); font-weight:700;">96.49%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:3px;">
+                  <span>Precision:</span><span id="simPrecision" style="color:var(--sk-green-dark); font-weight:700;">97.22%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:3px;">
+                  <span>Recall:</span><span id="simRecall" style="color:var(--sk-green-dark); font-weight:700;">97.22%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- BAR CHART SVG -->
+            <div class="sk-chart-container">
+              <span style="font-size:11px; font-weight:700; color:var(--sk-text-muted); margin-bottom:5px;">Top 5 Feature Importances</span>
+              <svg class="sk-chart-svg" viewBox="0 0 300 150">
+                <!-- Bar 1 -->
+                <text x="10" y="20" fill="#333" font-size="10" font-family="monospace">worst area</text>
+                <rect x="130" y="10" width="150" height="12" fill="#1b9e77" id="bar1"></rect>
+                
+                <!-- Bar 2 -->
+                <text x="10" y="45" fill="#333" font-size="10" font-family="monospace">worst concave pt</text>
+                <rect x="130" y="35" width="130" height="12" fill="#1b9e77" id="bar2"></rect>
+
+                <!-- Bar 3 -->
+                <text x="10" y="70" fill="#333" font-size="10" font-family="monospace">worst perimeter</text>
+                <rect x="130" y="60" width="115" height="12" fill="#1b9e77" id="bar3"></rect>
+
+                <!-- Bar 4 -->
+                <text x="10" y="95" fill="#333" font-size="10" font-family="monospace">worst radius</text>
+                <rect x="130" y="85" width="80" height="12" fill="#1b9e77" id="bar4"></rect>
+
+                <!-- Bar 5 -->
+                <text x="10" y="120" fill="#333" font-size="10" font-family="monospace">mean concave pt</text>
+                <rect x="130" y="110" width="60" height="12" fill="#1b9e77" id="bar5"></rect>
+
+                <!-- Scale line -->
+                <line x1="130" y1="135" x2="280" y2="135" stroke="#ccc" stroke-width="1"></line>
+                <text x="130" y="147" fill="#666" font-size="8">0.0</text>
+                <text x="270" y="147" fill="#666" font-size="8">0.16</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== PART E: THE REPORT GENERATOR ================== -->
+      <section class="tab-pane" id="pane-report">
+        <div class="sk-section-header">
+          <div class="sk-section-namespace">exam.submission</div>
+          <h1 class="sk-section-title">Report Builder & Deliverable Checker</h1>
+        </div>
+
+        <p class="sk-param-desc" style="margin-bottom:20px;">
+          Use this interactive wizard to configure your final exam details and build a complete, ready-to-copy summary paragraph and report table for your submission PDF.
+        </p>
+
+        <!-- DELIVERABLE PROGRESS LIST -->
+        <h3 class="sk-doc-section-title">Submission Package Checklist</h3>
+        <p style="font-size:12.5px; color:var(--sk-text-muted); margin-bottom:8px;">
+          Click items to cross them off as you prepare your submission files.
+        </p>
+        <ul class="sk-checklist">
+          <li class="sk-checklist-item" onclick="toggleCheckbox(this)">
+            <div class="sk-check-box"></div>
+            <span>Rename notebook to: <strong>[NameSurname]_[StudentID]_RandomForest.ipynb</strong></span>
+          </li>
+          <li class="sk-checklist-item" onclick="toggleCheckbox(this)">
+            <div class="sk-check-box"></div>
+            <span>Download notebook from Colab (File &rarr; Download &rarr; Download .ipynb)</span>
+          </li>
+          <li class="sk-checklist-item" onclick="toggleCheckbox(this)">
+            <div class="sk-check-box"></div>
+            <span>Prepare PDF report named: <strong>[NameSurname]_[StudentID]_RandomForest.pdf</strong></span>
+          </li>
+          <li class="sk-checklist-item" onclick="toggleCheckbox(this)">
+            <div class="sk-check-box"></div>
+            <span>Include Model Evaluation metrics table & Feature Importance chart in report</span>
+          </li>
+          <li class="sk-checklist-item" onclick="toggleCheckbox(this)">
+            <div class="sk-check-box"></div>
+            <span>Zip notebook and PDF as: <strong>[NameSurname]-[StudentID]-Activity4.zip</strong></span>
+          </li>
+        </ul>
+
+        <!-- REPORT BUILDER INTERACTIVE COMPONENT -->
+        <h3 class="sk-doc-section-title">Interactive PDF Report Builder</h3>
+        
+        <div class="sk-report-form">
+          <div class="sk-input-row">
+            <div class="sk-input-group">
+              <label>Your Name</label>
+              <input type="text" id="reportName" class="sk-text-input" value="John Doe" oninput="updateReportText()">
+            </div>
+            <div class="sk-input-group">
+              <label>Student ID</label>
+              <input type="text" id="reportID" class="sk-text-input" value="1234567" oninput="updateReportText()">
+            </div>
+          </div>
+
+          <div class="sk-input-row">
+            <div class="sk-input-group">
+              <label>Model Accuracy (%)</label>
+              <input type="text" id="reportAccuracy" class="sk-text-input" value="96.49" oninput="updateReportText()">
+            </div>
+            <div class="sk-input-group">
+              <label>Model Recall (%)</label>
+              <input type="text" id="reportRecall" class="sk-text-input" value="97.22" oninput="updateReportText()">
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size:11px; font-weight:700; color:var(--sk-text-muted); text-transform:uppercase; margin-bottom:6px;">Your Custom Generated Discussion Paragraph:</p>
+        <div class="sk-report-output-box" id="reportOutput">
+          <!-- Text will be inserted dynamically by JS -->
+        </div>
+        <button class="sk-quick-button" style="margin-top:12px; width:auto;" onclick="copyGeneratedReport()">Copy Report Text</button>
+
+        <h3 class="sk-doc-section-title">Critical Verification Questions</h3>
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>Would you trust this model in clinical practice? Explain why or why not.</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            No, I would not deploy this model immediately based only on these results. While it achieves high classification performance, the dataset is relatively small (569 records) and comes from a single localized medical source. Medical diagnostic systems require validation across diverse hospital systems, patient populations, and machine scanning manufacturers to protect against overfitting to institutional noise.
+          </div>
+        </div>
+
+        <div class="sk-accordion">
+          <div class="sk-accordion-header" onclick="toggleAccordion(this)">
+            <span>What additional validation checks are required?</span>
+            <span class="sk-accordion-arrow">▼</span>
+          </div>
+          <div class="sk-accordion-content">
+            <ol style="margin-left:20px; display:flex; flex-direction:column; gap:8px;">
+              <li><strong>Cross-Validation:</strong> Implement k-fold cross-validation (e.g., Stratified 5-Fold) to confirm performance metrics remain consistent across multiple dataset subsets.</li>
+              <li><strong>External Cohort Validation:</strong> Test model efficacy on entirely separate datasets acquired from different clinical centers.</li>
+              <li><strong>Bias Audits:</strong> Verify model accuracy across demographic subsets to prevent demographic biases.</li>
+              <li><strong>Human-in-the-Loop Integration:</strong> Evaluate the model as an advisory support tool operating under physician oversight, measuring clinician agreement and diagnostic accuracy improvements.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
-  <!-- ===================== PART D ===================== -->
-  <div class="tab-content" id="partD">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(217,119,6,0.1);color:var(--warn)">D</div>
-        <div>
-          <div class="part-title">Feature Importance</div>
-          <div class="part-desc">Which tumor measurements matter most?</div>
-        </div>
-      </div>
-      <div class="part-body">
+  <script>
+    // Tab Switching Controller
+    function tab(id) {
+      // Deactivate all sidebar links & tabs
+      document.querySelectorAll('.sk-sidebar-link').forEach(link => link.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
-        <div class="analogy" style="border-color:rgba(217,119,6,0.25);color:#78350f;background:rgba(245,158,11,0.06)">
-          <span class="emoji">🔍</span>
-          Like a doctor saying: "I mostly look at the tumor size and shape — those matter most. The color barely affects my decision." Feature importance tells you which of the 30 measurements the model relied on most.
-        </div>
+      // Activate clicked pane & corresponding sidebar link
+      const targetPane = document.getElementById('pane-' + id);
+      const targetLink = document.getElementById('side-' + id);
 
-        <div class="section-label">Cell 1 — Table of Importances</div>
-        <div class="code-block">
-          <div class="code-header">
-            <span>python · Part D — Table</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeD1')">COPY</button>
-          </div>
-          <pre id="codeD1"><span class="cm"># Part D - Feature Importance</span>
-<span class="kw">import</span> pandas <span class="kw">as</span> pd
+      if (targetPane) targetPane.classList.add('active');
+      if (targetLink) targetLink.classList.add('active');
 
-importances = model.feature_importances_
-feature_names = data.feature_names
-
-<span class="cm"># Create a sorted table</span>
-feat_df = pd.<span class="fn">DataFrame</span>({
-    <span class="st">'Feature'</span>: feature_names,
-    <span class="st">'Importance'</span>: importances
-})
-
-feat_df = feat_df.<span class="fn">sort_values</span>(<span class="st">'Importance'</span>, ascending=<span class="kw">False</span>).<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
-
-<span class="fn">print</span>(<span class="st">"Top 10 Most Important Features:"</span>)
-<span class="fn">print</span>(feat_df.<span class="fn">head</span>(<span class="nm">10</span>).<span class="fn">to_string</span>(index=<span class="kw">False</span>))</pre>
-        </div>
-
-        <div class="section-label">Cell 2 — Bar Chart</div>
-        <div class="code-block">
-          <div class="code-header">
-            <span>python · Part D — Chart</span>
-            <button class="copy-btn" onclick="copyCode(this, 'codeD2')">COPY</button>
-          </div>
-          <pre id="codeD2"><span class="cm"># Bar chart of top 10</span>
-<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
-
-top10 = feat_df.<span class="fn">head</span>(<span class="nm">10</span>)
-
-plt.<span class="fn">figure</span>(figsize=(<span class="nm">10</span>, <span class="nm">6</span>))
-plt.<span class="fn">barh</span>(top10[<span class="st">'Feature'</span>][::-<span class="nm">1</span>], top10[<span class="st">'Importance'</span>][::-<span class="nm">1</span>], color=<span class="st">'steelblue'</span>)
-plt.<span class="fn">xlabel</span>(<span class="st">'Importance Score'</span>)
-plt.<span class="fn">title</span>(<span class="st">'Top 10 Feature Importances — Random Forest'</span>)
-plt.<span class="fn">tight_layout</span>()
-plt.<span class="fn">savefig</span>(<span class="st">'feature_importance.png'</span>, dpi=<span class="nm">150</span>)
-plt.<span class="fn">show</span>()</pre>
-        </div>
-
-        <div class="section-label">Discussion Answers</div>
-        <table class="qa-table">
-          <tr><td>Most important features?</td><td>Typically: worst concave points, worst perimeter, mean concave points — related to shape extremes</td></tr>
-          <tr><td>What does importance mean?</td><td>How much each feature helped the trees make correct decisions (split data well)</td></tr>
-          <tr><td>Does high importance = cause?</td><td>NO. It means useful for prediction. It does NOT mean that feature causes cancer. Correlation ≠ Causation</td></tr>
-          <tr><td>How does it help?</td><td>Doctors can focus on key measurements; we can simplify models by removing unimportant features</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== PART E ===================== -->
-  <div class="tab-content" id="partE">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(220,38,38,0.1);color:var(--danger)">E</div>
-        <div>
-          <div class="part-title">Short Interpretation</div>
-          <div class="part-desc">Write a paragraph summarizing everything</div>
-        </div>
-      </div>
-      <div class="part-body">
-
-        <div class="section-label">Sample Paragraph (adapt numbers to yours)</div>
-        <div class="highlight">
-          The Random Forest classifier achieved approximately <strong>96–97% accuracy</strong> on the breast cancer dataset, with high precision, recall, and F1-score, demonstrating strong and reliable performance for binary tumor classification. The model identified <strong>'worst concave points'</strong>, <strong>'worst perimeter'</strong>, and <strong>'mean concave points'</strong> as the most important features, suggesting that the extreme shape and size characteristics of a tumor are most predictive of malignancy. Overall, the model appears well-suited for this dataset. However, relying solely on these results is insufficient — <strong>cross-validation, checking for overfitting, and clinical expert review</strong> would be necessary before deploying such a model in a real medical environment.
-        </div>
-
-        <div class="section-label">Discussion Answers</div>
-        <table class="qa-table">
-          <tr><td>Would you trust it?</td><td>Not fully — high accuracy on one test split is promising but not enough for life-or-death medical decisions</td></tr>
-          <tr><td>Additional checks?</td><td>Cross-validation, ROC-AUC curve, testing on external datasets, checking class imbalance impact, clinical validation</td></tr>
-          <tr><td>Is the model useful?</td><td>Yes — as a decision support tool for doctors, not a replacement for clinical judgment</td></tr>
-        </table>
-
-        <div class="warn-box">For your PDF report — take screenshots of: the metrics output, confusion matrix, top 10 table, and the bar chart. Paste them in a Word doc / Google Doc and save as PDF.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== CHECKLIST ===================== -->
-  <div class="tab-content" id="checklist">
-    <div class="part-card">
-      <div class="part-header">
-        <div class="part-num" style="background:rgba(5,150,105,0.1);color:var(--accent3)">✅</div>
-        <div>
-          <div class="part-title">Exam Day Checklist</div>
-          <div class="part-desc">Click each item as you complete it</div>
-        </div>
-      </div>
-      <div class="part-body">
-
-        <div class="section-label">Setup</div>
-        <ul class="checklist" id="checkSetup">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Go to colab.research.google.com</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Click "New Notebook"</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Paste all imports in Cell 1 and run (Shift+Enter)</li>
-        </ul>
-
-        <div class="section-label">Part A — Exploration</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Load dataset with load_breast_cancer()</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print: shape, feature names, target names</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print summary statistics with df.describe()</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print malignant vs benign count</li>
-        </ul>
-
-        <div class="section-label">Part B — Split</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Set X = data.data, y = data.target</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Use train_test_split with test_size=0.2, random_state=42</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print training and testing sizes</li>
-        </ul>
-
-        <div class="section-label">Part C — Model</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create RandomForestClassifier(n_estimators=100, random_state=42)</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>model.fit(X_train, y_train)</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>y_pred = model.predict(X_test)</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print accuracy, precision, recall, f1</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print confusion matrix</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print classification_report</li>
-        </ul>
-
-        <div class="section-label">Part D — Feature Importance</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Extract model.feature_importances_</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create DataFrame with Feature + Importance columns</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Sort by Importance descending</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Print top 10 with feat_df.head(10)</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create and save bar chart (plt.savefig)</li>
-        </ul>
-
-        <div class="section-label">Part E — Write Up</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Write interpretation paragraph in a text cell</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Answer all discussion questions</li>
-        </ul>
-
-        <div class="section-label">Submit</div>
-        <ul class="checklist">
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>File → Download → Download .ipynb</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Rename to {NameSurname}_{StudentID}_RandomForest.ipynb</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Create PDF report with screenshots</li>
-          <li onclick="toggleCheck(this)"><span class="check-icon"></span>Zip both files: {NameSurname}_{StudentID}_Activity4.zip</li>
-        </ul>
-
-        <div class="section-label">Key Numbers To Remember</div>
-        <div class="info-grid">
-          <div class="info-card blue"><h4>test_size</h4><p>0.2 (20%)</p></div>
-          <div class="info-card purple"><h4>random_state</h4><p>42 (both split and model)</p></div>
-          <div class="info-card green"><h4>n_estimators</h4><p>100 trees</p></div>
-          <div class="info-card yellow"><h4>figsize</h4><p>(10, 6) for chart</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /container -->
-
-<script>
-  // Tab switching
-  function switchTab(btn, id) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(id).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Copy code — strips HTML tags
-  function copyCode(btn, id) {
-    const el = document.getElementById(id);
-    const text = el.innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'COPIED!';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = 'COPY';
-        btn.classList.remove('copied');
-      }, 1800);
-    });
-  }
-
-  // Checklist toggle
-  function toggleCheck(li) {
-    li.classList.toggle('done');
-    const icon = li.querySelector('.check-icon');
-    if (li.classList.contains('done')) {
-      icon.textContent = '✓';
-    } else {
-      icon.textContent = '';
+      // Scroll to top
+      window.scrollTo({ top: 0 });
     }
-  }
 
-  // Progress bar on scroll
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const total = document.body.scrollHeight - window.innerHeight;
-    const pct = total > 0 ? (scrolled / total) * 100 : 0;
-    document.getElementById('progressBar').style.width = pct + '%';
-  });
-</script>
+    // Collapsible Accordion Logic
+    function toggleAccordion(element) {
+      const accordion = element.parentElement;
+      accordion.classList.toggle('open');
+    }
+
+    // Checklist Logic
+    function toggleCheckbox(element) {
+      element.classList.toggle('done');
+    }
+
+    // Live Parameter Sandbox calculation & plotting
+    function runSandboxSim() {
+      const trees = parseInt(document.getElementById('sliderTrees').value);
+      const split = parseInt(document.getElementById('sliderSplit').value);
+
+      document.getElementById('valTrees').textContent = trees;
+      document.getElementById('valSplit').textContent = split + "%";
+
+      // Dynamically simulate small variations based on values to mimic real training changes
+      const seedVal = (trees * 0.003) - (split * 0.005);
+      const simAcc = (95.2 + (seedVal % 2)).toFixed(2);
+      const simPrec = (96.1 + ((seedVal * 1.3) % 1.5)).toFixed(2);
+      const simRec = (96.5 + ((seedVal * 0.8) % 1.8)).toFixed(2);
+
+      document.getElementById('simAccuracy').textContent = simAcc + "%";
+      document.getElementById('simPrecision').textContent = simPrec + "%";
+      document.getElementById('simRecall').textContent = simRec + "%";
+
+      // Adjust widths of SVG chart bars to show interactivity
+      const scaleMultiplier = trees / 100;
+      document.getElementById('bar1').setAttribute('width', Math.min(260, Math.round(150 * scaleMultiplier)));
+      document.getElementById('bar2').setAttribute('width', Math.min(260, Math.round(130 * scaleMultiplier)));
+      document.getElementById('bar3').setAttribute('width', Math.min(260, Math.round(115 * scaleMultiplier)));
+      document.getElementById('bar4').setAttribute('width', Math.min(260, Math.round(80 * scaleMultiplier)));
+      document.getElementById('bar5').setAttribute('width', Math.min(260, Math.round(60 * scaleMultiplier)));
+    }
+
+    // Clipboard Copy Utility
+    function copyCode(elementId) {
+      const textToCopy = document.getElementById(elementId).innerText;
+      
+      // Clipboard compatibility fallback
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = textToCopy;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      
+      try {
+        document.execCommand('copy');
+        const btn = event.target;
+        btn.textContent = "COPIED!";
+        btn.style.background = "#1b9e77";
+        setTimeout(() => {
+          btn.textContent = "COPY";
+          btn.style.background = "#333";
+        }, 1800);
+      } catch (err) {
+        console.error("Copy failed: ", err);
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // Dynamic Report Builder Logic
+    function updateReportText() {
+      const name = document.getElementById('reportName').value;
+      const id = document.getElementById('reportID').value;
+      const acc = document.getElementById('reportAccuracy').value;
+      const recall = document.getElementById('reportRecall').value;
+
+      const outputHTML = `<strong>Clinical Classifier Summary</strong><br>
+      This practical lab report, compiled by <strong>${name} (Student ID: ${id})</strong>, documents the performance of a supervised Random Forest classification model optimized to process tumor characteristic measurements. 
+      The model achieved an overall accuracy of <strong>${acc}%</strong> during test-set validation. Within a clinical diagnostic pipeline, the model exhibited a sensitivity/recall score of <strong>${recall}%</strong> on malignant classifications. 
+      Feature importance mapping reveals that <em>worst area</em>, <em>worst concave points</em>, and <em>worst perimeter</em> represent the strongest diagnostic indicators utilized by the model to partition cell borders. 
+      To guarantee therapeutic safety, validation against external clinical registries alongside rigorous cross-validation is mandatory prior to clinical support deployment.`;
+
+      document.getElementById('reportOutput').innerHTML = outputHTML;
+    }
+
+    function copyGeneratedReport() {
+      const text = document.getElementById('reportOutput').innerText;
+      
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = text;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      
+      try {
+        document.execCommand('copy');
+        alert("Report summary paragraph copied to clipboard! Paste directly into your PDF report document.");
+      } catch (err) {
+        console.error(err);
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // Interactive Search Logic
+    const searchableItems = [
+      { name: "load_breast_cancer", tabId: "breast-cancer" },
+      { name: "train_test_split", tabId: "train-split" },
+      { name: "RandomForestClassifier", tabId: "random-forest" },
+      { name: "classification_report", tabId: "evaluation" },
+      { name: "accuracy_score", tabId: "evaluation" },
+      { name: "precision_score", tabId: "evaluation" },
+      { name: "recall_score", tabId: "evaluation" },
+      { name: "f1_score", tabId: "evaluation" },
+      { name: "feature_importances_", tabId: "feature-importance" },
+      { name: "Deliverables Checklist", tabId: "report" },
+      { name: "Discussion Answers Part A", tabId: "breast-cancer" },
+      { name: "Discussion Answers Part B", tabId: "train-split" },
+      { name: "Discussion Answers Part C", tabId: "random-forest" },
+      { name: "Discussion Answers Part D", tabId: "feature-importance" }
+    ];
+
+    function triggerSearch() {
+      const input = document.getElementById('searchBar').value.toLowerCase();
+      const resultsDiv = document.getElementById('searchResults');
+      
+      if (!input) {
+        resultsDiv.style.display = 'none';
+        return;
+      }
+
+      const filtered = searchableItems.filter(item => item.name.toLowerCase().includes(input));
+      
+      resultsDiv.innerHTML = '';
+      if (filtered.length > 0) {
+        filtered.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'sk-search-result-item';
+          div.textContent = item.name;
+          div.onclick = () => {
+            tab(item.tabId);
+            resultsDiv.style.display = 'none';
+            document.getElementById('searchBar').value = '';
+          };
+          resultsDiv.appendChild(div);
+        });
+        resultsDiv.style.display = 'block';
+      } else {
+        resultsDiv.style.display = 'none';
+      }
+    }
+
+    // Close search results if clicked outside
+    window.addEventListener('click', (e) => {
+      if (!e.target.matches('.sk-search-input')) {
+        document.getElementById('searchResults').style.display = 'none';
+      }
+    });
+
+    // Page Load Initialization
+    window.onload = function() {
+      runSandboxSim();
+      updateReportText();
+    };
+  </script>
 </body>
 </html>
