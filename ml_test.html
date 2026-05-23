@@ -4,24 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>sklearn.model_selection.train_test_split — scikit-learn 1.4.2 documentation</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sk-green: #1b9e77;
-    --sk-green-dark: #127557;
-    --sk-green-light: #e6f6f2;
-    --sk-orange: #f89406;
-    --sk-orange-light: #fef8f0;
+    /* Palette aligned with scikit-learn.org (PyData Sphinx / light docs) */
+    --sk-green: #4cae4f;
+    --sk-green-dark: #3a9640;
+    --sk-green-light: #e8f5e9;
+    --sk-orange: #f89939;
+    --sk-orange-light: #fff8f0;
     --sk-gray-bg: #f8f9fa;
-    --sk-border: #e5e5e5;
-    --sk-text: #333333;
-    --sk-text-muted: #666666;
-    --sk-code-light: #f7f9fa;
-    --sk-code-dark: #1e1e1e;
-    
-    /* Variable state styling */
-    --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: 'JetBrains Mono', Consolas, 'Courier New', Courier, monospace;
+    --sk-border: #dee2e6;
+    --sk-text: #212529;
+    --sk-text-muted: #6c757d;
+    --sk-code-bg: #f6f8fa;
+    --sk-code-bg-header: #eef1f4;
+    --sk-code-border: #d0d7de;
+
+    --font-sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'Source Code Pro', Consolas, 'Courier New', monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,6 +42,7 @@
   .sk-navbar {
     background: #ffffff;
     border-bottom: 1px solid var(--sk-border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     height: 52px;
     display: flex;
     align-items: center;
@@ -57,8 +59,9 @@
     gap: 10px;
     text-decoration: none;
     color: var(--sk-text);
-    font-weight: 700;
-    font-size: 18px;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
   }
 
   .sk-logo-img {
@@ -83,7 +86,11 @@
   }
 
   .sk-nav-links a:hover, .sk-nav-links a.active {
-    color: var(--sk-green);
+    color: var(--sk-green-dark);
+  }
+
+  .sk-nav-links a.active {
+    font-weight: 600;
   }
 
   .sk-version-tag {
@@ -115,7 +122,7 @@
   .sk-search-input:focus {
     border-color: var(--sk-green);
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(27, 158, 119, 0.1);
+    box-shadow: 0 0 0 3px rgba(74, 174, 79, 0.12);
   }
 
   .sk-search-icon {
@@ -137,7 +144,7 @@
   /* SIDEBAR (LEFT) */
   .sk-sidebar {
     width: 280px;
-    background: var(--sk-gray-bg);
+    background: #ffffff;
     border-right: 1px solid var(--sk-border);
     padding: 20px 0;
     overflow-y: auto;
@@ -180,7 +187,7 @@
   }
 
   .sk-sidebar-link:hover {
-    background: #f0f1f2;
+    background: var(--sk-gray-bg);
     color: var(--sk-green-dark);
   }
 
@@ -203,7 +210,7 @@
   }
 
   .sk-sidebar-badge.core {
-    background: rgba(27, 158, 119, 0.15);
+    background: rgba(74, 174, 79, 0.15);
     color: var(--sk-green-dark);
   }
 
@@ -235,12 +242,13 @@
 
   /* EXAM INTEGRITY NOTICE BAR */
   .sk-notice-bar {
-    background: #fff9db;
-    border: 1px solid #ffe066;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
     border-radius: 4px;
     padding: 12px 15px;
     font-size: 13px;
-    color: #856404;
+    color: #92400e;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -377,7 +385,7 @@
 
   .sk-note-box p {
     font-size: 13px;
-    color: #2e5549;
+    color: #1e4620;
     line-height: 1.6;
   }
 
@@ -403,70 +411,71 @@
     line-height: 1.6;
   }
 
-  /* CODE CONTAINER AND THEME SWITCHER */
+  /* CODE CONTAINER (scikit-learn.org documentation style) */
   .sk-code-container {
-    background: #272822; /* High quality dark theme matching scikit-learn gallery previews */
+    background: var(--sk-code-bg);
     border-radius: 6px;
-    border: 1px solid var(--sk-border);
+    border: 1px solid var(--sk-code-border);
     margin: 15px 0 25px 0;
     overflow: hidden;
     position: relative;
   }
 
   .sk-code-header {
-    background: #1e1e1e;
-    height: 36px;
+    background: var(--sk-code-bg-header);
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
-    border-bottom: 1px solid #333;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--sk-code-border);
   }
 
   .sk-code-lang {
     font-family: var(--font-mono);
-    font-size: 11px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px;
+    color: var(--sk-text-muted);
+    text-transform: none;
+    letter-spacing: 0;
   }
 
   .sk-copy-btn {
-    background: #333;
-    border: 1px solid #444;
-    color: #ccc;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 3px;
+    background: #ffffff;
+    border: 1px solid var(--sk-code-border);
+    color: var(--sk-text);
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
     cursor: pointer;
     font-family: var(--font-sans);
     font-weight: 600;
-    transition: all 0.2s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
   }
 
   .sk-copy-btn:hover {
-    background: var(--sk-green);
-    border-color: var(--sk-green-dark);
-    color: #fff;
+    background: var(--sk-gray-bg);
+    border-color: #b1b9c2;
+    color: var(--sk-text);
   }
 
   .sk-code-pre {
-    padding: 15px;
+    padding: 14px 16px;
     margin: 0;
     overflow-x: auto;
     font-family: var(--font-mono);
     font-size: 13px;
-    line-height: 1.6;
-    color: #f8f8f2;
+    line-height: 1.65;
+    color: #24292f;
+    background: var(--sk-code-bg);
   }
 
-  /* CODE HIGHLIGHT COLORS */
-  .sk-c-keyword { color: #f92672; font-weight: bold; }
-  .sk-c-import  { color: #66d9ef; font-weight: bold; }
-  .sk-c-func    { color: #a6e22e; }
-  .sk-c-str     { color: #e6db74; }
-  .sk-c-comm    { color: #75715e; font-style: italic; }
-  .sk-c-num     { color: #ae81ff; }
+  /* Light-theme syntax (similar to sklearn docs) */
+  .sk-c-keyword { color: #003875; font-weight: 600; }
+  .sk-c-import  { color: #003875; font-weight: 600; }
+  .sk-c-func    { color: #06287e; }
+  .sk-c-str     { color: #0b5d18; }
+  .sk-c-comm    { color: #5c6370; font-style: italic; }
+  .sk-c-num     { color: #6f42c1; }
 
   /* DISCUSSION & ACCORDION EXPANDERS */
   .sk-accordion {
@@ -1137,7 +1146,7 @@ importance_df = pd.DataFrame({
 top_10 = importance_df.head(<span class="sk-c-num">10</span>)
 plt.figure(figsize=(<span class="sk-c-num">10</span>, <span class="sk-c-num">6</span>))
 <span class="sk-c-comm"># [::-1] reverses the sorted list so the highest importance bar is plotted at the top of the chart</span>
-plt.barh(top_10[<span class="sk-c-str">'Feature'</span>][::-1], top_10[<span class="sk-c-str">'Importance'</span>][::-1], color=<span class="sk-c-str">'#1b9e77'</span>, edgecolor=<span class="sk-c-str">'black'</span>)
+plt.barh(top_10[<span class="sk-c-str">'Feature'</span>][::-1], top_10[<span class="sk-c-str">'Importance'</span>][::-1], color=<span class="sk-c-str">'#4cae4f'</span>, edgecolor=<span class="sk-c-str">'black'</span>)
 plt.xlabel(<span class="sk-c-str">'Importance Score'</span>)
 plt.ylabel(<span class="sk-c-str">'Feature Title'</span>)
 plt.title(<span class="sk-c-str">'Top 10 Feature Importances'</span>)
@@ -1203,23 +1212,23 @@ plt.show()</pre>
               <svg class="sk-chart-svg" viewBox="0 0 300 150">
                 <!-- Bar 1 -->
                 <text x="10" y="20" fill="#333" font-size="10" font-family="monospace">worst area</text>
-                <rect x="130" y="10" width="150" height="12" fill="#1b9e77" id="bar1"></rect>
+                <rect x="130" y="10" width="150" height="12" fill="#4cae4f" id="bar1"></rect>
                 
                 <!-- Bar 2 -->
                 <text x="10" y="45" fill="#333" font-size="10" font-family="monospace">worst concave pt</text>
-                <rect x="130" y="35" width="130" height="12" fill="#1b9e77" id="bar2"></rect>
+                <rect x="130" y="35" width="130" height="12" fill="#4cae4f" id="bar2"></rect>
 
                 <!-- Bar 3 -->
                 <text x="10" y="70" fill="#333" font-size="10" font-family="monospace">worst perimeter</text>
-                <rect x="130" y="60" width="115" height="12" fill="#1b9e77" id="bar3"></rect>
+                <rect x="130" y="60" width="115" height="12" fill="#4cae4f" id="bar3"></rect>
 
                 <!-- Bar 4 -->
                 <text x="10" y="95" fill="#333" font-size="10" font-family="monospace">worst radius</text>
-                <rect x="130" y="85" width="80" height="12" fill="#1b9e77" id="bar4"></rect>
+                <rect x="130" y="85" width="80" height="12" fill="#4cae4f" id="bar4"></rect>
 
                 <!-- Bar 5 -->
                 <text x="10" y="120" fill="#333" font-size="10" font-family="monospace">mean concave pt</text>
-                <rect x="130" y="110" width="60" height="12" fill="#1b9e77" id="bar5"></rect>
+                <rect x="130" y="110" width="60" height="12" fill="#4cae4f" id="bar5"></rect>
 
                 <!-- Scale line -->
                 <line x1="130" y1="135" x2="280" y2="135" stroke="#ccc" stroke-width="1"></line>
@@ -1403,10 +1412,14 @@ plt.show()</pre>
         document.execCommand('copy');
         const btn = event.target;
         btn.textContent = "COPIED!";
-        btn.style.background = "#1b9e77";
+        btn.style.background = "#4cae4f";
+        btn.style.borderColor = "#3a9640";
+        btn.style.color = "#fff";
         setTimeout(() => {
           btn.textContent = "COPY";
-          btn.style.background = "#333";
+          btn.style.background = "";
+          btn.style.borderColor = "";
+          btn.style.color = "";
         }, 1800);
       } catch (err) {
         console.error("Copy failed: ", err);
