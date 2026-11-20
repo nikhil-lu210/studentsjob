@@ -9,7 +9,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --color-ink: #0a0a0a;
+    --color-paper: #ffffff;
+    --color-subtle: #fafafa;
+    --color-hairline: #e6e6e6;
+    --color-muted: #666666;
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -23,9 +30,15 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
+    --color-accent: var(--color-ink);
+    --color-accent-content: var(--color-ink);
+    --color-accent-foreground: var(--color-paper);
+
+    --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.035);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.045);
+    --shadow-card-hover: 0 10px 28px rgba(0, 0, 0, 0.075);
+    --shadow-dropdown: 0 12px 32px rgba(0, 0, 0, 0.09);
+    --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.14);
 }
 
 @layer theme {
@@ -37,13 +50,43 @@
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-hairline, currentColor);
+    }
+
+    body {
+        @apply bg-subtle text-ink antialiased;
+    }
+
+    ::selection {
+        @apply bg-ink text-paper;
+    }
+
+    a,
+    button,
+    [role='button'],
+    summary,
+    label[for],
+    input[type='button'],
+    input[type='submit'],
+    input[type='reset'],
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='file'],
+    select {
+        cursor: pointer;
+    }
+
+    a:disabled,
+    button:disabled,
+    [role='button'][aria-disabled='true'],
+    input:disabled,
+    select:disabled {
+        cursor: not-allowed;
     }
 }
 
@@ -52,7 +95,7 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],
@@ -61,6 +104,66 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+/* Custom checkbox / radio — ink/paper design system */
+input[type='checkbox'],
+input[type='radio'] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    background-color: var(--color-paper);
+    border: 1.5px solid var(--color-hairline);
+    box-shadow: var(--shadow-soft);
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+input[type='checkbox'] {
+    border-radius: 0.3rem;
+}
+
+input[type='radio'] {
+    border-radius: 9999px;
+}
+
+input[type='checkbox']:hover,
+input[type='radio']:hover {
+    border-color: var(--color-ink);
+}
+
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+    outline: none;
+    border-color: var(--color-ink);
+    box-shadow:
+        var(--shadow-soft),
+        0 0 0 3px color-mix(in oklab, var(--color-ink) 16%, transparent);
+}
+
+input[type='checkbox']:checked,
+input[type='radio']:checked {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+}
+
+input[type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5'/%3E%3C/svg%3E");
+    background-size: 0.7rem 0.7rem;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+input[type='radio']:checked {
+    background-image: radial-gradient(circle, var(--color-paper) 0 35%, transparent 36%);
+}
+
+input[type='checkbox']:disabled,
+input[type='radio']:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background-color: var(--color-subtle);
+}
