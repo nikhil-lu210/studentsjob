@@ -6,7 +6,7 @@
             ssoOpen: false,
             showPassword: false,
             roleBadge: null,
-            email: @js(old('email', '')),
+            email: @js(old('email', request('email', ''))),
             password: '',
             resolveRole(email) {
                 const normalized = (email || '').trim().toLowerCase();
@@ -74,7 +74,7 @@
             </div>
 
             {{-- Standard sign-in --}}
-            <div x-show="!recovery" x-cloak class="p-6 sm:p-8 space-y-6">
+            <div x-show="!recovery" class="p-6 sm:p-8 space-y-6">
                 <div class="space-y-1.5">
                     <h1 class="text-2xl font-semibold tracking-tight text-ink">{{ __('Sign in to your account') }}</h1>
                     <p class="text-xs sm:text-sm text-muted leading-relaxed">
@@ -119,8 +119,9 @@
                             type="email"
                             required
                             autofocus
-                            autocomplete="email"
+                            autocomplete="username"
                             placeholder="name@university.edu or name@company.com"
+                            value="{{ old('email', request('email', '')) }}"
                             x-model="email"
                             x-on:input="onEmailInput()"
                             class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft placeholder:text-neutral-400 focus:border-ink focus:outline-none transition-colors @error('email') border-red-500 @enderror"
@@ -149,7 +150,8 @@
                             <input
                                 id="password"
                                 name="password"
-                                :type="showPassword ? 'text' : 'password'"
+                                type="password"
+                                x-bind:type="showPassword ? 'text' : 'password'"
                                 required
                                 autocomplete="current-password"
                                 placeholder="••••••••••••"
@@ -158,9 +160,9 @@
                             />
                             <button
                                 type="button"
-                                x-on:click="showPassword = !showPassword"
+                                x-on:click.prevent="showPassword = !showPassword"
                                 aria-label="{{ __('Toggle password visibility') }}"
-                                class="absolute inset-y-0 right-0 px-3 flex items-center text-muted hover:text-ink transition-colors"
+                                class="absolute inset-y-0 right-0 z-10 px-3 flex items-center text-muted hover:text-ink transition-colors"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />

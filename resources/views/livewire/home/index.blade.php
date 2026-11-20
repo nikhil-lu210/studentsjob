@@ -27,10 +27,9 @@
         mobileOpen: false,
         search: '',
         jobDrawerOpen: @entangle('jobDrawerOpen').live,
-        authModalOpen: @entangle('authModalOpen').live,
     }"
-    x-effect="document.body.classList.toggle('overflow-hidden', jobDrawerOpen || authModalOpen)"
-    @keydown.escape.window="$wire.set('jobDrawerOpen', false); $wire.set('authModalOpen', false)"
+    x-effect="document.body.classList.toggle('overflow-hidden', jobDrawerOpen)"
+    @keydown.escape.window="$wire.set('jobDrawerOpen', false)"
 >
     {{-- TOP INSTITUTIONAL TRUST BAR --}}
     <div class="border-b border-hairline bg-subtle text-xs">
@@ -42,9 +41,9 @@
             <div class="font-mono text-[11px] text-ink flex items-center gap-3">
                 <span>studentsjob.work</span>
                 <span class="text-hairline">|</span>
-                <button type="button" wire:click="openAuth('institute')" class="underline underline-offset-4 hover:opacity-70 transition-opacity">
+                <a href="{{ route('login') }}" class="underline underline-offset-4 hover:opacity-70 transition-opacity">
                     Institute Career Office →
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -61,24 +60,33 @@
             </nav>
 
             <div class="hidden md:flex items-center gap-3">
-                <button type="button" wire:click="openAuth('student')" class="px-4 py-2 text-sm font-medium text-ink bg-paper border border-hairline rounded-lg shadow-soft hover:border-ink transition-all">
-                    Student / Alumni Login
-                </button>
-                <button type="button" wire:click="openAuth('employer')" class="px-4 py-2 text-sm font-medium bg-ink text-paper rounded-lg shadow-soft hover:bg-neutral-800 transition-all">
-                    Employer Portal
-                </button>
+                @auth
+                    <x-user-menu />
+                @else
+                    <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-ink bg-paper border border-hairline rounded-lg shadow-soft hover:border-ink transition-all">
+                        Login
+                    </a>
+                    <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium bg-ink text-paper rounded-lg shadow-soft hover:bg-neutral-800 transition-all">
+                        Register
+                    </a>
+                @endauth
             </div>
 
-            <button
-                type="button"
-                aria-label="Toggle Navigation"
-                class="md:hidden p-2.5 rounded-lg border border-hairline bg-paper shadow-soft text-ink hover:border-ink transition-colors"
-                @click="mobileOpen = !mobileOpen"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-            </button>
+            <div class="md:hidden flex items-center gap-2">
+                @auth
+                    <x-user-menu compact />
+                @endauth
+                <button
+                    type="button"
+                    aria-label="Toggle Navigation"
+                    class="p-2.5 rounded-lg border border-hairline bg-paper shadow-soft text-ink hover:border-ink transition-colors"
+                    @click="mobileOpen = !mobileOpen"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div x-show="mobileOpen" x-cloak class="md:hidden border-t border-hairline bg-paper px-4 pt-4 pb-6 space-y-4 shadow-card">
@@ -87,14 +95,16 @@
                 <a href="#how-it-works" @click="mobileOpen = false" class="py-2 px-2 rounded-md hover:bg-subtle text-ink">How It Works</a>
                 <a href="#eligibility" @click="mobileOpen = false" class="py-2 px-2 rounded-md hover:bg-subtle text-ink">Legal Eligibility</a>
             </div>
-            <div class="pt-3 border-t border-hairline flex flex-col gap-2.5">
-                <button type="button" @click="mobileOpen = false" wire:click="openAuth('student')" class="w-full py-2.5 text-sm font-medium text-ink bg-paper border border-ink rounded-lg shadow-soft">
-                    Student / Alumni Login
-                </button>
-                <button type="button" @click="mobileOpen = false" wire:click="openAuth('employer')" class="w-full py-2.5 text-sm font-medium bg-ink text-paper rounded-lg shadow-soft">
-                    Employer Portal
-                </button>
-            </div>
+            @guest
+                <div class="pt-3 border-t border-hairline flex flex-col gap-2.5">
+                    <a href="{{ route('login') }}" @click="mobileOpen = false" class="w-full py-2.5 text-center text-sm font-medium text-ink bg-paper border border-ink rounded-lg shadow-soft">
+                        Login
+                    </a>
+                    <a href="{{ route('register') }}" @click="mobileOpen = false" class="w-full py-2.5 text-center text-sm font-medium bg-ink text-paper rounded-lg shadow-soft">
+                        Register
+                    </a>
+                </div>
+            @endguest
         </div>
     </header>
 
@@ -347,9 +357,9 @@
 
             <div class="mt-8 p-5 bg-paper border border-hairline rounded-xl shadow-soft flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
                 <p class="font-mono">Sign in with your institute credentials to unlock full compensation details and apply with one click.</p>
-                <button type="button" wire:click="openAuth('student')" class="px-5 py-2.5 bg-ink text-paper font-medium rounded-lg shadow-soft hover:bg-neutral-800 transition-colors shrink-0">
-                    Student / Alumni Sign In →
-                </button>
+                <a href="{{ route('login') }}" class="px-5 py-2.5 bg-ink text-paper font-medium rounded-lg shadow-soft hover:bg-neutral-800 transition-colors shrink-0">
+                    Login →
+                </a>
             </div>
         </div>
     </section>
@@ -538,12 +548,12 @@
                     Log in with your academic credentials to browse verified opportunities, or register your company to hire legally eligible students and alumni.
                 </p>
                 <div class="pt-2 flex flex-col sm:flex-row gap-3">
-                    <button type="button" wire:click="openAuth('student')" class="px-6 py-3 bg-paper text-ink text-sm font-medium rounded-lg shadow-soft hover:bg-neutral-200 transition-colors">
-                        Student / Alumni Login
-                    </button>
-                    <button type="button" wire:click="openAuth('employer')" class="px-6 py-3 bg-transparent text-paper border border-neutral-700 text-sm font-medium rounded-lg hover:border-paper transition-colors">
-                        Employer Verification
-                    </button>
+                    <a href="{{ route('login') }}" class="px-6 py-3 text-center bg-paper text-ink text-sm font-medium rounded-lg shadow-soft hover:bg-neutral-200 transition-colors">
+                        Login
+                    </a>
+                    <a href="{{ route('register') }}" class="px-6 py-3 text-center bg-transparent text-paper border border-neutral-700 text-sm font-medium rounded-lg hover:border-paper transition-colors">
+                        Register
+                    </a>
                 </div>
             </div>
         </div>
@@ -561,7 +571,7 @@
                     <a href="#opportunities" class="hover:text-ink transition-colors">VERIFIED JOBS</a>
                     <a href="#how-it-works" class="hover:text-ink transition-colors">HOW IT WORKS</a>
                     <a href="#eligibility" class="hover:text-ink transition-colors">ELIGIBILITY</a>
-                    <button type="button" wire:click="openAuth('institute')" class="hover:text-ink transition-colors">INSTITUTE ADMIN</button>
+                    <a href="{{ route('login') }}" class="hover:text-ink transition-colors">INSTITUTE ADMIN</a>
                 </div>
             </div>
 
@@ -582,13 +592,12 @@
             $drawerTypeLabel = $jobTypeBadge($selectedJob);
         @endphp
         <div class="fixed inset-0 z-50" aria-modal="true" role="dialog">
-            <button
-                type="button"
+            <div
                 wire:click="$set('jobDrawerOpen', false)"
-                class="fixed inset-0 bg-black/35 backdrop-blur-[2px] transition-opacity w-full h-full cursor-default"
-                aria-label="Close job details overlay"
-            ></button>
-            <div class="fixed inset-y-0 right-0 max-w-lg w-full bg-paper border-l border-hairline shadow-modal flex flex-col justify-between overflow-y-auto">
+                class="absolute inset-0 bg-black/35 backdrop-blur-[2px]"
+                aria-hidden="true"
+            ></div>
+            <div class="fixed inset-y-0 right-0 z-10 max-w-lg w-full bg-paper border-l border-hairline shadow-modal flex flex-col justify-between overflow-y-auto">
                 <div class="p-6 sm:p-8 space-y-6">
                     <div class="flex items-center justify-between pb-4 border-b border-hairline">
                         <span class="font-mono text-xs px-2.5 py-1 bg-ink text-paper rounded-md">{{ $drawerTypeLabel }}</span>
@@ -634,13 +643,12 @@
                 </div>
 
                 <div class="p-6 border-t border-hairline bg-subtle space-y-3">
-                    <button
-                        type="button"
-                        @click="$wire.set('jobDrawerOpen', false); $wire.openAuth('student')"
-                        class="w-full py-3 bg-ink text-paper text-sm font-medium rounded-lg shadow-soft hover:bg-neutral-800 transition-colors"
+                    <a
+                        href="{{ route('login') }}"
+                        class="block w-full py-3 text-center bg-ink text-paper text-sm font-medium rounded-lg shadow-soft hover:bg-neutral-800 transition-colors"
                     >
-                        Sign In with Institute ID to Apply
-                    </button>
+                        Login to Apply
+                    </a>
                     <p class="text-[11px] font-mono text-center text-muted">
                         Your legal work right is attached automatically upon institutional login.
                     </p>
@@ -649,88 +657,4 @@
         </div>
     @endif
 
-    {{-- PORTAL ACCESS MODAL --}}
-    @if ($authModalOpen)
-        @php
-            $authCopy = match ($authRole) {
-                'employer' => [
-                    'badge' => 'EMPLOYER PORTAL',
-                    'title' => 'Hire Pre-Verified Talent',
-                    'subtitle' => 'Enter your corporate work email to verify your organization and post institute-approved roles.',
-                    'label' => 'Corporate Work Email',
-                    'placeholder' => 'talent@company.com',
-                ],
-                'institute' => [
-                    'badge' => 'INSTITUTE GOVERNANCE',
-                    'title' => 'Career Office Admin Portal',
-                    'subtitle' => 'Authorized university administrators can manage employer approvals, visa compliance rules, and student SSO verification.',
-                    'label' => 'Career Office Email',
-                    'placeholder' => 'careers-admin@university.edu',
-                ],
-                default => [
-                    'badge' => 'STUDENT & ALUMNI SSO',
-                    'title' => 'Sign in via your Institute',
-                    'subtitle' => 'Enter your official university or alumni email address to verify your enrollment and legal work eligibility.',
-                    'label' => 'Institutional Email',
-                    'placeholder' => 'name@university.edu',
-                ],
-            };
-        @endphp
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog">
-            <button
-                type="button"
-                wire:click="$set('authModalOpen', false)"
-                class="fixed inset-0 bg-black/40 backdrop-blur-[2px] w-full h-full cursor-default"
-                aria-label="Close authentication overlay"
-            ></button>
-            <div class="relative bg-paper border border-hairline rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-modal space-y-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <span class="font-mono text-[11px] px-2.5 py-0.5 bg-subtle border border-hairline rounded-md uppercase">{{ $authCopy['badge'] }}</span>
-                        <h3 class="text-xl font-semibold tracking-tight mt-2">{{ $authCopy['title'] }}</h3>
-                    </div>
-                    <button type="button" wire:click="$set('authModalOpen', false)" aria-label="Close Modal" class="p-1.5 rounded-lg border border-hairline shadow-soft hover:border-ink">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <p class="text-xs text-muted leading-relaxed">{{ $authCopy['subtitle'] }}</p>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block font-mono text-[11px] uppercase text-muted mb-1.5">{{ $authCopy['label'] }}</label>
-                        <input
-                            type="email"
-                            readonly
-                            placeholder="{{ $authCopy['placeholder'] }}"
-                            class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
-                        />
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-2.5">
-                        <a
-                            href="{{ route('login') }}"
-                            wire:navigate
-                            class="flex-1 text-center py-2.5 bg-ink text-paper text-sm font-medium rounded-lg shadow-soft hover:bg-neutral-800 transition-colors"
-                        >
-                            Sign In →
-                        </a>
-                        <a
-                            href="{{ route('register') }}"
-                            wire:navigate
-                            class="flex-1 text-center py-2.5 bg-paper text-ink text-sm font-medium rounded-lg border border-hairline shadow-soft hover:border-ink transition-colors"
-                        >
-                            Create Account
-                        </a>
-                    </div>
-                </div>
-
-                <p class="text-[11px] font-mono text-muted leading-relaxed">
-                    Institute SSO routes to verified login and registration flows for your selected portal role.
-                </p>
-            </div>
-        </div>
-    @endif
 </div>

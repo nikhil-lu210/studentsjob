@@ -15,10 +15,6 @@ class Index extends Component
 
     public bool $jobDrawerOpen = false;
 
-    public bool $authModalOpen = false;
-
-    public string $authRole = 'student';
-
     public ?string $selectedJobId = null;
 
     public function setAudience(string $audience): void
@@ -35,12 +31,6 @@ class Index extends Component
     {
         $this->selectedJobId = $jobId;
         $this->jobDrawerOpen = true;
-    }
-
-    public function openAuth(string $role = 'student'): void
-    {
-        $this->authRole = $role;
-        $this->authModalOpen = true;
     }
 
     public function render()

@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('partials.head')
+    <style>[x-cloak]{display:none!important}</style>
 </head>
 <body class="min-h-screen bg-subtle text-ink font-sans antialiased flex flex-col justify-between overflow-x-hidden">
     <header class="w-full bg-paper/90 backdrop-blur-md border-b border-hairline shadow-soft">
