@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employer Portal Dashboard — studentsjob.work</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono (Consistent across studentsjob.work) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            ink: '#0A0A0A',
+            paper: '#FFFFFF',
+            subtle: '#FAFAFA',
+            hairline: '#E6E6E6',
+            muted: '#666666',
+          },
+          boxShadow: {
+            'soft': '0 2px 10px rgba(0, 0, 0, 0.035)',
+            'card': '0 4px 20px rgba(0, 0, 0, 0.045)',
+            'card-hover': '0 10px 28px rgba(0, 0, 0, 0.075)',
+            'dropdown': '0 12px 32px rgba(0, 0, 0, 0.09)',
+            'modal': '0 20px 50px rgba(0, 0, 0, 0.14)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-subtle text-ink font-sans antialiased selection:bg-ink selection:text-paper overflow-x-hidden">
+
+  <!-- MOBILE SIDENAV BACKDROP -->
+  <div
+    id="sidebarBackdrop"
+    onclick="closeMobileSidebar()"
+    class="fixed inset-0 z-40 bg-black/35 backdrop-blur-[1px] hidden lg:hidden transition-opacity"
+  ></div>
+
+  <!-- MAIN APPLICATION SHELL -->
+  <div class="min-h-screen flex">
+
+    <!-- ===================================================================== -->
+    <!-- LEFT SIDENAV (WITH EXPANDABLE SUB-MENUS & KYB ORGANIZATION IDENTITY)  -->
+    <!-- ===================================================================== -->
+    <aside
+      id="sidebar"
+      aria-label="Employer Sidebar Navigation"
+      class="fixed inset-y-0 left-0 z-50 w-72 bg-paper border-r border-hairline shadow-card lg:shadow-none flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out"
+    >
+      <!-- TOP BRAND & ORGANIZATION CONTEXT -->
+      <div class="flex flex-col flex-1 overflow-y-auto">
+        <!-- Brand Header -->
+        <div class="h-16 px-5 border-b border-hairline flex items-center justify-between shrink-0">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-lg bg-ink text-paper flex items-center justify-center shadow-soft transition-transform duration-200 group-hover:scale-105">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <path d="M8 12.5L10.8 15.3L16.5 9" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-semibold tracking-tight text-sm leading-none">studentsjob.work</span>
+              <span class="font-mono text-[10px] text-muted tracking-widest uppercase mt-1">Employer Portal</span>
+            </div>
+          </a>
+
+          <!-- Mobile Close Button -->
+          <button
+            type="button"
+            onclick="closeMobileSidebar()"
+            aria-label="Close Sidebar"
+            class="lg:hidden p-2 rounded-lg border border-hairline text-muted hover:text-ink hover:border-ink transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- KYB-Verified Organization Card -->
+        <div class="p-4 border-b border-hairline">
+          <div class="p-3.5 rounded-xl bg-subtle border border-hairline shadow-soft space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-muted">KYB &amp; Sponsor Status</span>
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] px-2 py-0.5 rounded bg-ink text-paper">
+                <span class="w-1.5 h-1.5 rounded-full bg-paper"></span>
+                VERIFIED
+              </span>
+            </div>
+            <p id="sidebarCompanyName" class="text-xs font-semibold text-ink truncate">Helvetia Financial Systems</p>
+            <p class="font-mono text-[11px] text-muted truncate">REG: CHE-114.920.381 • TIER-1</p>
+          </div>
+        </div>
+
+        <!-- PRIMARY NAVIGATION MENU WITH SUB-MENUS -->
+        <nav class="p-3.5 space-y-1.5 flex-1">
+          <div class="px-2.5 pb-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+            Recruitment Workspace
+          </div>
+
+          <!-- 1. OVERVIEW (Direct Menu Item) -->
+          <button
+            type="button"
+            data-nav="overview"
+            onclick="navigateTo('overview', 'Overview', 'Recruitment Summary')"
+            class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium bg-ink text-paper shadow-soft transition-all"
+          >
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" />
+              </svg>
+              <span>Overview</span>
+            </span>
+          </button>
+
+          <!-- 2. VERIFIED CANDIDATES (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-candidates"
+              data-nav="candidates"
+              onclick="toggleSubmenu('candidates')"
+              aria-expanded="true"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16 11 2 2 4-4" />
+                </svg>
+                <span>Verified CVs</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="sidebarTotalCvsBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-subtle border border-hairline text-muted">6</span>
+                <svg id="chevron-candidates" class="w-3.5 h-3.5 text-muted transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Sub-menu Items for Verified Candidates -->
+            <div id="submenu-candidates" class="ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="cand-all"
+                onclick="openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>All Eligible CVs</span>
+                <span id="subCandAllCount" class="font-mono text-[10px]">06</span>
+              </button>
+              <button
+                type="button"
+                data-sub="cand-new"
+                onclick="openCandidatesWithFilter('New Verified CV', 'cand-new', 'New Verified CVs')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>New Submissions</span>
+                <span class="font-mono text-[10px]">02</span>
+              </button>
+              <button
+                type="button"
+                data-sub="cand-shortlisted"
+                onclick="openCandidatesWithFilter('Shortlisted', 'cand-shortlisted', 'Shortlisted Talent')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Shortlisted</span>
+                <span class="font-mono text-[10px]">02</span>
+              </button>
+              <button
+                type="button"
+                data-sub="cand-interview"
+                onclick="openCandidatesWithFilter('Interview Stage', 'cand-interview', 'Interview Stage')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Interview Stage</span>
+                <span class="font-mono text-[10px]">02</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. JOB POSTINGS (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-jobs"
+              data-nav="jobs"
+              onclick="toggleSubmenu('jobs')"
+              aria-expanded="false"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <rect x="2" y="7" width="20" height="14" rx="2.5" />
+                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                </svg>
+                <span>Job Postings</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="sidebarTotalJobsBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-subtle border border-hairline text-muted">3</span>
+                <svg id="chevron-jobs" class="w-3.5 h-3.5 text-muted transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Sub-menu Items for Job Postings -->
+            <div id="submenu-jobs" class="hidden ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="jobs-all"
+                onclick="openJobsWithFilter('all', 'jobs-all', 'All Posted Roles')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>All Posted Roles</span>
+                <span id="subJobsAllCount" class="font-mono text-[10px]">03</span>
+              </button>
+              <button
+                type="button"
+                data-sub="jobs-live"
+                onclick="openJobsWithFilter('Live • Verified', 'jobs-live', 'Live Institute-Verified Roles')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Live &amp; Verified</span>
+                <span class="font-mono text-[10px]">02</span>
+              </button>
+              <button
+                type="button"
+                data-sub="jobs-pending"
+                onclick="openJobsWithFilter('Pending Institute Review', 'jobs-pending', 'Pending Institute Review')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Pending Review</span>
+                <span class="font-mono text-[10px]">01</span>
+              </button>
+              <button
+                type="button"
+                onclick="openPostJobModal()"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono font-medium text-ink bg-subtle hover:bg-ink hover:text-paper transition-colors"
+              >
+                <span>+ Post New Role</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. PARTNER INSTITUTES & KYB (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-institutes"
+              data-nav="institutes"
+              onclick="toggleSubmenu('institutes')"
+              aria-expanded="false"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3L2 8l10 5 10-5-10-5Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 10.5v5.5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5.5" />
+                </svg>
+                <span>Institutes &amp; KYB</span>
+              </span>
+              <svg id="chevron-institutes" class="w-3.5 h-3.5 text-muted transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            <!-- Sub-menu Items for Institutes & KYB -->
+            <div id="submenu-institutes" class="hidden ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="inst-network"
+                onclick="openInstitutesSection('network', 'inst-network', 'Approved Academic Network')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Partner Universities</span>
+                <span class="font-mono text-[10px]">04</span>
+              </button>
+              <button
+                type="button"
+                data-sub="inst-kyb"
+                onclick="openInstitutesSection('kyb', 'inst-kyb', 'KYB & Sponsor Accreditation')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>KYB &amp; Sponsor Vault</span>
+                <span class="font-mono text-[10px] text-ink">✓</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. CAREER OFFICE LIAISON (Direct Menu Item) -->
+          <button
+            type="button"
+            data-nav="office"
+            onclick="navigateTo('office', 'Career Office Desk', 'University Verification Liaison')"
+            class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+          >
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>Career Office Desk</span>
+            </span>
+            <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-ink text-paper">1</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- BOTTOM SIDENAV STATUS & SIGN OUT -->
+      <div class="p-4 border-t border-hairline bg-subtle/60 space-y-3 shrink-0">
+        <div class="flex items-center justify-between text-[11px] font-mono text-muted px-1">
+          <span>COMPLIANCE FILTER</span>
+          <span class="text-ink font-medium">✓ STRICT</span>
+        </div>
+        <a
+          href="login.html"
+          class="w-full py-2.5 px-3 bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink text-xs font-mono text-ink flex items-center justify-center gap-2 transition-all"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
+          <span>SIGN OUT</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- RIGHT MAIN COLUMN (STICKY TOPNAV + WORKSPACE CONTENT)                 -->
+    <!-- ===================================================================== -->
+    <div class="flex-1 flex flex-col min-w-0 lg:pl-72">
+
+      <!-- TOPNAV HEADER -->
+      <header class="sticky top-0 z-30 h-16 bg-paper/95 backdrop-blur-md border-b border-hairline shadow-soft px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+
+        <!-- Left: Mobile Sidebar Trigger + Breadcrumb Trail -->
+        <div class="flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onclick="openMobileSidebar()"
+            aria-label="Open Navigation Menu"
+            class="lg:hidden p-2.5 rounded-lg border border-hairline bg-paper shadow-soft text-ink hover:border-ink transition-colors shrink-0"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <!-- Clean Breadcrumb -->
+          <div class="flex items-center gap-2 text-xs sm:text-sm truncate">
+            <span class="font-mono text-muted hidden sm:inline">EMPLOYER</span>
+            <span class="text-hairline hidden sm:inline">/</span>
+            <span id="breadcrumbParent" class="font-medium text-ink truncate">Overview</span>
+            <span class="text-hairline hidden md:inline">/</span>
+            <span id="breadcrumbChild" class="font-mono text-xs text-muted hidden md:inline truncate">Recruitment Summary</span>
+          </div>
+        </div>
+
+        <!-- Right: Candidate Search + Compliance Pill + Post Job CTA + Notifications + Profile Dropdown -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+
+          <!-- Compact Topnav Candidate Search -->
+          <div class="hidden md:flex items-center bg-subtle border border-hairline rounded-lg px-3 py-1.5 w-52 lg:w-64 focus-within:border-ink focus-within:bg-paper transition-colors">
+            <svg class="w-3.5 h-3.5 text-muted mr-2 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+            </svg>
+            <input
+              id="topnavSearchInput"
+              type="text"
+              placeholder="Search verified CVs..."
+              class="w-full text-xs bg-transparent placeholder:text-muted focus:outline-none"
+            />
+          </div>
+
+          <!-- Eligible CVs Guarantee Badge -->
+          <div class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle border border-hairline text-[11px] font-mono text-ink">
+            <span class="w-1.5 h-1.5 rounded-full bg-ink"></span>
+            <span>ELIGIBLE CVs ONLY</span>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- TOPNAV DROPDOWN 1: NOTIFICATIONS BELL                           -->
+          <!-- =============================================================== -->
+          <div class="relative" id="notificationDropdownWrapper">
+            <button
+              type="button"
+              id="notificationBellBtn"
+              onclick="toggleDropdown('notificationMenu', 'notificationBellBtn')"
+              aria-expanded="false"
+              aria-label="Notifications"
+              class="relative p-2.5 rounded-lg bg-paper border border-hairline shadow-soft hover:border-ink transition-colors text-ink"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
+              </svg>
+              <span id="notifUnreadDot" class="absolute top-2 right-2 w-2 h-2 rounded-full bg-ink ring-2 ring-paper"></span>
+            </button>
+
+            <!-- Notification Dropdown Panel -->
+            <div
+              id="notificationMenu"
+              class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 bg-paper border border-hairline rounded-2xl shadow-dropdown overflow-hidden z-50"
+            >
+              <div class="px-4 py-3 bg-subtle border-b border-hairline flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-semibold">RECRUITMENT ALERTS</span>
+                  <span id="notifCountBadge" class="font-mono text-[10px] px-1.5 py-0.5 bg-ink text-paper rounded">2 NEW</span>
+                </div>
+                <button
+                  type="button"
+                  onclick="markAllNotificationsRead()"
+                  class="font-mono text-[11px] text-muted hover:text-ink underline underline-offset-4"
+                >
+                  Mark all read
+                </button>
+              </div>
+
+              <div class="divide-y divide-hairline max-h-80 overflow-y-auto">
+                <div class="notif-item p-4 bg-subtle/50 hover:bg-subtle transition-colors cursor-pointer" onclick="openCandidatesWithFilter('New Verified CV', 'cand-new', 'New Verified CVs'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span class="text-ink font-semibold">● VERIFIED CV RECEIVED</span>
+                    <span>14M AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">Alex Mercer applied for Junior Quantitative Systems Engineer</p>
+                  <p class="text-[11px] text-muted mt-0.5">Polytechnic Institute • Work-Right &amp; MSc Enrollment verified.</p>
+                </div>
+
+                <div class="notif-item p-4 bg-subtle/50 hover:bg-subtle transition-colors cursor-pointer" onclick="openJobsWithFilter('Live • Verified', 'jobs-live', 'Live Institute-Verified Roles'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span class="text-ink font-semibold">● ROLE APPROVED</span>
+                    <span>3H AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">Engineering Career Office approved your role posting</p>
+                  <p class="text-[11px] text-muted mt-0.5">Now live to eligible BSc/MSc Computer Science &amp; Math cohorts.</p>
+                </div>
+
+                <div class="notif-item p-4 hover:bg-subtle transition-colors cursor-pointer" onclick="openInstitutesSection('kyb', 'inst-kyb', 'KYB & Sponsor Accreditation'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span>COMPLIANCE AUDIT</span>
+                    <span>1D AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">11 ineligible external submissions blocked automatically</p>
+                  <p class="text-[11px] text-muted mt-0.5">Filtered out prior to inbox delivery per visa compliance rules.</p>
+                </div>
+              </div>
+
+              <div class="px-4 py-2.5 bg-subtle border-t border-hairline text-center">
+                <button
+                  type="button"
+                  onclick="openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs'); closeAllDropdowns();"
+                  class="font-mono text-[11px] text-ink hover:underline underline-offset-4"
+                >
+                  Review All Verified Candidates →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- TOPNAV DROPDOWN 2: ORGANIZATION PROFILE MENU                    -->
+          <!-- =============================================================== -->
+          <div class="relative" id="profileDropdownWrapper">
+            <button
+              type="button"
+              id="profileMenuBtn"
+              onclick="toggleDropdown('profileMenu', 'profileMenuBtn')"
+              aria-expanded="false"
+              class="flex items-center gap-2.5 pl-2 pr-2.5 py-1.5 rounded-xl bg-paper border border-hairline shadow-soft hover:border-ink transition-all"
+            >
+              <div id="companyAvatarInitials" class="w-7 h-7 rounded-lg bg-ink text-paper font-mono text-xs font-semibold flex items-center justify-center">
+                HF
+              </div>
+              <div class="hidden sm:flex flex-col text-left">
+                <span id="topnavCompanyName" class="text-xs font-semibold leading-none text-ink">Helvetia Systems</span>
+                <span class="font-mono text-[10px] text-muted mt-0.5">KYB Approved</span>
+              </div>
+              <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            <!-- Organization Dropdown Panel -->
+            <div
+              id="profileMenu"
+              class="hidden absolute right-0 mt-2.5 w-64 bg-paper border border-hairline rounded-2xl shadow-dropdown overflow-hidden z-50"
+            >
+              <div class="p-4 bg-subtle border-b border-hairline space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">SPONSOR LICENSED</span>
+                  <span class="font-mono text-[10px] text-muted">KYB-4410</span>
+                </div>
+                <p id="dropdownCompanyFull" class="text-sm font-semibold text-ink pt-1">Helvetia Financial Systems</p>
+                <p id="dropdownRecruiterEmail" class="font-mono text-[11px] text-muted truncate">talent@helvetiasystems.ch</p>
+              </div>
+
+              <div class="p-1.5 space-y-0.5 text-xs">
+                <button
+                  type="button"
+                  onclick="openPostJobModal(); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink font-medium hover:bg-subtle transition-colors text-left"
+                >
+                  <span>+ Post Verified Role</span>
+                  <span class="font-mono text-[10px] text-muted">NEW</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="openInstitutesSection('kyb', 'inst-kyb', 'KYB & Sponsor Accreditation'); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors text-left"
+                >
+                  <span>KYB &amp; Sponsor Vault</span>
+                  <span class="font-mono text-[10px] text-muted">ACTIVE</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="openInstitutesSection('network', 'inst-network', 'Approved Academic Network'); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors text-left"
+                >
+                  <span>Partner Institutes</span>
+                  <span class="font-mono text-[10px] text-muted">04</span>
+                </button>
+                <a
+                  href="index.html"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors"
+                >
+                  <span>Public Portal Home</span>
+                  <span class="font-mono text-[10px] text-muted">↗</span>
+                </a>
+              </div>
+
+              <div class="p-1.5 border-t border-hairline bg-subtle/50">
+                <a
+                  href="login.html"
+                  class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-ink hover:bg-ink hover:text-paper transition-colors"
+                >
+                  <span>Sign Out</span>
+                  <span>→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- ===================================================================== -->
+      <!-- MAIN DYNAMIC WORKSPACE CONTENT                                        -->
+      <!-- ===================================================================== -->
+      <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- INLINE TOAST NOTIFICATION BANNER (No alert() used) -->
+        <div
+          id="toastBanner"
+          class="hidden p-4 bg-ink text-paper rounded-xl shadow-card flex items-center justify-between gap-4 text-xs font-mono"
+        >
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-paper shrink-0"></span>
+            <span id="toastMessage">Action completed.</span>
+          </div>
+          <button type="button" onclick="hideToast()" class="text-neutral-400 hover:text-paper shrink-0">✕</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: EMPLOYER OVERVIEW                                         -->
+        <!-- ================================================================= -->
+        <section id="view-overview" class="space-y-8">
+
+          <!-- Organization Welcome & Quick Actions Banner -->
+          <div class="p-6 sm:p-7 bg-paper border border-hairline rounded-2xl shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-1.5">
+              <div class="inline-flex items-center gap-2 font-mono text-[11px] text-muted">
+                <span class="w-1.5 h-1.5 rounded-full bg-ink"></span>
+                <span>EMPLOYER KYB &amp; SPONSORSHIP ACCREDITATION: ACTIVE</span>
+              </div>
+              <h1 id="overviewCompanyHeading" class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+                Helvetia Financial Systems
+              </h1>
+              <p class="text-xs sm:text-sm text-muted max-w-2xl leading-relaxed">
+                Every CV delivered to your inbox is pre-verified by partner university registrars for degree status and statutory right to work—eliminating compliance friction.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onclick="openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs')"
+                class="px-4 py-2.5 text-xs font-mono bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink transition-all"
+              >
+                REVIEW VERIFIED CVs
+              </button>
+              <button
+                type="button"
+                onclick="openPostJobModal()"
+                class="px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded-xl shadow-soft hover:bg-neutral-800 transition-all"
+              >
+                + POST VERIFIED ROLE
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPI METRIC CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Eligible CVs Received</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">100% LEGAL</span>
+              </div>
+              <div>
+                <p id="kpiTotalCvs" class="text-3xl font-semibold tracking-tight text-ink">06</p>
+                <p class="text-xs text-muted mt-1">All candidates work-permit verified</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Posted Roles</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-subtle border border-hairline rounded">VETTED</span>
+              </div>
+              <div>
+                <p id="kpiTotalJobs" class="text-3xl font-semibold tracking-tight text-ink">03</p>
+                <p class="text-xs text-muted mt-1">2 live on campus • 1 in review</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Interviews Active</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-subtle border border-hairline rounded">PIPELINE</span>
+              </div>
+              <div>
+                <p id="kpiInterviewCount" class="text-3xl font-semibold tracking-tight text-ink">02</p>
+                <p class="text-xs text-muted mt-1">Direct calendar sync with students</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Approved Institutes</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-subtle border border-hairline rounded">NETWORK</span>
+              </div>
+              <div>
+                <p class="text-3xl font-semibold tracking-tight text-ink">04</p>
+                <p class="text-xs text-muted mt-1">Accredited academic career offices</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TWO-COLUMN OVERVIEW GRID: VERIFIED CANDIDATE FEED + ACTIVE ROLES & COMPLIANCE -->
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+            <!-- Left 7 Cols: Latest Institute-Verified Candidates -->
+            <div class="xl:col-span-7 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-lg font-semibold tracking-tight text-ink">Latest Verified Candidates</h2>
+                  <p class="text-xs text-muted">Pre-screened by university registrars for legal right to work</p>
+                </div>
+                <button
+                  type="button"
+                  onclick="openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs')"
+                  class="font-mono text-xs underline underline-offset-4 hover:opacity-75"
+                >
+                  Open full CV pool →
+                </button>
+              </div>
+
+              <div id="overviewCandidateCards" class="space-y-3">
+                <!-- Populated dynamically by JS -->
+              </div>
+            </div>
+
+            <!-- Right 5 Cols: Active Job Postings & Compliance Shield -->
+            <div class="xl:col-span-5 space-y-6">
+              <!-- Posted Roles Snapshot -->
+              <div class="bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden">
+                <div class="px-5 py-4 bg-subtle border-b border-hairline flex items-center justify-between">
+                  <span class="font-mono text-xs font-semibold uppercase">Your Verified Roles</span>
+                  <button
+                    type="button"
+                    onclick="openJobsWithFilter('all', 'jobs-all', 'All Posted Roles')"
+                    class="font-mono text-[11px] text-muted hover:text-ink underline underline-offset-4"
+                  >
+                    Manage all
+                  </button>
+                </div>
+                <div id="overviewJobsList" class="divide-y divide-hairline">
+                  <!-- Populated dynamically by JS -->
+                </div>
+              </div>
+
+              <!-- Compliance Screening Guarantee Card -->
+              <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-card space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] uppercase text-muted">Legal Pre-Screening</span>
+                  <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">ZERO NOISE</span>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-ink">11 Ineligible Applicants Filtered Out</h3>
+                  <p class="text-xs text-muted mt-1 leading-relaxed">
+                    Applicants without matching degree credentials or statutory work authorization are automatically blocked before reaching your queue.
+                  </p>
+                </div>
+                <div class="p-3 bg-subtle border border-hairline rounded-xl flex items-center justify-between gap-2 font-mono text-[11px]">
+                  <span class="truncate text-muted">KYB SEAL: KYB-SJW-2026-4410</span>
+                  <button
+                    type="button"
+                    onclick="copyKybHash()"
+                    class="px-2.5 py-1 bg-paper border border-hairline rounded-lg hover:border-ink text-ink shrink-0 transition-colors"
+                  >
+                    COPY ID
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: VERIFIED CANDIDATE POOL (100% ELIGIBLE CVs)               -->
+        <!-- ================================================================= -->
+        <section id="view-candidates" class="hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">Registrar-Verified Talent</span>
+              <h1 id="candidatesSectionHeading" class="text-2xl font-semibold tracking-tight mt-1">All Eligible CVs</h1>
+            </div>
+
+            <!-- Candidate Stage Filter Pills -->
+            <div class="flex flex-wrap gap-2">
+              <button type="button" data-candfilter="all" onclick="setCandidateFilter('all')" class="cand-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-ink text-paper border border-ink shadow-soft">
+                ALL (6)
+              </button>
+              <button type="button" data-candfilter="New Verified CV" onclick="setCandidateFilter('New Verified CV')" class="cand-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                NEW CVs
+              </button>
+              <button type="button" data-candfilter="Shortlisted" onclick="setCandidateFilter('Shortlisted')" class="cand-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                SHORTLISTED
+              </button>
+              <button type="button" data-candfilter="Interview Stage" onclick="setCandidateFilter('Interview Stage')" class="cand-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                INTERVIEWS
+              </button>
+            </div>
+          </div>
+
+          <!-- Search & Compliance Filter Bar -->
+          <div class="p-4 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+            <div class="relative flex-1 flex items-center">
+              <svg class="w-4 h-4 text-muted ml-2 mr-2.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+              </svg>
+              <input
+                id="candidatePoolSearch"
+                type="text"
+                placeholder="Search by candidate name, institute, degree, or work authorization..."
+                class="w-full text-sm bg-transparent placeholder:text-muted focus:outline-none"
+              />
+            </div>
+            <div class="flex items-center gap-2 font-mono text-[11px] text-ink bg-subtle px-3 py-2 rounded-lg border border-hairline shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-ink"></span>
+              <span>100% STATUTORY WORK-RIGHT VERIFIED</span>
+            </div>
+          </div>
+
+          <!-- Verified Candidates Table -->
+          <div class="bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-subtle border-b border-hairline font-mono text-[11px] uppercase text-muted">
+                    <th class="py-3.5 px-5">Candidate &amp; Institute</th>
+                    <th class="py-3.5 px-5">Applied Role</th>
+                    <th class="py-3.5 px-5">Legal Work-Right Seal</th>
+                    <th class="py-3.5 px-5">Stage</th>
+                    <th class="py-3.5 px-5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="candidatesTableBody" class="divide-y divide-hairline text-sm">
+                  <!-- Populated dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: JOB POSTINGS MANAGER                                      -->
+        <!-- ================================================================= -->
+        <section id="view-jobs" class="hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">Campus-Vetted Listings</span>
+              <h1 id="jobsSectionHeading" class="text-2xl font-semibold tracking-tight mt-1">All Posted Roles</h1>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" data-jobstatus="all" onclick="setPostedJobFilter('all')" class="posted-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-ink text-paper border border-ink shadow-soft">
+                ALL
+              </button>
+              <button type="button" data-jobstatus="Live • Verified" onclick="setPostedJobFilter('Live • Verified')" class="posted-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                LIVE &amp; VERIFIED
+              </button>
+              <button type="button" data-jobstatus="Pending Institute Review" onclick="setPostedJobFilter('Pending Institute Review')" class="posted-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                PENDING REVIEW
+              </button>
+              <button
+                type="button"
+                onclick="openPostJobModal()"
+                class="px-4 py-2 text-xs font-mono bg-ink text-paper rounded-lg shadow-soft hover:bg-neutral-800 transition-colors"
+              >
+                + POST NEW ROLE
+              </button>
+            </div>
+          </div>
+
+          <div id="postedJobsList" class="space-y-3.5">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 4: PARTNER INSTITUTES & KYB VAULT                            -->
+        <!-- ================================================================= -->
+        <section id="view-institutes" class="hidden space-y-6">
+          <div>
+            <span class="font-mono text-xs text-muted uppercase tracking-wider">Institutional Trust &amp; Compliance</span>
+            <h1 id="institutesSectionHeading" class="text-2xl font-semibold tracking-tight mt-1">Approved Academic Network &amp; KYB Vault</h1>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left 7 Cols: Partner Universities -->
+            <div class="lg:col-span-7 space-y-4">
+              <div class="bg-paper border border-hairline rounded-2xl shadow-card divide-y divide-hairline overflow-hidden">
+                <div class="px-6 py-4 bg-subtle flex items-center justify-between">
+                  <span class="font-mono text-xs font-semibold uppercase">Connected Institute Career Offices</span>
+                  <span class="font-mono text-[11px] text-ink">04 APPROVED</span>
+                </div>
+
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 class="text-sm font-semibold text-ink">Polytechnic Institute</h3>
+                    <p class="text-xs text-muted mt-0.5">Computer Science, Mathematics, Robotics &amp; Engineering Cohorts</p>
+                  </div>
+                  <span class="font-mono text-[10px] px-2.5 py-1 bg-ink text-paper rounded self-start sm:self-center shrink-0">
+                    FULL ACCESS
+                  </span>
+                </div>
+
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 class="text-sm font-semibold text-ink">School of Economics</h3>
+                    <p class="text-xs text-muted mt-0.5">Quantitative Finance, Econometrics &amp; Policy Analytics</p>
+                  </div>
+                  <span class="font-mono text-[10px] px-2.5 py-1 bg-ink text-paper rounded self-start sm:self-center shrink-0">
+                    FULL ACCESS
+                  </span>
+                </div>
+
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 class="text-sm font-semibold text-ink">Faculty of Engineering</h3>
+                    <p class="text-xs text-muted mt-0.5">Systems Engineering, Electrical &amp; Autonomous Systems</p>
+                  </div>
+                  <span class="font-mono text-[10px] px-2.5 py-1 bg-subtle border border-hairline text-ink rounded self-start sm:self-center shrink-0">
+                    APPROVED
+                  </span>
+                </div>
+
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 class="text-sm font-semibold text-ink">Graduate Research Hub</h3>
+                    <p class="text-xs text-muted mt-0.5">MSc, PhD &amp; Post-Doctoral Alumni Network</p>
+                  </div>
+                  <span class="font-mono text-[10px] px-2.5 py-1 bg-subtle border border-hairline text-ink rounded self-start sm:self-center shrink-0">
+                    APPROVED
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right 5 Cols: KYB & Sponsorship License Vault -->
+            <div class="lg:col-span-5">
+              <div class="bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden">
+                <div class="px-6 py-4 bg-ink text-paper flex items-center justify-between">
+                  <span class="font-mono text-xs">EMPLOYER KYB &amp; SPONSOR VAULT</span>
+                  <span class="font-mono text-[10px] text-neutral-300">VERIFIED</span>
+                </div>
+
+                <div class="p-6 space-y-4 text-xs">
+                  <div class="p-3.5 bg-subtle border border-hairline rounded-xl space-y-1">
+                    <span class="font-mono text-[10px] text-muted uppercase">Registered Entity</span>
+                    <p class="font-semibold text-ink">Helvetia Financial Systems AG</p>
+                    <p class="font-mono text-[11px] text-muted">Commercial Reg: CHE-114.920.381</p>
+                  </div>
+
+                  <div class="p-3.5 bg-subtle border border-hairline rounded-xl space-y-1">
+                    <span class="font-mono text-[10px] text-muted uppercase">Visa Sponsorship Accreditation</span>
+                    <p class="font-semibold text-ink">Tier-1 Licensed Work-Permit Sponsor</p>
+                    <p class="text-muted">Authorized to issue full-time graduate &amp; skilled worker sponsorships.</p>
+                  </div>
+
+                  <div class="p-3.5 bg-subtle border border-hairline rounded-xl flex items-center justify-between gap-2 font-mono text-[11px]">
+                    <span class="truncate text-ink">HASH: KYB-SJW-2026-4410</span>
+                    <button
+                      type="button"
+                      onclick="copyKybHash()"
+                      class="px-2.5 py-1 bg-paper border border-hairline rounded-lg hover:border-ink shrink-0"
+                    >
+                      COPY
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 5: CAREER OFFICE LIAISON DESK                                -->
+        <!-- ================================================================= -->
+        <section id="view-office" class="hidden space-y-6">
+          <div>
+            <span class="font-mono text-xs text-muted uppercase tracking-wider">University Partnerships</span>
+            <h1 class="text-2xl font-semibold tracking-tight mt-1">Institute Career Office Desk</h1>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden flex flex-col justify-between">
+              <div class="px-6 py-4 bg-subtle border-b border-hairline flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-semibold text-ink">Polytechnic Institute — Employer Relations</h2>
+                  <p class="font-mono text-[11px] text-muted">Coordinator: Dr. Elena Vance • careers-office@polytechnic.edu</p>
+                </div>
+                <span class="font-mono text-[10px] px-2.5 py-1 bg-ink text-paper rounded">VERIFIED CHANNEL</span>
+              </div>
+
+              <div id="officeMessageThread" class="p-6 space-y-4 max-h-80 overflow-y-auto">
+                <div class="p-4 bg-subtle border border-hairline rounded-xl space-y-1.5">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted">
+                    <span class="text-ink font-semibold">DR. ELENA VANCE (CAREER OFFICE)</span>
+                    <span>TODAY, 09:45</span>
+                  </div>
+                  <p class="text-xs text-ink leading-relaxed">
+                    Welcome, Helvetia Financial Systems. Your Junior Quantitative Systems Engineer posting has been verified and distributed to eligible final-year MSc and BSc cohorts. Only candidates holding valid post-study or sponsorship eligibility can submit CVs.
+                  </p>
+                </div>
+              </div>
+
+              <form id="officeReplyForm" class="p-4 bg-subtle border-t border-hairline flex gap-2.5">
+                <input
+                  id="officeReplyInput"
+                  type="text"
+                  placeholder="Message university career office coordinators..."
+                  class="flex-1 px-3.5 py-2.5 text-xs bg-paper border border-hairline rounded-xl shadow-soft focus:border-ink focus:outline-none"
+                />
+                <button type="submit" class="px-4 py-2.5 bg-ink text-paper text-xs font-mono rounded-xl shadow-soft hover:bg-neutral-800 transition-colors shrink-0">
+                  SEND →
+                </button>
+              </form>
+            </div>
+
+            <div class="lg:col-span-5 p-6 bg-paper border border-hairline rounded-2xl shadow-card space-y-4 self-start">
+              <span class="font-mono text-xs font-semibold uppercase">Campus Recruitment Events</span>
+              <p class="text-xs text-muted leading-relaxed">
+                Reserve a verified employer booth or technical interview room directly on campus.
+              </p>
+              <div class="space-y-2.5 text-xs font-mono">
+                <div class="p-3 bg-subtle border border-hairline rounded-xl flex items-center justify-between">
+                  <span>WINTER TECH SYMPOSIUM • DEC 04</span>
+                  <button type="button" onclick="showToast('✓ Employer booth requested for Winter Tech Symposium.')" class="px-3 py-1 bg-ink text-paper rounded-lg">
+                    RESERVE
+                  </button>
+                </div>
+                <div class="p-3 bg-subtle border border-hairline rounded-xl flex items-center justify-between">
+                  <span>GRADUATE SPONSOR FAIR • JAN 15</span>
+                  <button type="button" onclick="showToast('✓ Employer booth requested for Graduate Sponsor Fair.')" class="px-3 py-1 bg-ink text-paper rounded-lg">
+                    RESERVE
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- CANDIDATE VERIFIED CV & LEGAL WORK-RIGHT SLIDE-OVER DRAWER            -->
+  <!-- ===================================================================== -->
+  <div id="candidateDrawer" class="fixed inset-0 z-50 hidden" aria-modal="true" role="dialog">
+    <div onclick="closeCandidateDrawer()" class="fixed inset-0 bg-black/35 backdrop-blur-[2px]"></div>
+    <div class="fixed inset-y-0 right-0 max-w-lg w-full bg-paper border-l border-hairline shadow-modal flex flex-col justify-between overflow-y-auto">
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-hairline">
+          <div class="flex items-center gap-2">
+            <span id="drawerCandStage" class="font-mono text-xs px-2.5 py-1 bg-ink text-paper rounded-md">NEW VERIFIED CV</span>
+            <span id="drawerCandSeal" class="font-mono text-xs text-muted">SJW-ATT-8841</span>
+          </div>
+          <button type="button" onclick="closeCandidateDrawer()" aria-label="Close Drawer" class="p-2 rounded-lg border border-hairline shadow-soft hover:border-ink">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div>
+          <p id="drawerCandInstitute" class="font-mono text-xs text-muted uppercase tracking-wider">Polytechnic Institute</p>
+          <h2 id="drawerCandName" class="text-2xl font-semibold tracking-tight text-ink mt-1">Alex Mercer</h2>
+          <p id="drawerCandDegree" class="text-sm text-muted mt-1">MSc Computer Science • Class of 2027</p>
+        </div>
+
+        <!-- Institutional Legal Work-Right Attestation Card -->
+        <div class="p-5 bg-subtle border border-hairline rounded-xl shadow-soft space-y-3 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">APPLIED ROLE</span>
+            <span id="drawerCandRole" class="font-mono font-medium text-ink text-right">Role Title</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">LEGAL WORK RIGHT</span>
+            <span id="drawerCandWorkRight" class="font-mono font-medium text-ink text-right">Verified Eligible</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">AVAILABILITY</span>
+            <span id="drawerCandAvailability" class="font-mono font-medium text-ink text-right">Immediate / Full-Time</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">REGISTRAR STATUS</span>
+            <span class="font-mono font-semibold text-ink text-right">✓ AUTHENTICATED</span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-mono text-xs uppercase tracking-wider text-muted">Verified Academic &amp; Technical Summary</h3>
+          <p id="drawerCandSummary" class="text-sm text-ink/90 leading-relaxed"></p>
+        </div>
+
+        <div class="p-4 bg-subtle border border-hairline rounded-xl flex items-center justify-between gap-3 text-xs font-mono">
+          <div class="min-w-0">
+            <p id="drawerCandCvFile" class="font-semibold text-ink truncate">Candidate_CV_Verified.pdf</p>
+            <p class="text-[10px] text-muted mt-0.5">Digitally stamped by Institute Career Office</p>
+          </div>
+          <button
+            type="button"
+            onclick="showToast('✓ Stamped CV PDF downloaded with registrar seal.')"
+            class="px-3 py-1.5 bg-paper border border-hairline rounded-lg hover:border-ink shrink-0"
+          >
+            DOWNLOAD PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Candidate Pipeline Actions -->
+      <div class="p-6 border-t border-hairline bg-subtle flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button
+          type="button"
+          onclick="updateCandidateStage('Shortlisted')"
+          class="flex-1 py-3 px-4 bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink text-xs font-mono text-ink transition-colors"
+        >
+          SHORTLIST CANDIDATE
+        </button>
+        <button
+          type="button"
+          onclick="updateCandidateStage('Interview Stage')"
+          class="flex-1 py-3 px-4 bg-ink text-paper text-xs font-mono rounded-xl shadow-soft hover:bg-neutral-800 transition-colors"
+        >
+          INVITE TO INTERVIEW →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- POST NEW VERIFIED ROLE MODAL                                          -->
+  <!-- ===================================================================== -->
+  <div id="postJobModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" aria-modal="true" role="dialog">
+    <div onclick="closePostJobModal()" class="fixed inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+    <div class="relative bg-paper border border-hairline rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-modal">
+      <div class="px-6 py-4 bg-subtle border-b border-hairline flex items-center justify-between sticky top-0 z-10">
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <span class="w-2 h-2 rounded-full bg-ink"></span>
+          <span>PUBLISH INSTITUTE-VERIFIED ROLE</span>
+        </div>
+        <button type="button" onclick="closePostJobModal()" aria-label="Close Modal" class="p-1.5 rounded-lg border border-hairline bg-paper hover:border-ink">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="newJobForm" class="p-6 sm:p-7 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label for="newJobTitle" class="block font-mono text-[11px] uppercase text-muted">Role Title</label>
+            <input
+              id="newJobTitle"
+              type="text"
+              required
+              placeholder="Quantitative Risk Analyst"
+              class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="newJobType" class="block font-mono text-[11px] uppercase text-muted">Employment Category</label>
+            <select
+              id="newJobType"
+              class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+            >
+              <option value="Full-Time">Full-Time</option>
+              <option value="Part-Time">Part-Time (≤20 hrs/week Student Safe)</option>
+              <option value="Sponsorship">Job Sponsorship (Visa Supported)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label for="newJobLocation" class="block font-mono text-[11px] uppercase text-muted">Location &amp; Mode</label>
+            <input
+              id="newJobLocation"
+              type="text"
+              required
+              placeholder="Zurich / Hybrid"
+              class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="newJobSalary" class="block font-mono text-[11px] uppercase text-muted">Compensation</label>
+            <input
+              id="newJobSalary"
+              type="text"
+              required
+              placeholder="CHF 90,000 – 105,000 / yr"
+              class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="newJobEligibility" class="block font-mono text-[11px] uppercase text-muted">Mandatory Legal Work-Right Filter</label>
+          <select
+            id="newJobEligibility"
+            class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+          >
+            <option value="Graduate Work-Permit & Tier-1 Sponsorship Eligible">Graduate Work-Permit &amp; Tier-1 Sponsorship Eligible</option>
+            <option value="Enrolled Student Visa Compliant (Max 20 hrs/wk)">Enrolled Student Visa Compliant (Max 20 hrs/wk)</option>
+            <option value="Unrestricted Work Authorization Only">Unrestricted Work Authorization Only</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="newJobInstitute" class="block font-mono text-[11px] uppercase text-muted">Target Partner Institute</label>
+          <select
+            id="newJobInstitute"
+            class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+          >
+            <option value="Polytechnic Institute">Polytechnic Institute</option>
+            <option value="School of Economics">School of Economics</option>
+            <option value="Faculty of Engineering">Faculty of Engineering</option>
+            <option value="Graduate Research Hub">Graduate Research Hub</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="newJobDesc" class="block font-mono text-[11px] uppercase text-muted">Role Overview &amp; Cohort Requirements</label>
+          <textarea
+            id="newJobDesc"
+            rows="3"
+            required
+            placeholder="Describe responsibilities and eligible academic degrees..."
+            class="w-full px-3.5 py-2.5 text-sm bg-paper border border-hairline rounded-lg shadow-soft focus:border-ink focus:outline-none"
+          ></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onclick="closePostJobModal()"
+            class="px-4 py-2.5 text-xs font-mono bg-paper border border-hairline rounded-xl hover:border-ink"
+          >
+            CANCEL
+          </button>
+          <button
+            type="submit"
+            class="px-5 py-2.5 text-xs font-mono bg-ink text-paper rounded-xl shadow-soft hover:bg-neutral-800 transition-colors"
+          >
+            SUBMIT FOR INSTITUTE VERIFICATION →
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- EMPLOYER DASHBOARD INTERACTIVITY & STATE CONTROLLER                   -->
+  <!-- ===================================================================== -->
+  <script>
+    // 1. VERIFIED CANDIDATES DATASET (100% INSTITUTE-SCREENED)
+    const CANDIDATES_DATA = [
+      {
+        id: 'CAND-01',
+        name: 'Alex Mercer',
+        institute: 'Polytechnic Institute',
+        degree: 'MSc Computer Science • Class of 2027',
+        role: 'Junior Quantitative Systems Engineer',
+        workRight: 'Post-Study Permit & Sponsor Eligible',
+        availability: 'June 2027 (Full-Time)',
+        sealId: 'SJW-ATT-8841',
+        stage: 'New Verified CV',
+        cvFile: 'Alex_Mercer_CV_2026_Verified.pdf',
+        summary: 'Specializes in distributed low-latency systems, C++20, and stochastic modeling. Ranked top 5% in Systems Architecture cohort; enrollment and work eligibility verified by Polytechnic Registrar.'
+      },
+      {
+        id: 'CAND-02',
+        name: 'Sofia Lindqvist',
+        institute: 'School of Economics',
+        degree: 'MSc Quantitative Finance • Class of 2026',
+        role: 'Junior Quantitative Systems Engineer',
+        workRight: 'Unrestricted EU/EFTA Work Right',
+        availability: 'Immediate (Graduated)',
+        sealId: 'SJW-ATT-8910',
+        stage: 'Interview Stage',
+        cvFile: 'Sofia_Lindqvist_CV_Verified.pdf',
+        summary: 'Quantitative researcher experienced in derivatives pricing, Python numerical libraries, and risk telemetry. Completed thesis on high-frequency order book liquidity.'
+      },
+      {
+        id: 'CAND-03',
+        name: 'Kenji Takahashi',
+        institute: 'Faculty of Engineering',
+        degree: 'BSc Applied Mathematics • 3rd Year',
+        role: 'Part-Time Quantitative Research Intern (20h/wk)',
+        workRight: 'Student Visa Compliant (Max 20h/wk)',
+        availability: '20 hrs/week Term-Time',
+        sealId: 'SJW-ATT-8944',
+        stage: 'Shortlisted',
+        cvFile: 'Kenji_Takahashi_CV_Verified.pdf',
+        summary: 'Strong background in numerical linear algebra, statistical inference, and Rust backend tooling. Academic timetable verified compliant for 20 hours/week.'
+      },
+      {
+        id: 'CAND-04',
+        name: 'Amara Okafor',
+        institute: 'Graduate Research Hub',
+        degree: 'PhD Computational Statistics • Alumni',
+        role: 'Senior Quantitative Infrastructure Associate',
+        workRight: 'Tier-1 Visa Sponsorship Eligible',
+        availability: '30 Days Notice',
+        sealId: 'SJW-ATT-8992',
+        stage: 'Interview Stage',
+        cvFile: 'Amara_Okafor_PhD_CV_Verified.pdf',
+        summary: '4 years of academic and industry experience building fault-tolerant pricing pipelines and distributed Monte Carlo simulation clusters.'
+      },
+      {
+        id: 'CAND-05',
+        name: 'Lukas Meyer',
+        institute: 'Polytechnic Institute',
+        degree: 'BSc Computer Science • Final Year',
+        role: 'Part-Time Quantitative Research Intern (20h/wk)',
+        workRight: 'Student Visa Compliant (Max 20h/wk)',
+        availability: '16–20 hrs/week',
+        sealId: 'SJW-ATT-9018',
+        stage: 'New Verified CV',
+        cvFile: 'Lukas_Meyer_CV_Verified.pdf',
+        summary: 'Systems programming teaching assistant with deep familiarity in Linux kernel networking, time-series databases, and automated testing.'
+      },
+      {
+        id: 'CAND-06',
+        name: 'Clara Rossi',
+        institute: 'School of Economics',
+        degree: 'MSc Data Science & Policy • Class of 2026',
+        role: 'Junior Quantitative Systems Engineer',
+        workRight: 'Post-Study Graduate Work Permit',
+        availability: 'Immediate',
+        sealId: 'SJW-ATT-9051',
+        stage: 'Shortlisted',
+        cvFile: 'Clara_Rossi_CV_Verified.pdf',
+        summary: 'Experienced in econometric time-series forecasting, SQL analytics, and real-time market data ingestion pipelines.'
+      }
+    ];
+
+    // 2. EMPLOYER POSTED ROLES DATASET
+    const POSTED_JOBS_DATA = [
+      {
+        id: 'JOB-101',
+        title: 'Junior Quantitative Systems Engineer',
+        type: 'Full-Time',
+        location: 'Zurich / Hybrid',
+        salary: 'CHF 95,000 – 110,000 / yr',
+        institute: 'Polytechnic Institute & School of Economics',
+        eligibility: 'Graduate Work-Permit & Tier-1 Sponsorship Eligible',
+        eligibleCount: 3,
+        status: 'Live • Verified',
+        description: 'Build low-latency risk engines alongside senior quantitative architects.'
+      },
+      {
+        id: 'JOB-108',
+        title: 'Part-Time Quantitative Research Intern (20h/wk)',
+        type: 'Part-Time',
+        location: 'Zurich / Campus Hub',
+        salary: 'CHF 36 / hour',
+        institute: 'Polytechnic Institute & Faculty of Engineering',
+        eligibility: 'Enrolled Student Visa Compliant (Max 20 hrs/wk)',
+        eligibleCount: 2,
+        status: 'Live • Verified',
+        description: 'Term-time compliant research role aligned with academic lecture schedules.'
+      },
+      {
+        id: 'JOB-112',
+        title: 'Senior Quantitative Infrastructure Associate',
+        type: 'Sponsorship',
+        location: 'Zurich, Switzerland',
+        salary: 'CHF 125,000 – 140,000 / yr + Relocation',
+        institute: 'Graduate Research Hub',
+        eligibility: 'Tier-1 Visa Sponsorship Provided',
+        eligibleCount: 1,
+        status: 'Pending Institute Review',
+        description: 'Architect distributed simulation infrastructure for institutional trading desks.'
+      }
+    ];
+
+    // STATE VARIABLES
+    let currentCandFilter = 'all';
+    let currentCandSearch = '';
+    let currentPostedFilter = 'all';
+    let activeDrawerCandidateId = null;
+
+    // 3. HYDRATE SESSION FROM LOGIN.HTML (IF AVAILABLE)
+    function hydrateEmployerSession() {
+      try {
+        const raw = localStorage.getItem('studentsjob_session');
+        if (!raw) return;
+        const session = JSON.parse(raw);
+        if (session && session.email && session.role === 'employer') {
+          document.getElementById('dropdownRecruiterEmail').textContent = session.email;
+        }
+      } catch (e) {
+        // Fallback to default employer profile
+      }
+    }
+
+    // 4. SIDENAV & EXPANDABLE SUB-MENUS
+    function openMobileSidebar() {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.remove('hidden');
+    }
+
+    function closeMobileSidebar() {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.add('hidden');
+    }
+
+    function toggleSubmenu(menuKey) {
+      const submenu = document.getElementById(`submenu-${menuKey}`);
+      const chevron = document.getElementById(`chevron-${menuKey}`);
+      const btn = document.getElementById(`menuBtn-${menuKey}`);
+      if (!submenu) return;
+
+      const isHidden = submenu.classList.contains('hidden');
+      if (isHidden) {
+        submenu.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        submenu.classList.add('hidden');
+        chevron.classList.remove('rotate-180');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function setActiveNavHighlight(mainKey, subKey = null) {
+      document.querySelectorAll('.nav-main-btn').forEach(btn => {
+        if (btn.getAttribute('data-nav') === mainKey && !subKey) {
+          btn.classList.add('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.remove('text-ink', 'hover:bg-subtle');
+        } else if (btn.getAttribute('data-nav') === mainKey && subKey) {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.add('bg-subtle', 'text-ink');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft', 'bg-subtle');
+          btn.classList.add('text-ink', 'hover:bg-subtle');
+        }
+      });
+
+      document.querySelectorAll('.nav-sub-btn').forEach(btn => {
+        if (subKey && btn.getAttribute('data-sub') === subKey) {
+          btn.classList.add('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.remove('text-muted', 'hover:text-ink', 'hover:bg-subtle');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.add('text-muted', 'hover:text-ink', 'hover:bg-subtle');
+        }
+      });
+    }
+
+    function navigateTo(viewName, parentLabel, childLabel, subKey = null) {
+      ['overview', 'candidates', 'jobs', 'institutes', 'office'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+      });
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+      document.getElementById('breadcrumbParent').textContent = parentLabel;
+      document.getElementById('breadcrumbChild').textContent = childLabel;
+
+      setActiveNavHighlight(viewName, subKey);
+      closeMobileSidebar();
+    }
+
+    function openCandidatesWithFilter(filterVal, subKey, label) {
+      const submenu = document.getElementById('submenu-candidates');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('candidates');
+      navigateTo('candidates', 'Verified CVs', label, subKey);
+      document.getElementById('candidatesSectionHeading').textContent = label;
+      setCandidateFilter(filterVal);
+    }
+
+    function openJobsWithFilter(filterVal, subKey, label) {
+      const submenu = document.getElementById('submenu-jobs');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('jobs');
+      navigateTo('jobs', 'Job Postings', label, subKey);
+      document.getElementById('jobsSectionHeading').textContent = label;
+      setPostedJobFilter(filterVal);
+    }
+
+    function openInstitutesSection(sectionKey, subKey, label) {
+      const submenu = document.getElementById('submenu-institutes');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('institutes');
+      navigateTo('institutes', 'Institutes & KYB', label, subKey);
+      document.getElementById('institutesSectionHeading').textContent = label;
+    }
+
+    // 5. TOPNAV DROPDOWN CONTROLS
+    function toggleDropdown(menuId, btnId) {
+      const menu = document.getElementById(menuId);
+      const btn = document.getElementById(btnId);
+      const isHidden = menu.classList.contains('hidden');
+      closeAllDropdowns();
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    function closeAllDropdowns() {
+      ['notificationMenu', 'profileMenu'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      ['notificationBellBtn', 'profileMenuBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const notifWrap = document.getElementById('notificationDropdownWrapper');
+      const profileWrap = document.getElementById('profileDropdownWrapper');
+      if (notifWrap && !notifWrap.contains(e.target) && profileWrap && !profileWrap.contains(e.target)) {
+        closeAllDropdowns();
+      }
+    });
+
+    function markAllNotificationsRead() {
+      document.getElementById('notifUnreadDot').classList.add('hidden');
+      document.getElementById('notifCountBadge').textContent = '0 NEW';
+      document.querySelectorAll('.notif-item').forEach(item => item.classList.remove('bg-subtle/50'));
+      showToast('✓ All recruitment alerts marked as read.');
+    }
+
+    // 6. RENDER OVERVIEW & METRICS
+    function renderOverview() {
+      // Latest 3 Candidates
+      const candContainer = document.getElementById('overviewCandidateCards');
+      candContainer.innerHTML = CANDIDATES_DATA.slice(0, 3).map(cand => `
+        <article
+          onclick="openCandidateDrawer('${cand.id}')"
+          class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft hover:shadow-card-hover hover:border-ink/40 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded ${cand.stage === 'Interview Stage' ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+                ${cand.stage.toUpperCase()}
+              </span>
+              <span class="font-mono text-[11px] text-muted">✓ ${cand.workRight}</span>
+            </div>
+            <h3 class="text-base font-semibold text-ink">${cand.name} <span class="font-normal text-xs text-muted">• ${cand.institute}</span></h3>
+            <p class="text-xs text-muted">Applied for: <span class="text-ink font-medium">${cand.role}</span></p>
+          </div>
+          <span class="font-mono text-[11px] px-3.5 py-2 rounded-lg bg-ink text-paper shrink-0 self-start sm:self-center">
+            INSPECT CV →
+          </span>
+        </article>
+      `).join('');
+
+      // Posted Roles Snapshot
+      const jobsContainer = document.getElementById('overviewJobsList');
+      jobsContainer.innerHTML = POSTED_JOBS_DATA.map(job => `
+        <div class="p-4 flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold text-ink truncate">${job.title}</p>
+            <p class="text-[11px] text-muted truncate mt-0.5">${job.type} • ${job.eligibleCount} Eligible CVs</p>
+            <p class="font-mono text-[10px] text-muted mt-1">${job.institute}</p>
+          </div>
+          <span class="font-mono text-[10px] px-2 py-1 rounded-md shrink-0 ${job.status.startsWith('Live') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+            ${job.status.startsWith('Live') ? 'LIVE' : 'REVIEW'}
+          </span>
+        </div>
+      `).join('');
+
+      // Update Counters
+      const interviewTotal = CANDIDATES_DATA.filter(c => c.stage === 'Interview Stage').length;
+      document.getElementById('kpiTotalCvs').textContent = String(CANDIDATES_DATA.length).padStart(2, '0');
+      document.getElementById('kpiTotalJobs').textContent = String(POSTED_JOBS_DATA.length).padStart(2, '0');
+      document.getElementById('kpiInterviewCount').textContent = String(interviewTotal).padStart(2, '0');
+      document.getElementById('sidebarTotalCvsBadge').textContent = CANDIDATES_DATA.length;
+      document.getElementById('subCandAllCount').textContent = String(CANDIDATES_DATA.length).padStart(2, '0');
+      document.getElementById('sidebarTotalJobsBadge').textContent = POSTED_JOBS_DATA.length;
+      document.getElementById('subJobsAllCount').textContent = String(POSTED_JOBS_DATA.length).padStart(2, '0');
+    }
+
+    // 7. RENDER CANDIDATE POOL TABLE
+    function setCandidateFilter(filterVal) {
+      currentCandFilter = filterVal;
+      document.querySelectorAll('.cand-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-candfilter') === filterVal) {
+          btn.classList.add('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.remove('bg-paper', 'text-ink', 'border-hairline');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.add('bg-paper', 'text-ink', 'border-hairline');
+        }
+      });
+      renderCandidatesTable();
+    }
+
+    function renderCandidatesTable() {
+      const tbody = document.getElementById('candidatesTableBody');
+      const q = currentCandSearch.trim().toLowerCase();
+
+      const filtered = CANDIDATES_DATA.filter(c => {
+        const matchesStage = currentCandFilter === 'all' || c.stage === currentCandFilter;
+        const matchesQuery = !q ||
+          c.name.toLowerCase().includes(q) ||
+          c.institute.toLowerCase().includes(q) ||
+          c.degree.toLowerCase().includes(q) ||
+          c.role.toLowerCase().includes(q) ||
+          c.workRight.toLowerCase().includes(q);
+        return matchesStage && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-10 px-5 text-center font-mono text-xs text-muted">
+              No verified candidates match your current filter criteria.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(cand => `
+        <tr onclick="openCandidateDrawer('${cand.id}')" class="hover:bg-subtle/70 transition-colors cursor-pointer">
+          <td class="py-4 px-5">
+            <p class="font-semibold text-ink text-xs sm:text-sm">${cand.name}</p>
+            <p class="text-xs text-muted mt-0.5">${cand.institute} • ${cand.degree}</p>
+          </td>
+          <td class="py-4 px-5 text-xs text-ink font-medium">${cand.role}</td>
+          <td class="py-4 px-5">
+            <span class="font-mono text-[11px] px-2.5 py-1 bg-subtle border border-hairline rounded text-ink inline-block">
+              ✓ ${cand.workRight}
+            </span>
+          </td>
+          <td class="py-4 px-5">
+            <span class="font-mono text-[10px] px-2.5 py-1 rounded-md ${cand.stage === 'Interview Stage' ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+              ${cand.stage.toUpperCase()}
+            </span>
+          </td>
+          <td class="py-4 px-5 text-right">
+            <button
+              type="button"
+              onclick="event.stopPropagation(); openCandidateDrawer('${cand.id}')"
+              class="font-mono text-[11px] px-3 py-1.5 bg-paper border border-hairline rounded-lg hover:border-ink transition-colors"
+            >
+              VIEW CV →
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 8. RENDER POSTED JOBS LIST
+    function setPostedJobFilter(statusVal) {
+      currentPostedFilter = statusVal;
+      document.querySelectorAll('.posted-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-jobstatus') === statusVal) {
+          btn.classList.add('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.remove('bg-paper', 'text-ink', 'border-hairline');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.add('bg-paper', 'text-ink', 'border-hairline');
+        }
+      });
+      renderPostedJobsList();
+    }
+
+    function renderPostedJobsList() {
+      const container = document.getElementById('postedJobsList');
+      const filtered = POSTED_JOBS_DATA.filter(j =>
+        currentPostedFilter === 'all' || j.status === currentPostedFilter
+      );
+
+      container.innerHTML = filtered.map(job => `
+        <article class="p-5 sm:p-6 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="space-y-2 max-w-2xl">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-md ${job.status.startsWith('Live') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+                ${job.status.toUpperCase()}
+              </span>
+              <span class="font-mono text-[10px] px-2.5 py-0.5 bg-subtle border border-hairline rounded-md text-ink">
+                ${job.type.toUpperCase()}
+              </span>
+              <span class="font-mono text-[11px] text-muted">${job.institute}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-ink">${job.title}</h3>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+              <span>${job.location}</span>
+              <span>•</span>
+              <span class="font-mono text-ink">${job.salary}</span>
+              <span>•</span>
+              <span>Filter: ${job.eligibility}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between lg:justify-end gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-hairline shrink-0">
+            <div class="text-right mr-2">
+              <p class="font-mono text-sm font-semibold text-ink">${job.eligibleCount} CVs</p>
+              <p class="font-mono text-[10px] text-muted">100% ELIGIBLE</p>
+            </div>
+            <button
+              type="button"
+              onclick="openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs')"
+              class="px-4 py-2 text-xs font-mono bg-ink text-paper rounded-lg hover:bg-neutral-800 transition-colors"
+            >
+              REVIEW CVs →
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // 9. CANDIDATE VERIFIED CV DRAWER
+    function openCandidateDrawer(candId) {
+      const cand = CANDIDATES_DATA.find(c => c.id === candId);
+      if (!cand) return;
+      activeDrawerCandidateId = candId;
+
+      document.getElementById('drawerCandStage').textContent = cand.stage.toUpperCase();
+      document.getElementById('drawerCandSeal').textContent = cand.sealId;
+      document.getElementById('drawerCandInstitute').textContent = cand.institute;
+      document.getElementById('drawerCandName').textContent = cand.name;
+      document.getElementById('drawerCandDegree').textContent = cand.degree;
+      document.getElementById('drawerCandRole').textContent = cand.role;
+      document.getElementById('drawerCandWorkRight').textContent = cand.workRight;
+      document.getElementById('drawerCandAvailability').textContent = cand.availability;
+      document.getElementById('drawerCandSummary').textContent = cand.summary;
+      document.getElementById('drawerCandCvFile').textContent = cand.cvFile;
+
+      document.getElementById('candidateDrawer').classList.remove('hidden');
+    }
+
+    function closeCandidateDrawer() {
+      document.getElementById('candidateDrawer').classList.add('hidden');
+      activeDrawerCandidateId = null;
+    }
+
+    function updateCandidateStage(newStage) {
+      if (!activeDrawerCandidateId) return;
+      const cand = CANDIDATES_DATA.find(c => c.id === activeDrawerCandidateId);
+      if (!cand) return;
+      cand.stage = newStage;
+
+      renderOverview();
+      renderCandidatesTable();
+      closeCandidateDrawer();
+      showToast(`✓ ${cand.name} moved to "${newStage}".`);
+    }
+
+    // 10. POST NEW VERIFIED JOB MODAL
+    function openPostJobModal() {
+      document.getElementById('postJobModal').classList.remove('hidden');
+    }
+
+    function closePostJobModal() {
+      document.getElementById('postJobModal').classList.add('hidden');
+    }
+
+    document.getElementById('newJobForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('newJobTitle').value.trim();
+      const type = document.getElementById('newJobType').value;
+      const location = document.getElementById('newJobLocation').value.trim();
+      const salary = document.getElementById('newJobSalary').value.trim();
+      const eligibility = document.getElementById('newJobEligibility').value;
+      const institute = document.getElementById('newJobInstitute').value;
+      const desc = document.getElementById('newJobDesc').value.trim();
+
+      if (!title || !location || !salary) return;
+
+      POSTED_JOBS_DATA.unshift({
+        id: `JOB-${Math.floor(200 + Math.random() * 700)}`,
+        title,
+        type,
+        location,
+        salary,
+        institute,
+        eligibility,
+        eligibleCount: 0,
+        status: 'Pending Institute Review',
+        description: desc
+      });
+
+      e.target.reset();
+      closePostJobModal();
+      renderOverview();
+      renderPostedJobsList();
+      openJobsWithFilter('all', 'jobs-all', 'All Posted Roles');
+      showToast(`✓ "${title}" submitted to ${institute} Career Office for verification.`);
+    });
+
+    // 11. SEARCH INPUT BINDINGS
+    document.getElementById('candidatePoolSearch').addEventListener('input', (e) => {
+      currentCandSearch = e.target.value;
+      renderCandidatesTable();
+    });
+
+    document.getElementById('topnavSearchInput').addEventListener('input', (e) => {
+      currentCandSearch = e.target.value;
+      document.getElementById('candidatePoolSearch').value = currentCandSearch;
+      if (document.getElementById('view-candidates').classList.contains('hidden')) {
+        openCandidatesWithFilter('all', 'cand-all', 'All Eligible CVs');
+      } else {
+        renderCandidatesTable();
+      }
+    });
+
+    // 12. CLIPBOARD & CAREER OFFICE MESSAGING
+    function copyKybHash() {
+      const temp = document.createElement('input');
+      temp.value = 'KYB-SJW-2026-4410';
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('✓ Employer KYB Seal (KYB-SJW-2026-4410) copied to clipboard.');
+    }
+
+    document.getElementById('officeReplyForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('officeReplyInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const thread = document.getElementById('officeMessageThread');
+      const div = document.createElement('div');
+      div.className = 'p-4 bg-paper border border-hairline rounded-xl space-y-1.5';
+      div.innerHTML = `
+        <div class="flex items-center justify-between font-mono text-[10px] text-muted">
+          <span class="text-ink font-semibold">HELVETIA FINANCIAL SYSTEMS (YOU)</span>
+          <span>JUST NOW</span>
+        </div>
+        <p class="text-xs text-ink leading-relaxed">${text}</p>
+      `;
+      thread.appendChild(div);
+      thread.scrollTop = thread.scrollHeight;
+      input.value = '';
+      showToast('✓ Message sent to Polytechnic Institute Career Office.');
+    });
+
+    // 13. INLINE TOAST HELPER (NO ALERT)
+    let toastTimer = null;
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastMessage').textContent = msg;
+      banner.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4500);
+    }
+
+    function hideToast() {
+      document.getElementById('toastBanner').classList.add('hidden');
+    }
+
+    // ESCAPE KEY HANDLER
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllDropdowns();
+        closeCandidateDrawer();
+        closePostJobModal();
+        closeMobileSidebar();
+      }
+    });
+
+    // INITIAL RENDER
+    hydrateEmployerSession();
+    renderOverview();
+    renderCandidatesTable();
+    renderPostedJobsList();
+  </script>
+</body>
+</html>

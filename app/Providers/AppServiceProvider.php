@@ -15,7 +15,30 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->loadHelpers();
+    }
+
+    /**
+     * Recursively require all PHP helpers under app/Helpers.
+     */
+    protected function loadHelpers(): void
+    {
+        $helpersPath = app_path('Helpers');
+
+        if (! is_dir($helpersPath)) {
+            return;
+        }
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($helpersPath, \FilesystemIterator::SKIP_DOTS)
+        );
+
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                require_once $file->getPathname();
+            }
+        }
     }
 
     /**
