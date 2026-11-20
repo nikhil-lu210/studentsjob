@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institute Career Office Dashboard — studentsjob.work</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono (Consistent across studentsjob.work) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            ink: '#0A0A0A',
+            paper: '#FFFFFF',
+            subtle: '#FAFAFA',
+            hairline: '#E6E6E6',
+            muted: '#666666',
+          },
+          boxShadow: {
+            'soft': '0 2px 10px rgba(0, 0, 0, 0.035)',
+            'card': '0 4px 20px rgba(0, 0, 0, 0.045)',
+            'card-hover': '0 10px 28px rgba(0, 0, 0, 0.075)',
+            'dropdown': '0 12px 32px rgba(0, 0, 0, 0.09)',
+            'modal': '0 20px 50px rgba(0, 0, 0, 0.14)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-subtle text-ink font-sans antialiased selection:bg-ink selection:text-paper overflow-x-hidden">
+
+  <!-- MOBILE SIDENAV BACKDROP -->
+  <div
+    id="sidebarBackdrop"
+    onclick="closeMobileSidebar()"
+    class="fixed inset-0 z-40 bg-black/35 backdrop-blur-[1px] hidden lg:hidden transition-opacity"
+  ></div>
+
+  <!-- MAIN APPLICATION SHELL -->
+  <div class="min-h-screen flex">
+
+    <!-- ===================================================================== -->
+    <!-- LEFT SIDENAV (WITH EXPANDABLE SUB-MENUS & INSTITUTE GOVERNANCE SEAL)  -->
+    <!-- ===================================================================== -->
+    <aside
+      id="sidebar"
+      aria-label="Institute Governance Sidebar Navigation"
+      class="fixed inset-y-0 left-0 z-50 w-72 bg-paper border-r border-hairline shadow-card lg:shadow-none flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out"
+    >
+      <!-- TOP BRAND & INSTITUTE GOVERNANCE CONTEXT -->
+      <div class="flex flex-col flex-1 overflow-y-auto">
+        <!-- Brand Header -->
+        <div class="h-16 px-5 border-b border-hairline flex items-center justify-between shrink-0">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-lg bg-ink text-paper flex items-center justify-center shadow-soft transition-transform duration-200 group-hover:scale-105">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <path d="M8 12.5L10.8 15.3L16.5 9" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-semibold tracking-tight text-sm leading-none">studentsjob.work</span>
+              <span class="font-mono text-[10px] text-muted tracking-widest uppercase mt-1">Institute Admin</span>
+            </div>
+          </a>
+
+          <!-- Mobile Close Button -->
+          <button
+            type="button"
+            onclick="closeMobileSidebar()"
+            aria-label="Close Sidebar"
+            class="lg:hidden p-2 rounded-lg border border-hairline text-muted hover:text-ink hover:border-ink transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Accredited Institute Authority Card -->
+        <div class="p-4 border-b border-hairline">
+          <div class="p-3.5 rounded-xl bg-subtle border border-hairline shadow-soft space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-muted">Authority Node</span>
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] px-2 py-0.5 rounded bg-ink text-paper">
+                <span class="w-1.5 h-1.5 rounded-full bg-paper"></span>
+                GOVERNANCE
+              </span>
+            </div>
+            <p class="text-xs font-semibold text-ink truncate">Polytechnic Institute</p>
+            <p class="font-mono text-[11px] text-muted truncate">Career &amp; Visa Compliance Office</p>
+          </div>
+        </div>
+
+        <!-- PRIMARY NAVIGATION MENU WITH SUB-MENUS -->
+        <nav class="p-3.5 space-y-1.5 flex-1">
+          <div class="px-2.5 pb-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+            Institutional Governance
+          </div>
+
+          <!-- 1. OVERVIEW (Direct Menu Item) -->
+          <button
+            type="button"
+            data-nav="overview"
+            onclick="navigateTo('overview', 'Overview', 'Governance Summary')"
+            class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium bg-ink text-paper shadow-soft transition-all"
+          >
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" />
+              </svg>
+              <span>Overview</span>
+            </span>
+          </button>
+
+          <!-- 2. EMPLOYER KYB VERIFICATION (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-employers"
+              data-nav="employers"
+              onclick="toggleSubmenu('employers')"
+              aria-expanded="true"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01" />
+                </svg>
+                <span>Employer KYB</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="sidebarPendingEmpBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-ink text-paper">2</span>
+                <svg id="chevron-employers" class="w-3.5 h-3.5 text-muted transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Sub-menu Items for Employer KYB -->
+            <div id="submenu-employers" class="ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="emp-all"
+                onclick="openEmployersWithFilter('all', 'emp-all', 'All Employer Organizations')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>All Organizations</span>
+                <span id="subEmpAllCount" class="font-mono text-[10px]">05</span>
+              </button>
+              <button
+                type="button"
+                data-sub="emp-pending"
+                onclick="openEmployersWithFilter('Pending KYB Review', 'emp-pending', 'Pending KYB Queue')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Pending KYB Queue</span>
+                <span id="subEmpPendingCount" class="font-mono text-[10px]">02</span>
+              </button>
+              <button
+                type="button"
+                data-sub="emp-approved"
+                onclick="openEmployersWithFilter('Approved & Verified', 'emp-approved', 'Approved Campus Employers')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Approved Employers</span>
+                <span id="subEmpApprovedCount" class="font-mono text-[10px]">03</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. JOB LISTING VETTING (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-jobs"
+              data-nav="jobs"
+              onclick="toggleSubmenu('jobs')"
+              aria-expanded="true"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <rect x="2" y="7" width="20" height="14" rx="2.5" />
+                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                </svg>
+                <span>Job Vetting</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="sidebarPendingJobsBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-subtle border border-hairline text-ink">2</span>
+                <svg id="chevron-jobs" class="w-3.5 h-3.5 text-muted transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Sub-menu Items for Job Vetting -->
+            <div id="submenu-jobs" class="ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="job-all"
+                onclick="openJobsWithFilter('all', 'job-all', 'All Submitted Roles')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>All Submitted Roles</span>
+                <span id="subJobAllCount" class="font-mono text-[10px]">05</span>
+              </button>
+              <button
+                type="button"
+                data-sub="job-pending"
+                onclick="openJobsWithFilter('Pending Institute Review', 'job-pending', 'Pending Job Vetting')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Pending Approval</span>
+                <span id="subJobPendingCount" class="font-mono text-[10px]">02</span>
+              </button>
+              <button
+                type="button"
+                data-sub="job-live"
+                onclick="openJobsWithFilter('Verified & Published', 'job-live', 'Live Campus Roles')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Verified &amp; Live</span>
+                <span id="subJobLiveCount" class="font-mono text-[10px]">03</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. STUDENT & ALUMNI REGISTRY (Parent Menu + Expandable Sub-Menu) -->
+          <div class="space-y-1">
+            <button
+              type="button"
+              id="menuBtn-registry"
+              data-nav="registry"
+              onclick="toggleSubmenu('registry')"
+              aria-expanded="false"
+              class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+            >
+              <span class="flex items-center gap-3">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3L2 8l10 5 10-5-10-5Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 10.5v5.5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5.5" />
+                </svg>
+                <span>Student Registry</span>
+              </span>
+              <svg id="chevron-registry" class="w-3.5 h-3.5 text-muted transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            <!-- Sub-menu Items for Student Registry -->
+            <div id="submenu-registry" class="hidden ml-4 pl-3 border-l border-hairline space-y-1">
+              <button
+                type="button"
+                data-sub="reg-all"
+                onclick="openRegistryWithFilter('all', 'reg-all', 'Verified Student & Alumni Registry')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>All Verified Cohorts</span>
+                <span class="font-mono text-[10px]">05</span>
+              </button>
+              <button
+                type="button"
+                data-sub="reg-term"
+                onclick="openRegistryWithFilter('Student Visa (≤20h/wk)', 'reg-term', 'Term-Time Student Visa (≤20h/wk)')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Term-Time (≤20h/wk)</span>
+              </button>
+              <button
+                type="button"
+                data-sub="reg-alumni"
+                onclick="openRegistryWithFilter('Post-Study & Unrestricted', 'reg-alumni', 'Post-Study & Alumni Work Rights')"
+                class="nav-sub-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink hover:bg-subtle transition-colors"
+              >
+                <span>Post-Study &amp; Alumni</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. COMPLIANCE & AUDIT LOGS (Direct Menu Item) -->
+          <button
+            type="button"
+            data-nav="audit"
+            onclick="navigateTo('audit', 'Compliance Audit', 'Work-Right Enforcement Ledger')"
+            class="nav-main-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-subtle transition-all"
+          >
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4" />
+              </svg>
+              <span>Compliance Audit</span>
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- BOTTOM SIDENAV STATUS & SIGN OUT -->
+      <div class="p-4 border-t border-hairline bg-subtle/60 space-y-3 shrink-0">
+        <div class="flex items-center justify-between text-[11px] font-mono text-muted px-1">
+          <span>SIS / REGISTRAR API</span>
+          <span class="text-ink font-medium">✓ SYNCED</span>
+        </div>
+        <a
+          href="login.html"
+          class="w-full py-2.5 px-3 bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink text-xs font-mono text-ink flex items-center justify-center gap-2 transition-all"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
+          <span>SIGN OUT</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- RIGHT MAIN COLUMN (STICKY TOPNAV + GOVERNANCE WORKSPACE)              -->
+    <!-- ===================================================================== -->
+    <div class="flex-1 flex flex-col min-w-0 lg:pl-72">
+
+      <!-- TOPNAV HEADER -->
+      <header class="sticky top-0 z-30 h-16 bg-paper/95 backdrop-blur-md border-b border-hairline shadow-soft px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+
+        <!-- Left: Mobile Sidebar Trigger + Breadcrumb Trail -->
+        <div class="flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onclick="openMobileSidebar()"
+            aria-label="Open Navigation Menu"
+            class="lg:hidden p-2.5 rounded-lg border border-hairline bg-paper shadow-soft text-ink hover:border-ink transition-colors shrink-0"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <!-- Clean Breadcrumb -->
+          <div class="flex items-center gap-2 text-xs sm:text-sm truncate">
+            <span class="font-mono text-muted hidden sm:inline">CAREER OFFICE</span>
+            <span class="text-hairline hidden sm:inline">/</span>
+            <span id="breadcrumbParent" class="font-medium text-ink truncate">Overview</span>
+            <span class="text-hairline hidden md:inline">/</span>
+            <span id="breadcrumbChild" class="font-mono text-xs text-muted hidden md:inline truncate">Governance Summary</span>
+          </div>
+        </div>
+
+        <!-- Right: Global Search + Registrar Sync Pill + Notifications Dropdown + Admin Profile Dropdown -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+
+          <!-- Compact Topnav Governance Search -->
+          <div class="hidden md:flex items-center bg-subtle border border-hairline rounded-lg px-3 py-1.5 w-52 lg:w-64 focus-within:border-ink focus-within:bg-paper transition-colors">
+            <svg class="w-3.5 h-3.5 text-muted mr-2 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+            </svg>
+            <input
+              id="topnavSearchInput"
+              type="text"
+              placeholder="Search employer, job, or ID..."
+              class="w-full text-xs bg-transparent placeholder:text-muted focus:outline-none"
+            />
+          </div>
+
+          <!-- Registrar Sync Quick Action -->
+          <button
+            type="button"
+            onclick="triggerRegistrarSync()"
+            class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle border border-hairline hover:border-ink text-[11px] font-mono text-ink transition-colors"
+            title="Synchronize Student Enrollment & Work Permits with Registrar SIS"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-ink"></span>
+            <span>REGISTRAR SYNC: LIVE</span>
+          </button>
+
+          <!-- =============================================================== -->
+          <!-- TOPNAV DROPDOWN 1: GOVERNANCE ALERTS BELL                       -->
+          <!-- =============================================================== -->
+          <div class="relative" id="notificationDropdownWrapper">
+            <button
+              type="button"
+              id="notificationBellBtn"
+              onclick="toggleDropdown('notificationMenu', 'notificationBellBtn')"
+              aria-expanded="false"
+              aria-label="Governance Notifications"
+              class="relative p-2.5 rounded-lg bg-paper border border-hairline shadow-soft hover:border-ink transition-colors text-ink"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" />
+              </svg>
+              <span id="notifUnreadDot" class="absolute top-2 right-2 w-2 h-2 rounded-full bg-ink ring-2 ring-paper"></span>
+            </button>
+
+            <!-- Governance Alerts Dropdown Panel -->
+            <div
+              id="notificationMenu"
+              class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 bg-paper border border-hairline rounded-2xl shadow-dropdown overflow-hidden z-50"
+            >
+              <div class="px-4 py-3 bg-subtle border-b border-hairline flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-semibold">GOVERNANCE QUEUE</span>
+                  <span id="notifCountBadge" class="font-mono text-[10px] px-1.5 py-0.5 bg-ink text-paper rounded">2 PENDING</span>
+                </div>
+                <button
+                  type="button"
+                  onclick="markAllNotificationsRead()"
+                  class="font-mono text-[11px] text-muted hover:text-ink underline underline-offset-4"
+                >
+                  Mark all read
+                </button>
+              </div>
+
+              <div class="divide-y divide-hairline max-h-80 overflow-y-auto">
+                <div class="notif-item p-4 bg-subtle/50 hover:bg-subtle transition-colors cursor-pointer" onclick="openEmployersWithFilter('Pending KYB Review', 'emp-pending', 'Pending KYB Queue'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span class="text-ink font-semibold">● NEW EMPLOYER KYB</span>
+                    <span>22M AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">Vektor Robotics AG requested campus recruiting access</p>
+                  <p class="text-[11px] text-muted mt-0.5">Tax ID CHE-298.410.119 • EU Blue Card Sponsor License attached.</p>
+                </div>
+
+                <div class="notif-item p-4 bg-subtle/50 hover:bg-subtle transition-colors cursor-pointer" onclick="openJobsWithFilter('Pending Institute Review', 'job-pending', 'Pending Job Vetting'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span class="text-ink font-semibold">● JOB VETTING REQUIRED</span>
+                    <span>1H AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">Helvetia Systems submitted Senior Quantitative Infrastructure Associate</p>
+                  <p class="text-[11px] text-muted mt-0.5">Requires Career Office cohort &amp; sponsorship verification.</p>
+                </div>
+
+                <div class="notif-item p-4 hover:bg-subtle transition-colors cursor-pointer" onclick="navigateTo('audit', 'Compliance Audit', 'Work-Right Enforcement Ledger'); closeAllDropdowns();">
+                  <div class="flex items-center justify-between font-mono text-[10px] text-muted mb-1">
+                    <span>AUTOMATED ENFORCEMENT</span>
+                    <span>3H AGO</span>
+                  </div>
+                  <p class="text-xs font-medium text-ink">4 over-hour part-time applications blocked automatically</p>
+                  <p class="text-[11px] text-muted mt-0.5">Protected enrolled student visa holders from exceeding 20h/wk cap.</p>
+                </div>
+              </div>
+
+              <div class="px-4 py-2.5 bg-subtle border-t border-hairline text-center">
+                <button
+                  type="button"
+                  onclick="navigateTo('audit', 'Compliance Audit', 'Work-Right Enforcement Ledger'); closeAllDropdowns();"
+                  class="font-mono text-[11px] text-ink hover:underline underline-offset-4"
+                >
+                  Inspect Full Compliance Ledger →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- TOPNAV DROPDOWN 2: INSTITUTE ADMIN PROFILE MENU                 -->
+          <!-- =============================================================== -->
+          <div class="relative" id="profileDropdownWrapper">
+            <button
+              type="button"
+              id="profileMenuBtn"
+              onclick="toggleDropdown('profileMenu', 'profileMenuBtn')"
+              aria-expanded="false"
+              class="flex items-center gap-2.5 pl-2 pr-2.5 py-1.5 rounded-xl bg-paper border border-hairline shadow-soft hover:border-ink transition-all"
+            >
+              <div id="adminAvatarInitials" class="w-7 h-7 rounded-lg bg-ink text-paper font-mono text-xs font-semibold flex items-center justify-center">
+                EV
+              </div>
+              <div class="hidden sm:flex flex-col text-left">
+                <span id="topnavAdminName" class="text-xs font-semibold leading-none text-ink">Dr. Elena Vance</span>
+                <span class="font-mono text-[10px] text-muted mt-0.5">Career Director</span>
+              </div>
+              <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            <!-- Admin Dropdown Panel -->
+            <div
+              id="profileMenu"
+              class="hidden absolute right-0 mt-2.5 w-64 bg-paper border border-hairline rounded-2xl shadow-dropdown overflow-hidden z-50"
+            >
+              <div class="p-4 bg-subtle border-b border-hairline space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">INSTITUTE ADMIN</span>
+                  <span class="font-mono text-[10px] text-muted">NODE-01</span>
+                </div>
+                <p id="dropdownAdminFull" class="text-sm font-semibold text-ink pt-1">Dr. Elena Vance</p>
+                <p id="dropdownAdminEmail" class="font-mono text-[11px] text-muted truncate">careers-office@polytechnic.edu</p>
+              </div>
+
+              <div class="p-1.5 space-y-0.5 text-xs">
+                <button
+                  type="button"
+                  onclick="triggerRegistrarSync(); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink font-medium hover:bg-subtle transition-colors text-left"
+                >
+                  <span>Sync Registrar SIS</span>
+                  <span class="font-mono text-[10px] text-muted">RUN</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="openEmployersWithFilter('Pending KYB Review', 'emp-pending', 'Pending KYB Queue'); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors text-left"
+                >
+                  <span>Pending Employer KYB</span>
+                  <span class="font-mono text-[10px] text-muted">QUEUE</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="navigateTo('audit', 'Compliance Audit', 'Work-Right Enforcement Ledger'); closeAllDropdowns();"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors text-left"
+                >
+                  <span>Compliance Audit Logs</span>
+                  <span class="font-mono text-[10px] text-muted">LEDGER</span>
+                </button>
+                <a
+                  href="index.html"
+                  class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-ink hover:bg-subtle transition-colors"
+                >
+                  <span>Public Portal Home</span>
+                  <span class="font-mono text-[10px] text-muted">↗</span>
+                </a>
+              </div>
+
+              <div class="p-1.5 border-t border-hairline bg-subtle/50">
+                <a
+                  href="login.html"
+                  class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-ink hover:bg-ink hover:text-paper transition-colors"
+                >
+                  <span>Sign Out</span>
+                  <span>→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- ===================================================================== -->
+      <!-- MAIN DYNAMIC GOVERNANCE WORKSPACE                                     -->
+      <!-- ===================================================================== -->
+      <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- INLINE TOAST NOTIFICATION BANNER (No alert() used) -->
+        <div
+          id="toastBanner"
+          class="hidden p-4 bg-ink text-paper rounded-xl shadow-card flex items-center justify-between gap-4 text-xs font-mono"
+        >
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-paper shrink-0"></span>
+            <span id="toastMessage">Governance action recorded.</span>
+          </div>
+          <button type="button" onclick="hideToast()" class="text-neutral-400 hover:text-paper shrink-0">✕</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: GOVERNANCE OVERVIEW                                       -->
+        <!-- ================================================================= -->
+        <section id="view-overview" class="space-y-8">
+
+          <!-- Institute Governance Header Banner -->
+          <div class="p-6 sm:p-7 bg-paper border border-hairline rounded-2xl shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-1.5">
+              <div class="inline-flex items-center gap-2 font-mono text-[11px] text-muted">
+                <span class="w-1.5 h-1.5 rounded-full bg-ink"></span>
+                <span>POLYTECHNIC INSTITUTE // CAREER OFFICE &amp; LEGAL COMPLIANCE GOVERNANCE</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+                Institutional Verification Control
+              </h1>
+              <p class="text-xs sm:text-sm text-muted max-w-2xl leading-relaxed">
+                Approve employer KYB credentials, vet job postings for cohort alignment, and enforce statutory student work-right rules before any CV reaches an employer.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onclick="triggerRegistrarSync()"
+                class="px-4 py-2.5 text-xs font-mono bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink transition-all"
+              >
+                ↻ SYNC REGISTRAR SIS
+              </button>
+              <button
+                type="button"
+                onclick="openEmployersWithFilter('Pending KYB Review', 'emp-pending', 'Pending KYB Queue')"
+                class="px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded-xl shadow-soft hover:bg-neutral-800 transition-all"
+              >
+                REVIEW PENDING QUEUE →
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 GOVERNANCE KPI CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Pending KYB Reviews</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">ACTION</span>
+              </div>
+              <div>
+                <p id="kpiPendingEmployers" class="text-3xl font-semibold tracking-tight text-ink">02</p>
+                <p class="text-xs text-muted mt-1">Employers awaiting campus approval</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Jobs Awaiting Vetting</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-subtle border border-hairline rounded">QUEUE</span>
+              </div>
+              <div>
+                <p id="kpiPendingJobs" class="text-3xl font-semibold tracking-tight text-ink">02</p>
+                <p class="text-xs text-muted mt-1">Checked for cohort &amp; legal alignment</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Verified Students &amp; Alumni</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-subtle border border-hairline rounded">SIS SYNCED</span>
+              </div>
+              <div>
+                <p class="text-3xl font-semibold tracking-tight text-ink">4,820</p>
+                <p class="text-xs text-muted mt-1">Active work-right attestations issued</p>
+              </div>
+            </div>
+
+            <div class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft flex flex-col justify-between space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] uppercase text-muted">Ineligible Apps Blocked</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-ink text-paper rounded">100% SAFE</span>
+              </div>
+              <div>
+                <p class="text-3xl font-semibold tracking-tight text-ink">143</p>
+                <p class="text-xs text-muted mt-1">Prevented unauthorized work submissions</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TWO-COLUMN GOVERNANCE WORKSPACE: PENDING EMPLOYERS + PENDING JOBS -->
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+            <!-- Left 6 Cols: Employer KYB Verification Queue -->
+            <div class="xl:col-span-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-lg font-semibold tracking-tight text-ink">Employer KYB Queue</h2>
+                  <p class="text-xs text-muted">Verify business registration &amp; sponsorship licenses</p>
+                </div>
+                <button
+                  type="button"
+                  onclick="openEmployersWithFilter('all', 'emp-all', 'All Employer Organizations')"
+                  class="font-mono text-xs underline underline-offset-4 hover:opacity-75"
+                >
+                  All employers →
+                </button>
+              </div>
+
+              <div id="overviewEmployerQueue" class="space-y-3">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- Right 6 Cols: Job Vetting Queue -->
+            <div class="xl:col-span-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-lg font-semibold tracking-tight text-ink">Job Vetting Queue</h2>
+                  <p class="text-xs text-muted">Approve roles before visibility to students &amp; alumni</p>
+                </div>
+                <button
+                  type="button"
+                  onclick="openJobsWithFilter('all', 'job-all', 'All Submitted Roles')"
+                  class="font-mono text-xs underline underline-offset-4 hover:opacity-75"
+                >
+                  All roles →
+                </button>
+              </div>
+
+              <div id="overviewJobQueue" class="space-y-3">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: EMPLOYER KYB VERIFICATION MANAGER                         -->
+        <!-- ================================================================= -->
+        <section id="view-employers" class="hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">Institutional Onboarding</span>
+              <h1 id="employersSectionHeading" class="text-2xl font-semibold tracking-tight mt-1">All Employer Organizations</h1>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button type="button" data-empfilter="all" onclick="setEmployerFilter('all')" class="emp-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-ink text-paper border border-ink shadow-soft">
+                ALL
+              </button>
+              <button type="button" data-empfilter="Pending KYB Review" onclick="setEmployerFilter('Pending KYB Review')" class="emp-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                PENDING KYB
+              </button>
+              <button type="button" data-empfilter="Approved & Verified" onclick="setEmployerFilter('Approved & Verified')" class="emp-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                APPROVED
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-subtle border-b border-hairline font-mono text-[11px] uppercase text-muted">
+                    <th class="py-3.5 px-5">Organization &amp; KYB ID</th>
+                    <th class="py-3.5 px-5">Sponsorship License</th>
+                    <th class="py-3.5 px-5">Target Faculties</th>
+                    <th class="py-3.5 px-5">Status</th>
+                    <th class="py-3.5 px-5 text-right">Governance</th>
+                  </tr>
+                </thead>
+                <tbody id="employersTableBody" class="divide-y divide-hairline text-sm">
+                  <!-- Populated dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: JOB POSTING VETTING MANAGER                               -->
+        <!-- ================================================================= -->
+        <section id="view-jobs" class="hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">Campus Listing Compliance</span>
+              <h1 id="jobsSectionHeading" class="text-2xl font-semibold tracking-tight mt-1">All Submitted Roles</h1>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button type="button" data-jobvetfilter="all" onclick="setJobVetFilter('all')" class="jobvet-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-ink text-paper border border-ink shadow-soft">
+                ALL
+              </button>
+              <button type="button" data-jobvetfilter="Pending Institute Review" onclick="setJobVetFilter('Pending Institute Review')" class="jobvet-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                PENDING VETTING
+              </button>
+              <button type="button" data-jobvetfilter="Verified & Published" onclick="setJobVetFilter('Verified & Published')" class="jobvet-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                VERIFIED &amp; LIVE
+              </button>
+            </div>
+          </div>
+
+          <div id="jobVettingList" class="space-y-3.5">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 4: STUDENT & ALUMNI WORK-ELIGIBILITY REGISTRY                -->
+        <!-- ================================================================= -->
+        <section id="view-registry" class="hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">SIS &amp; Statutory Work-Permit Sync</span>
+              <h1 id="registrySectionHeading" class="text-2xl font-semibold tracking-tight mt-1">Verified Student &amp; Alumni Registry</h1>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" data-regfilter="all" onclick="setRegistryFilter('all')" class="reg-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-ink text-paper border border-ink shadow-soft">
+                ALL COHORTS
+              </button>
+              <button type="button" data-regfilter="Student Visa (≤20h/wk)" onclick="setRegistryFilter('Student Visa (≤20h/wk)')" class="reg-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                TERM-TIME (≤20H)
+              </button>
+              <button type="button" data-regfilter="Post-Study & Unrestricted" onclick="setRegistryFilter('Post-Study & Unrestricted')" class="reg-pill-btn px-3.5 py-2 text-xs font-mono rounded-lg bg-paper text-ink border border-hairline shadow-soft hover:border-ink">
+                POST-STUDY &amp; ALUMNI
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-paper border border-hairline rounded-2xl shadow-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-subtle border-b border-hairline font-mono text-[11px] uppercase text-muted">
+                    <th class="py-3.5 px-5">Student / Alumni</th>
+                    <th class="py-3.5 px-5">Degree &amp; Cohort</th>
+                    <th class="py-3.5 px-5">Legal Work Authorization</th>
+                    <th class="py-3.5 px-5">Attestation Hash</th>
+                    <th class="py-3.5 px-5 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="registryTableBody" class="divide-y divide-hairline text-sm">
+                  <!-- Populated dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 5: COMPLIANCE & AUDIT LOGS                                   -->
+        <!-- ================================================================= -->
+        <section id="view-audit" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <span class="font-mono text-xs text-muted uppercase tracking-wider">Immutable Institutional Record</span>
+              <h1 class="text-2xl font-semibold tracking-tight mt-1">Compliance &amp; Enforcement Audit Ledger</h1>
+            </div>
+            <button
+              type="button"
+              onclick="copyAuditHash()"
+              class="px-4 py-2 text-xs font-mono bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink self-start sm:self-auto"
+            >
+              COPY AUDIT MERKLE HASH
+            </button>
+          </div>
+
+          <div class="bg-paper border border-hairline rounded-2xl shadow-card divide-y divide-hairline overflow-hidden" id="auditLogList">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- EMPLOYER KYB INSPECTION & APPROVAL SLIDE-OVER DRAWER                  -->
+  <!-- ===================================================================== -->
+  <div id="employerDrawer" class="fixed inset-0 z-50 hidden" aria-modal="true" role="dialog">
+    <div onclick="closeEmployerDrawer()" class="fixed inset-0 bg-black/35 backdrop-blur-[2px]"></div>
+    <div class="fixed inset-y-0 right-0 max-w-lg w-full bg-paper border-l border-hairline shadow-modal flex flex-col justify-between overflow-y-auto">
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-hairline">
+          <span id="drawerEmpStatus" class="font-mono text-xs px-2.5 py-1 bg-ink text-paper rounded-md">PENDING KYB</span>
+          <button type="button" onclick="closeEmployerDrawer()" aria-label="Close Drawer" class="p-2 rounded-lg border border-hairline shadow-soft hover:border-ink">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div>
+          <p id="drawerEmpRegId" class="font-mono text-xs text-muted uppercase tracking-wider">REG: CHE-000.000</p>
+          <h2 id="drawerEmpName" class="text-2xl font-semibold tracking-tight text-ink mt-1">Company Name</h2>
+          <p id="drawerEmpEmail" class="text-sm text-muted mt-1">talent@company.com</p>
+        </div>
+
+        <div class="p-5 bg-subtle border border-hairline rounded-xl shadow-soft space-y-3 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">SPONSOR LICENSE</span>
+            <span id="drawerEmpSponsor" class="font-mono font-medium text-ink text-right">Verified</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">TARGET FACULTIES</span>
+            <span id="drawerEmpFaculties" class="font-mono font-medium text-ink text-right">Engineering &amp; CS</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">HEADQUARTERS</span>
+            <span id="drawerEmpLocation" class="font-mono font-medium text-ink text-right">Zurich</span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-mono text-xs uppercase tracking-wider text-muted">KYB &amp; Compliance Notes</h3>
+          <p id="drawerEmpNotes" class="text-sm text-ink/90 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-hairline bg-subtle flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button
+          type="button"
+          onclick="decideEmployerKyb('Rejected / Flagged')"
+          class="flex-1 py-3 px-4 bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink text-xs font-mono text-ink transition-colors"
+        >
+          FLAG / REJECT
+        </button>
+        <button
+          type="button"
+          onclick="decideEmployerKyb('Approved & Verified')"
+          class="flex-1 py-3 px-4 bg-ink text-paper text-xs font-mono rounded-xl shadow-soft hover:bg-neutral-800 transition-colors"
+        >
+          APPROVE EMPLOYER KYB →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JOB VETTING INSPECTION & APPROVAL SLIDE-OVER DRAWER                   -->
+  <!-- ===================================================================== -->
+  <div id="jobVetDrawer" class="fixed inset-0 z-50 hidden" aria-modal="true" role="dialog">
+    <div onclick="closeJobVetDrawer()" class="fixed inset-0 bg-black/35 backdrop-blur-[2px]"></div>
+    <div class="fixed inset-y-0 right-0 max-w-lg w-full bg-paper border-l border-hairline shadow-modal flex flex-col justify-between overflow-y-auto">
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-hairline">
+          <div class="flex items-center gap-2">
+            <span id="drawerJobStatus" class="font-mono text-xs px-2.5 py-1 bg-ink text-paper rounded-md">PENDING REVIEW</span>
+            <span id="drawerJobType" class="font-mono text-xs text-muted">FULL-TIME</span>
+          </div>
+          <button type="button" onclick="closeJobVetDrawer()" aria-label="Close Drawer" class="p-2 rounded-lg border border-hairline shadow-soft hover:border-ink">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div>
+          <p id="drawerJobCompany" class="font-mono text-xs text-muted uppercase tracking-wider">Employer</p>
+          <h2 id="drawerJobTitle" class="text-2xl font-semibold tracking-tight text-ink mt-1">Role Title</h2>
+          <p id="drawerJobSalary" class="text-sm text-muted mt-1">Compensation</p>
+        </div>
+
+        <div class="p-5 bg-subtle border border-hairline rounded-xl shadow-soft space-y-3 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">WORK-RIGHT FILTER</span>
+            <span id="drawerJobEligibility" class="font-mono font-medium text-ink text-right">Verified</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">TARGET COHORT</span>
+            <span id="drawerJobCohort" class="font-mono font-medium text-ink text-right">MSc / BSc</span>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-mono text-muted">TERM-TIME CHECK</span>
+            <span class="font-mono font-semibold text-ink text-right">✓ STATUTORY SAFE</span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-mono text-xs uppercase tracking-wider text-muted">Role Scope &amp; Institute Alignment</h3>
+          <p id="drawerJobDesc" class="text-sm text-ink/90 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-hairline bg-subtle flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button
+          type="button"
+          onclick="decideJobVetting('Returned for Edits')"
+          class="flex-1 py-3 px-4 bg-paper border border-hairline rounded-xl shadow-soft hover:border-ink text-xs font-mono text-ink transition-colors"
+        >
+          RETURN FOR EDITS
+        </button>
+        <button
+          type="button"
+          onclick="decideJobVetting('Verified & Published')"
+          class="flex-1 py-3 px-4 bg-ink text-paper text-xs font-mono rounded-xl shadow-soft hover:bg-neutral-800 transition-colors"
+        >
+          VERIFY &amp; PUBLISH ROLE →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- INSTITUTE GOVERNANCE INTERACTIVITY & STATE CONTROLLER                 -->
+  <!-- ===================================================================== -->
+  <script>
+    // 1. EMPLOYER KYB DATASET
+    const EMPLOYERS_DATA = [
+      {
+        id: 'EMP-01',
+        name: 'Vektor Robotics AG',
+        regId: 'CHE-298.410.119',
+        email: 'recruiting@vektor-robotics.ch',
+        location: 'Zurich, Switzerland',
+        sponsor: 'EU Blue Card & Work-Permit Sponsor',
+        faculties: 'Robotics, Computer Science, Mechanical Eng.',
+        status: 'Pending KYB Review',
+        notes: 'Commercial registry extract and federal sponsorship accreditation uploaded. Awaiting Career Office sign-off to unlock MSc Robotics cohort.'
+      },
+      {
+        id: 'EMP-02',
+        name: 'Nordic BioAnalytics ApS',
+        regId: 'DK-41902844',
+        email: 'careers@nordicbio.dk',
+        location: 'Copenhagen / Remote',
+        sponsor: 'Student Visa Part-Time Compliant (≤20h/wk)',
+        faculties: 'Bioinformatics, Data Science, Life Sciences',
+        status: 'Pending KYB Review',
+        notes: 'Requesting approval to post 16-hour/week term-time research assistantships for enrolled Master’s candidates.'
+      },
+      {
+        id: 'EMP-03',
+        name: 'Helvetia Financial Systems',
+        regId: 'CHE-114.920.381',
+        email: 'talent@helvetiasystems.ch',
+        location: 'Zurich / Hybrid',
+        sponsor: 'Tier-1 Licensed Work-Permit Sponsor',
+        faculties: 'Computer Science, Mathematics, Economics',
+        status: 'Approved & Verified',
+        notes: 'Long-standing accredited campus partner. All roles pre-screened for post-study and sponsorship eligibility.'
+      },
+      {
+        id: 'EMP-04',
+        name: 'Kinetix Autonomous Logistics',
+        regId: 'DE-HRB-249102',
+        email: 'talent@kinetix-logistics.de',
+        location: 'Munich, Germany',
+        sponsor: 'Full EU Blue Card Sponsor',
+        faculties: 'Engineering & Graduate Research Hub',
+        status: 'Approved & Verified',
+        notes: 'Verified relocation and visa sponsorship track for graduating MSc and PhD cohorts.'
+      },
+      {
+        id: 'EMP-05',
+        name: 'Aether Sovereign Cloud',
+        regId: 'NL-KVK-8829104',
+        email: 'hiring@aethercloud.nl',
+        location: 'Amsterdam, Netherlands',
+        sponsor: 'Recognized Dutch HSM Sponsor',
+        faculties: 'Computer Science & Systems Security',
+        status: 'Approved & Verified',
+        notes: 'Accredited Highly Skilled Migrant sponsor verified by Polytechnic Career Board.'
+      }
+    ];
+
+    // 2. JOB VETTING DATASET
+    const VETTING_JOBS_DATA = [
+      {
+        id: 'JOB-112',
+        title: 'Senior Quantitative Infrastructure Associate',
+        company: 'Helvetia Financial Systems',
+        type: 'Sponsorship',
+        salary: 'CHF 125,000 – 140,000 / yr',
+        eligibility: 'Tier-1 Visa Sponsorship & Post-Study Permit',
+        cohort: 'MSc / PhD Computer Science & Quantitative Finance',
+        status: 'Pending Institute Review',
+        desc: 'Architect distributed simulation infrastructure for institutional risk desks. Full sponsorship documentation verified.'
+      },
+      {
+        id: 'JOB-115',
+        title: 'Autonomous Navigation Intern (18 hrs/week)',
+        company: 'Vektor Robotics AG',
+        type: 'Part-Time',
+        salary: 'CHF 34 / hour',
+        eligibility: 'Enrolled Student Visa Compliant (Max 20h/wk)',
+        cohort: '2nd & 3rd Year BSc / MSc Robotics & CS',
+        status: 'Pending Institute Review',
+        desc: 'Flexible 18-hour weekly schedule strictly capped below the 20h/wk statutory student work-permit threshold.'
+      },
+      {
+        id: 'JOB-101',
+        title: 'Junior Quantitative Systems Engineer',
+        company: 'Helvetia Financial Systems',
+        type: 'Full-Time',
+        salary: 'CHF 95,000 – 110,000 / yr',
+        eligibility: 'Graduate Work-Permit & Sponsorship Eligible',
+        cohort: 'Class of 2025–2027 CS, Math & Physics',
+        status: 'Verified & Published',
+        desc: 'Low-latency risk engine engineering. Approved and live across Polytechnic and Economics cohorts.'
+      },
+      {
+        id: 'JOB-102',
+        title: 'Research Data Analyst (20 hrs/week)',
+        company: 'Nordic Climate Policy Lab',
+        type: 'Part-Time',
+        salary: '€24 / hour',
+        eligibility: 'Student Visa Compliant (Max 20h/wk)',
+        cohort: 'Enrolled BSc & MSc Students',
+        status: 'Verified & Published',
+        desc: 'Empirical energy modeling aligned around lecture timetables.'
+      },
+      {
+        id: 'JOB-103',
+        title: 'Graduate Robotics & Autonomy Engineer',
+        company: 'Kinetix Autonomous Logistics',
+        type: 'Sponsorship',
+        salary: '€68,000 – 76,000 / yr + Relocation',
+        eligibility: 'Full EU Blue Card Sponsor',
+        cohort: 'Final-Year MSc / PhD & Alumni',
+        status: 'Verified & Published',
+        desc: 'Sensor-fusion navigation development with complete immigration support.'
+      }
+    ];
+
+    // 3. STUDENT & ALUMNI REGISTRY DATASET
+    const REGISTRY_DATA = [
+      {
+        studentId: 'STU-2026-8492',
+        name: 'Alex Mercer',
+        email: 'alex.mercer@polytechnic.edu',
+        cohort: 'MSc Computer Science (2027)',
+        category: 'Student Visa (≤20h/wk)',
+        workAuth: 'Student Visa — Max 20h/wk Term-Time',
+        sealHash: 'SJW-POLY-2026-8492',
+        status: 'SIS Verified'
+      },
+      {
+        studentId: 'STU-2026-7714',
+        name: 'Sofia Lindqvist',
+        email: 'sofia.lindqvist@polytechnic.edu',
+        cohort: 'MSc Quantitative Finance (2026)',
+        category: 'Post-Study & Unrestricted',
+        workAuth: 'Unrestricted EU/EFTA Right to Work',
+        sealHash: 'SJW-POLY-2026-7714',
+        status: 'Alumni Verified'
+      },
+      {
+        studentId: 'STU-2026-9103',
+        name: 'Kenji Takahashi',
+        email: 'kenji.takahashi@polytechnic.edu',
+        cohort: 'BSc Applied Mathematics (2027)',
+        category: 'Student Visa (≤20h/wk)',
+        workAuth: 'Student Visa — Max 20h/wk Term-Time',
+        sealHash: 'SJW-POLY-2026-9103',
+        status: 'SIS Verified'
+      },
+      {
+        studentId: 'STU-2025-4418',
+        name: 'Amara Okafor',
+        email: 'amara.okafor@polytechnic.edu',
+        cohort: 'PhD Computational Statistics (Alumni)',
+        category: 'Post-Study & Unrestricted',
+        workAuth: 'Post-Study Graduate Work Permit (24 Mos.)',
+        sealHash: 'SJW-POLY-2025-4418',
+        status: 'Alumni Verified'
+      },
+      {
+        studentId: 'STU-2026-6520',
+        name: 'Lukas Meyer',
+        email: 'lukas.meyer@polytechnic.edu',
+        cohort: 'BSc Computer Science (2026)',
+        category: 'Student Visa (≤20h/wk)',
+        workAuth: 'Student Visa — Max 20h/wk Term-Time',
+        sealHash: 'SJW-POLY-2026-6520',
+        status: 'SIS Verified'
+      }
+    ];
+
+    // 4. COMPLIANCE AUDIT LOGS
+    const AUDIT_LOGS = [
+      {
+        time: 'TODAY • 16:40',
+        code: 'RULE-20H-BLOCK',
+        actor: 'Automated Work-Right Engine',
+        detail: 'Blocked 2 full-time (40h/wk) applications from active term-time student visa holders to preserve immigration compliance.'
+      },
+      {
+        time: 'TODAY • 14:15',
+        code: 'SEAL-ISSUED',
+        actor: 'Registrar SIS Sync',
+        detail: 'Issued cryptographic work-eligibility seal SJW-POLY-2026-8492 for Alex Mercer (MSc Computer Science).'
+      },
+      {
+        time: 'YESTERDAY • 17:05',
+        code: 'KYB-APPROVED',
+        actor: 'Dr. Elena Vance (Career Office)',
+        detail: 'Verified corporate registration CHE-114.920.381 and Tier-1 sponsorship license for Helvetia Financial Systems.'
+      },
+      {
+        time: 'NOV 18 • 11:30',
+        code: 'INELIGIBLE-FILTER',
+        actor: 'Automated Work-Right Engine',
+        detail: 'Filtered 9 non-accredited external applicants from Kinetix Autonomous Logistics candidate inbox.'
+      }
+    ];
+
+    // STATE VARIABLES
+    let currentEmpFilter = 'all';
+    let currentJobVetFilter = 'all';
+    let currentRegFilter = 'all';
+    let globalSearchQuery = '';
+    let activeEmpDrawerId = null;
+    let activeJobDrawerId = null;
+
+    // 5. HYDRATE SESSION FROM LOGIN.HTML (IF PRESENT)
+    function hydrateInstituteSession() {
+      try {
+        const raw = localStorage.getItem('studentsjob_session');
+        if (!raw) return;
+        const session = JSON.parse(raw);
+        if (session && session.email && session.role === 'institute') {
+          document.getElementById('dropdownAdminEmail').textContent = session.email;
+        }
+      } catch (e) {
+        // Use default Career Director profile
+      }
+    }
+
+    // 6. SIDENAV & EXPANDABLE SUB-MENUS
+    function openMobileSidebar() {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.remove('hidden');
+    }
+
+    function closeMobileSidebar() {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.add('hidden');
+    }
+
+    function toggleSubmenu(menuKey) {
+      const submenu = document.getElementById(`submenu-${menuKey}`);
+      const chevron = document.getElementById(`chevron-${menuKey}`);
+      const btn = document.getElementById(`menuBtn-${menuKey}`);
+      if (!submenu) return;
+
+      const isHidden = submenu.classList.contains('hidden');
+      if (isHidden) {
+        submenu.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        submenu.classList.add('hidden');
+        chevron.classList.remove('rotate-180');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function setActiveNavHighlight(mainKey, subKey = null) {
+      document.querySelectorAll('.nav-main-btn').forEach(btn => {
+        if (btn.getAttribute('data-nav') === mainKey && !subKey) {
+          btn.classList.add('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.remove('text-ink', 'hover:bg-subtle');
+        } else if (btn.getAttribute('data-nav') === mainKey && subKey) {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.add('bg-subtle', 'text-ink');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft', 'bg-subtle');
+          btn.classList.add('text-ink', 'hover:bg-subtle');
+        }
+      });
+
+      document.querySelectorAll('.nav-sub-btn').forEach(btn => {
+        if (subKey && btn.getAttribute('data-sub') === subKey) {
+          btn.classList.add('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.remove('text-muted', 'hover:text-ink', 'hover:bg-subtle');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'shadow-soft');
+          btn.classList.add('text-muted', 'hover:text-ink', 'hover:bg-subtle');
+        }
+      });
+    }
+
+    function navigateTo(viewName, parentLabel, childLabel, subKey = null) {
+      ['overview', 'employers', 'jobs', 'registry', 'audit'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+      });
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+      document.getElementById('breadcrumbParent').textContent = parentLabel;
+      document.getElementById('breadcrumbChild').textContent = childLabel;
+
+      setActiveNavHighlight(viewName, subKey);
+      closeMobileSidebar();
+    }
+
+    function openEmployersWithFilter(filterVal, subKey, label) {
+      const submenu = document.getElementById('submenu-employers');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('employers');
+      navigateTo('employers', 'Employer KYB', label, subKey);
+      document.getElementById('employersSectionHeading').textContent = label;
+      setEmployerFilter(filterVal);
+    }
+
+    function openJobsWithFilter(filterVal, subKey, label) {
+      const submenu = document.getElementById('submenu-jobs');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('jobs');
+      navigateTo('jobs', 'Job Vetting', label, subKey);
+      document.getElementById('jobsSectionHeading').textContent = label;
+      setJobVetFilter(filterVal);
+    }
+
+    function openRegistryWithFilter(filterVal, subKey, label) {
+      const submenu = document.getElementById('submenu-registry');
+      if (submenu.classList.contains('hidden')) toggleSubmenu('registry');
+      navigateTo('registry', 'Student Registry', label, subKey);
+      document.getElementById('registrySectionHeading').textContent = label;
+      setRegistryFilter(filterVal);
+    }
+
+    // 7. TOPNAV DROPDOWNS
+    function toggleDropdown(menuId, btnId) {
+      const menu = document.getElementById(menuId);
+      const btn = document.getElementById(btnId);
+      const isHidden = menu.classList.contains('hidden');
+      closeAllDropdowns();
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    function closeAllDropdowns() {
+      ['notificationMenu', 'profileMenu'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      ['notificationBellBtn', 'profileMenuBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const notifWrap = document.getElementById('notificationDropdownWrapper');
+      const profileWrap = document.getElementById('profileDropdownWrapper');
+      if (notifWrap && !notifWrap.contains(e.target) && profileWrap && !profileWrap.contains(e.target)) {
+        closeAllDropdowns();
+      }
+    });
+
+    function markAllNotificationsRead() {
+      document.getElementById('notifUnreadDot').classList.add('hidden');
+      document.getElementById('notifCountBadge').textContent = '0 NEW';
+      document.querySelectorAll('.notif-item').forEach(item => item.classList.remove('bg-subtle/50'));
+      showToast('✓ All governance notifications marked as read.');
+    }
+
+    // 8. RENDER OVERVIEW & COUNTERS
+    function renderOverview() {
+      const pendingEmployers = EMPLOYERS_DATA.filter(e => e.status === 'Pending KYB Review');
+      const approvedEmployers = EMPLOYERS_DATA.filter(e => e.status === 'Approved & Verified');
+      const pendingJobs = VETTING_JOBS_DATA.filter(j => j.status === 'Pending Institute Review');
+      const liveJobs = VETTING_JOBS_DATA.filter(j => j.status === 'Verified & Published');
+
+      // Update KPI & Sidebar Badges
+      document.getElementById('kpiPendingEmployers').textContent = String(pendingEmployers.length).padStart(2, '0');
+      document.getElementById('kpiPendingJobs').textContent = String(pendingJobs.length).padStart(2, '0');
+      document.getElementById('sidebarPendingEmpBadge').textContent = pendingEmployers.length;
+      document.getElementById('sidebarPendingJobsBadge').textContent = pendingJobs.length;
+      document.getElementById('subEmpAllCount').textContent = String(EMPLOYERS_DATA.length).padStart(2, '0');
+      document.getElementById('subEmpPendingCount').textContent = String(pendingEmployers.length).padStart(2, '0');
+      document.getElementById('subEmpApprovedCount').textContent = String(approvedEmployers.length).padStart(2, '0');
+      document.getElementById('subJobAllCount').textContent = String(VETTING_JOBS_DATA.length).padStart(2, '0');
+      document.getElementById('subJobPendingCount').textContent = String(pendingJobs.length).padStart(2, '0');
+      document.getElementById('subJobLiveCount').textContent = String(liveJobs.length).padStart(2, '0');
+
+      // Overview Employer Queue
+      const empContainer = document.getElementById('overviewEmployerQueue');
+      const empDisplay = pendingEmployers.length > 0 ? pendingEmployers : EMPLOYERS_DATA.slice(0, 2);
+      empContainer.innerHTML = empDisplay.map(emp => `
+        <article
+          onclick="openEmployerDrawer('${emp.id}')"
+          class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft hover:shadow-card-hover hover:border-ink/40 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded ${emp.status.startsWith('Pending') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+                ${emp.status.toUpperCase()}
+              </span>
+              <span class="font-mono text-[11px] text-muted">${emp.regId}</span>
+            </div>
+            <h3 class="text-base font-semibold text-ink">${emp.name}</h3>
+            <p class="text-xs text-muted">${emp.sponsor} • ${emp.location}</p>
+          </div>
+          <span class="font-mono text-[11px] px-3.5 py-2 rounded-lg bg-subtle border border-hairline text-ink shrink-0 self-start sm:self-center">
+            VET KYB →
+          </span>
+        </article>
+      `).join('');
+
+      // Overview Job Vetting Queue
+      const jobContainer = document.getElementById('overviewJobQueue');
+      const jobDisplay = pendingJobs.length > 0 ? pendingJobs : VETTING_JOBS_DATA.slice(0, 2);
+      jobContainer.innerHTML = jobDisplay.map(job => `
+        <article
+          onclick="openJobVetDrawer('${job.id}')"
+          class="p-5 bg-paper border border-hairline rounded-2xl shadow-soft hover:shadow-card-hover hover:border-ink/40 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded ${job.status.startsWith('Pending') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+                ${job.status.toUpperCase()}
+              </span>
+              <span class="font-mono text-[11px] text-muted">${job.type.toUpperCase()}</span>
+            </div>
+            <h3 class="text-base font-semibold text-ink">${job.title}</h3>
+            <p class="text-xs text-muted">${job.company} • ${job.eligibility}</p>
+          </div>
+          <span class="font-mono text-[11px] px-3.5 py-2 rounded-lg bg-subtle border border-hairline text-ink shrink-0 self-start sm:self-center">
+            INSPECT →
+          </span>
+        </article>
+      `).join('');
+    }
+
+    // 9. EMPLOYERS TABLE & FILTERING
+    function setEmployerFilter(filterVal) {
+      currentEmpFilter = filterVal;
+      document.querySelectorAll('.emp-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-empfilter') === filterVal) {
+          btn.classList.add('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.remove('bg-paper', 'text-ink', 'border-hairline');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.add('bg-paper', 'text-ink', 'border-hairline');
+        }
+      });
+      renderEmployersTable();
+    }
+
+    function renderEmployersTable() {
+      const tbody = document.getElementById('employersTableBody');
+      const q = globalSearchQuery.trim().toLowerCase();
+      const filtered = EMPLOYERS_DATA.filter(emp => {
+        const matchesStatus = currentEmpFilter === 'all' || emp.status === currentEmpFilter;
+        const matchesSearch = !q || emp.name.toLowerCase().includes(q) || emp.regId.toLowerCase().includes(q) || emp.faculties.toLowerCase().includes(q);
+        return matchesStatus && matchesSearch;
+      });
+
+      tbody.innerHTML = filtered.map(emp => `
+        <tr onclick="openEmployerDrawer('${emp.id}')" class="hover:bg-subtle/70 transition-colors cursor-pointer">
+          <td class="py-4 px-5">
+            <p class="font-semibold text-ink text-xs sm:text-sm">${emp.name}</p>
+            <p class="font-mono text-[11px] text-muted mt-0.5">${emp.regId} • ${emp.location}</p>
+          </td>
+          <td class="py-4 px-5 text-xs text-ink">${emp.sponsor}</td>
+          <td class="py-4 px-5 text-xs text-muted">${emp.faculties}</td>
+          <td class="py-4 px-5">
+            <span class="font-mono text-[10px] px-2.5 py-1 rounded-md ${emp.status.startsWith('Approved') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+              ${emp.status.toUpperCase()}
+            </span>
+          </td>
+          <td class="py-4 px-5 text-right">
+            <button type="button" onclick="event.stopPropagation(); openEmployerDrawer('${emp.id}')" class="font-mono text-[11px] px-3 py-1.5 bg-paper border border-hairline rounded-lg hover:border-ink">
+              REVIEW →
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 10. JOB VETTING LIST & FILTERING
+    function setJobVetFilter(filterVal) {
+      currentJobVetFilter = filterVal;
+      document.querySelectorAll('.jobvet-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-jobvetfilter') === filterVal) {
+          btn.classList.add('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.remove('bg-paper', 'text-ink', 'border-hairline');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.add('bg-paper', 'text-ink', 'border-hairline');
+        }
+      });
+      renderJobVettingList();
+    }
+
+    function renderJobVettingList() {
+      const list = document.getElementById('jobVettingList');
+      const q = globalSearchQuery.trim().toLowerCase();
+      const filtered = VETTING_JOBS_DATA.filter(job => {
+        const matchesStatus = currentJobVetFilter === 'all' || job.status === currentJobVetFilter;
+        const matchesSearch = !q || job.title.toLowerCase().includes(q) || job.company.toLowerCase().includes(q) || job.cohort.toLowerCase().includes(q);
+        return matchesStatus && matchesSearch;
+      });
+
+      list.innerHTML = filtered.map(job => `
+        <article onclick="openJobVetDrawer('${job.id}')" class="p-5 sm:p-6 bg-paper border border-hairline rounded-2xl shadow-soft hover:shadow-card-hover hover:border-ink/40 transition-all cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="space-y-2 max-w-2xl">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-md ${job.status.startsWith('Verified') ? 'bg-ink text-paper' : 'bg-subtle border border-hairline text-ink'}">
+                ${job.status.toUpperCase()}
+              </span>
+              <span class="font-mono text-[10px] px-2.5 py-0.5 bg-subtle border border-hairline rounded-md text-ink">
+                ${job.type.toUpperCase()}
+              </span>
+              <span class="font-mono text-[11px] text-muted">${job.cohort}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-ink">${job.title}</h3>
+            <p class="text-xs text-muted"><span class="font-medium text-ink">${job.company}</span> • ${job.salary} • ${job.eligibility}</p>
+          </div>
+          <span class="font-mono text-xs px-4 py-2 bg-paper border border-hairline rounded-lg hover:border-ink self-start lg:self-center shrink-0">
+            VET LISTING →
+          </span>
+        </article>
+      `).join('');
+    }
+
+    // 11. STUDENT & ALUMNI REGISTRY
+    function setRegistryFilter(filterVal) {
+      currentRegFilter = filterVal;
+      document.querySelectorAll('.reg-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-regfilter') === filterVal) {
+          btn.classList.add('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.remove('bg-paper', 'text-ink', 'border-hairline');
+        } else {
+          btn.classList.remove('bg-ink', 'text-paper', 'border-ink');
+          btn.classList.add('bg-paper', 'text-ink', 'border-hairline');
+        }
+      });
+      renderRegistryTable();
+    }
+
+    function renderRegistryTable() {
+      const tbody = document.getElementById('registryTableBody');
+      const q = globalSearchQuery.trim().toLowerCase();
+      const filtered = REGISTRY_DATA.filter(s => {
+        const matchesCat = currentRegFilter === 'all' || s.category === currentRegFilter;
+        const matchesSearch = !q || s.name.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q) || s.cohort.toLowerCase().includes(q);
+        return matchesCat && matchesSearch;
+      });
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-subtle/60 transition-colors">
+          <td class="py-4 px-5">
+            <p class="font-semibold text-ink text-xs sm:text-sm">${s.name}</p>
+            <p class="font-mono text-[11px] text-muted mt-0.5">${s.studentId} • ${s.email}</p>
+          </td>
+          <td class="py-4 px-5 text-xs text-ink">${s.cohort}</td>
+          <td class="py-4 px-5">
+            <span class="font-mono text-[11px] px-2.5 py-1 bg-subtle border border-hairline rounded text-ink">
+              ✓ ${s.workAuth}
+            </span>
+          </td>
+          <td class="py-4 px-5 font-mono text-xs text-muted">${s.sealHash}</td>
+          <td class="py-4 px-5 text-right">
+            <span class="font-mono text-[10px] px-2.5 py-1 bg-ink text-paper rounded-md">
+              ${s.status.toUpperCase()}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 12. RENDER COMPLIANCE AUDIT LEDGER
+    function renderAuditLogs() {
+      const container = document.getElementById('auditLogList');
+      container.innerHTML = AUDIT_LOGS.map(log => `
+        <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 font-mono text-[10px]">
+              <span class="px-2 py-0.5 bg-ink text-paper rounded">${log.code}</span>
+              <span class="text-muted">${log.actor}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-ink font-medium">${log.detail}</p>
+          </div>
+          <span class="font-mono text-[11px] text-muted shrink-0">${log.time}</span>
+        </div>
+      `).join('');
+    }
+
+    // 13. EMPLOYER KYB DRAWER & APPROVAL ACTIONS
+    function openEmployerDrawer(empId) {
+      const emp = EMPLOYERS_DATA.find(e => e.id === empId);
+      if (!emp) return;
+      activeEmpDrawerId = empId;
+
+      document.getElementById('drawerEmpStatus').textContent = emp.status.toUpperCase();
+      document.getElementById('drawerEmpRegId').textContent = `KYB REG: ${emp.regId}`;
+      document.getElementById('drawerEmpName').textContent = emp.name;
+      document.getElementById('drawerEmpEmail').textContent = emp.email;
+      document.getElementById('drawerEmpSponsor').textContent = emp.sponsor;
+      document.getElementById('drawerEmpFaculties').textContent = emp.faculties;
+      document.getElementById('drawerEmpLocation').textContent = emp.location;
+      document.getElementById('drawerEmpNotes').textContent = emp.notes;
+
+      document.getElementById('employerDrawer').classList.remove('hidden');
+    }
+
+    function closeEmployerDrawer() {
+      document.getElementById('employerDrawer').classList.add('hidden');
+      activeEmpDrawerId = null;
+    }
+
+    function decideEmployerKyb(newStatus) {
+      if (!activeEmpDrawerId) return;
+      const emp = EMPLOYERS_DATA.find(e => e.id === activeEmpDrawerId);
+      if (!emp) return;
+      emp.status = newStatus;
+
+      AUDIT_LOGS.unshift({
+        time: 'JUST NOW',
+        code: newStatus.startsWith('Approved') ? 'KYB-APPROVED' : 'KYB-FLAGGED',
+        actor: 'Dr. Elena Vance (Career Office)',
+        detail: `${newStatus}: ${emp.name} (${emp.regId}) updated in Polytechnic employer registry.`
+      });
+
+      renderOverview();
+      renderEmployersTable();
+      renderAuditLogs();
+      closeEmployerDrawer();
+      showToast(`✓ ${emp.name} updated to "${newStatus}".`);
+    }
+
+    // 14. JOB VETTING DRAWER & APPROVAL ACTIONS
+    function openJobVetDrawer(jobId) {
+      const job = VETTING_JOBS_DATA.find(j => j.id === jobId);
+      if (!job) return;
+      activeJobDrawerId = jobId;
+
+      document.getElementById('drawerJobStatus').textContent = job.status.toUpperCase();
+      document.getElementById('drawerJobType').textContent = job.type.toUpperCase();
+      document.getElementById('drawerJobCompany').textContent = job.company;
+      document.getElementById('drawerJobTitle').textContent = job.title;
+      document.getElementById('drawerJobSalary').textContent = job.salary;
+      document.getElementById('drawerJobEligibility').textContent = job.eligibility;
+      document.getElementById('drawerJobCohort').textContent = job.cohort;
+      document.getElementById('drawerJobDesc').textContent = job.desc;
+
+      document.getElementById('jobVetDrawer').classList.remove('hidden');
+    }
+
+    function closeJobVetDrawer() {
+      document.getElementById('jobVetDrawer').classList.add('hidden');
+      activeJobDrawerId = null;
+    }
+
+    function decideJobVetting(newStatus) {
+      if (!activeJobDrawerId) return;
+      const job = VETTING_JOBS_DATA.find(j => j.id === activeJobDrawerId);
+      if (!job) return;
+      job.status = newStatus;
+
+      AUDIT_LOGS.unshift({
+        time: 'JUST NOW',
+        code: newStatus.startsWith('Verified') ? 'JOB-VERIFIED' : 'JOB-RETURNED',
+        actor: 'Dr. Elena Vance (Career Office)',
+        detail: `${newStatus}: "${job.title}" by ${job.company}.`
+      });
+
+      renderOverview();
+      renderJobVettingList();
+      renderAuditLogs();
+      closeJobVetDrawer();
+      showToast(`✓ "${job.title}" marked as "${newStatus}".`);
+    }
+
+    // 15. REGISTRAR SYNC, SEARCH & CLIPBOARD HELPERS
+    function triggerRegistrarSync() {
+      AUDIT_LOGS.unshift({
+        time: 'JUST NOW',
+        code: 'SIS-SYNC',
+        actor: 'Registrar Integration Bridge',
+        detail: 'Synchronized 4,820 active student enrollment and statutory visa work-permit records.'
+      });
+      renderAuditLogs();
+      showToast('✓ Registrar SIS synchronized: 4,820 student & alumni work-right records verified.');
+    }
+
+    function copyAuditHash() {
+      const temp = document.createElement('input');
+      temp.value = 'AUDIT-POLY-2026-9941-SHA256';
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('✓ Audit Merkle Hash copied to clipboard.');
+    }
+
+    document.getElementById('topnavSearchInput').addEventListener('input', (e) => {
+      globalSearchQuery = e.target.value;
+      renderEmployersTable();
+      renderJobVettingList();
+      renderRegistryTable();
+    });
+
+    // INLINE TOAST HELPER (NO BROWSER ALERT)
+    let toastTimer = null;
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastMessage').textContent = msg;
+      banner.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4500);
+    }
+
+    function hideToast() {
+      document.getElementById('toastBanner').classList.add('hidden');
+    }
+
+    // ESCAPE KEY DISMISSAL
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllDropdowns();
+        closeEmployerDrawer();
+        closeJobVetDrawer();
+        closeMobileSidebar();
+      }
+    });
+
+    // INITIAL RENDER
+    hydrateInstituteSession();
+    renderOverview();
+    renderEmployersTable();
+    renderJobVettingList();
+    renderRegistryTable();
+    renderAuditLogs();
+  </script>
+</body>
+</html>
